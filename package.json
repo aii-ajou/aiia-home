@@ -16,10 +16,16 @@
     "check": "astro check"
   },
   "dependencies": {
-    "astro": "^5.0.0"
+    "astro": "^7.0.4"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "^0.9.9",
     "typescript": "^5.6.0"
+  },
+  "comments": {
+    "overrides": "Force patched yaml (>=2.8.3) into @astrojs/check's transitive yaml-language-server; dev-only tooling, remove once upstream updates. See GHSA-48c2-rrv3-qjmp."
+  },
+  "overrides": {
+    "yaml": "^2.9.0"
   }
 }

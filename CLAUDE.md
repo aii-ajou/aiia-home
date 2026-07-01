@@ -16,7 +16,8 @@ Homepage for **AIIA — 아주대학교 인공지능연구원 (AI Institute of A
 
 ## Build tooling / versions
 
-- **Astro 5** on **Node 22** (managed with nvm). `.nvmrc` pins `22`, so `nvm use` selects the right version on any machine; `package.json` `engines` also enforces Node `^18.20.8 || ^20.3.0 || >=22.0.0` (Astro 5's requirement). On a fresh clone run `nvm install` (or `nvm use`) before `npm install`.
+- **Astro 7** on **Node 22** (managed with nvm). `.nvmrc` pins `22`, so `nvm use` selects the right version on any machine; `package.json` `engines` enforces Node `^18.20.8 || ^20.3.0 || >=22.0.0`. On a fresh clone run `nvm install` (or `nvm use`) before `npm install`.
+- `package.json` has an `overrides` forcing `yaml` to `^2.9.0` — this patches a transitive vuln (GHSA-48c2-rrv3-qjmp) in `@astrojs/check`'s dev-only language server. `npm audit` must stay at **0 vulnerabilities**; remove the override once upstream `@astrojs/check` ships a fixed `yaml`.
 - `astro.config.mjs` sets `site: "https://aiia.ajou.ac.kr"` — required so `Base.astro`'s canonical and OG URLs resolve. Keep it set.
 - `tsconfig.json` extends `astro/tsconfigs/strict`. `npm run check` must stay at 0 errors.
 

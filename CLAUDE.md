@@ -16,9 +16,9 @@ Homepage for **AIIA — 아주대학교 인공지능연구원 (AI Institute of A
 
 ## Build tooling / versions
 
+- **Astro 5** on **Node 22** (managed with nvm). `.nvmrc` pins `22`, so `nvm use` selects the right version on any machine; `package.json` `engines` also enforces Node `^18.20.8 || ^20.3.0 || >=22.0.0` (Astro 5's requirement). On a fresh clone run `nvm install` (or `nvm use`) before `npm install`.
 - `astro.config.mjs` sets `site: "https://aiia.ajou.ac.kr"` — required so `Base.astro`'s canonical and OG URLs resolve. Keep it set.
-- **Astro is pinned to `^4.16`, not 5.** This machine runs Node 18.19.1, but Astro 5 requires Node ≥18.20.8. To move to Astro 5, upgrade Node first (e.g. `nvm install 20`), then bump `astro` to `^5` and reinstall. The components use no Astro-5-specific features, so the pin is purely a Node-version constraint.
-- `tsconfig.json` extends `astro/tsconfigs/strict`.
+- `tsconfig.json` extends `astro/tsconfigs/strict`. `npm run check` must stay at 0 errors.
 
 ## Architecture
 

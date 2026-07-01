@@ -4,6 +4,9 @@
   "version": "0.0.1",
   "private": true,
   "description": "Homepage for AIIA (AI Institute of Ajou University)",
+  "engines": {
+    "node": "^18.20.8 || ^20.3.0 || >=22.0.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -13,7 +16,7 @@
     "check": "astro check"
   },
   "dependencies": {
-    "astro": "^4.16.18"
+    "astro": "^5.0.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",

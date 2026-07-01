@@ -16,6 +16,8 @@
     "check": "astro check"
   },
   "dependencies": {
+    "@astrojs/node": "^11.0.0",
+    "@directus/sdk": "^22.0.0",
     "astro": "^7.0.4"
   },
   "devDependencies": {

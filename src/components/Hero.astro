@@ -1,28 +1,33 @@
 ---
 /**
- * Hero.astro — 첫 화면 (헤드라인 · 소개 · 주요 CTA · 비주얼 자리표시자)
+ * Hero.astro — 첫 화면 (헤드라인 · 소개 · 주요 CTA · 비주얼)
+ * 콘텐츠는 Directus 에서 온다. visual 이 없으면 placeholder-chip 유지.
  */
+import type { HeroView } from "../lib/directus/queries";
+import { nl2br } from "../lib/directus/html";
+interface Props { hero: HeroView }
+const { hero } = Astro.props;
 ---
 
 <section id="top" class="hero">
   <div class="hero__inner">
     <div class="hero__copy">
-      <p class="eyebrow eyebrow--primary">RESEARCH · EDUCATION · PARTNERSHIP</p>
-      <h1 class="hero__title">아주대학교<br />인공지능연구원</h1>
-      <p class="hero__lede">
-        기초 연구부터 산업 응용까지 — 6개 연구센터와 40여 명의 연구진이 함께
-        인공지능의 최전선을 넓혀갑니다.
-      </p>
+      <p class="eyebrow eyebrow--primary">{hero.eyebrow}</p>
+      <h1 class="hero__title" set:html={nl2br(hero.title)}></h1>
+      <p class="hero__lede">{hero.lede}</p>
       <div class="hero__actions">
-        <a href="#centers" class="btn btn--primary">연구센터 보기</a>
-        <a href="#inquiry" class="btn btn--outline-gold">협력문의</a>
+        <a href={hero.ctaPrimary.href} class="btn btn--primary">{hero.ctaPrimary.label}</a>
+        <a href={hero.ctaSecondary.href} class="btn btn--outline-gold">{hero.ctaSecondary.label}</a>
       </div>
     </div>
-    <div class="hero__visual">
-      <span class="placeholder-chip">main visual / lab image</span>
+    <div
+      class="hero__visual"
+      style={hero.visual ? `background-image:url(${hero.visual});background-size:cover;background-position:center` : undefined}
+    >
+      {hero.visual ? null : <span class="placeholder-chip">main visual / lab image</span>}
       <div class="hero__badge">
-        <div class="hero__badge-num">6</div>
-        <div class="hero__badge-label">전문 연구센터<br />운영 중</div>
+        <div class="hero__badge-num">{hero.badgeNumber}</div>
+        <div class="hero__badge-label" set:html={nl2br(hero.badgeLabel)}></div>
       </div>
     </div>
   </div>

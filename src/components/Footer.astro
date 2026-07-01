@@ -1,13 +1,12 @@
 ---
 /**
  * Footer.astro — 하단 (주소·연락처 · 링크 컬럼 · 카피라이트 · 소셜)
- * 배경은 항상 어두운 톤(#0B1220)으로 고정합니다.
+ * 배경은 항상 어두운 톤(#0B1220)으로 고정합니다. 콘텐츠는 Directus 에서 온다.
  */
-const footerCols = [
-  { title: "연구원", links: ["소개", "비전", "연혁", "오시는 길"] },
-  { title: "연구", links: ["연구센터", "연구성과", "논문", "세미나"] },
-  { title: "참여", links: ["구성원", "채용", "연구연수생", "협력문의"] },
-];
+import type { FooterView } from "../lib/directus/queries";
+import { nl2br } from "../lib/directus/html";
+interface Props { footer: FooterView }
+const { footer } = Astro.props;
 ---
 
 <footer class="footer">
@@ -18,13 +17,9 @@ const footerCols = [
           <img class="footer__mark" src="/brand/aiia-symbol.png" alt="" width="26" height="32" />
           <span class="footer__name">AIIA</span>
         </div>
-        <p class="footer__addr">
-          16499 경기도 수원시 영통구<br />
-          월드컵로 206 아주대학교 인공지능연구원<br />
-          T. 031-219-0000 · aiia@ajou.ac.kr
-        </p>
+        <p class="footer__addr" set:html={nl2br(footer.addressHtml)}></p>
       </div>
-      {footerCols.map((col) => (
+      {footer.columns.map((col) => (
         <div>
           <div class="footer__col-title">{col.title}</div>
           {col.links.map((l) => <a href="#top" class="footer__link">{l}</a>)}
@@ -32,9 +27,9 @@ const footerCols = [
       ))}
     </div>
     <div class="footer__bottom">
-      <span class="footer__copy">© 2026 AI Institute of Ajou University. All Rights Reserved.</span>
+      <span class="footer__copy">{footer.copyright}</span>
       <div class="footer__social">
-        <span>IG</span><span>YT</span><span>FB</span>
+        {footer.social.map((s) => <span>{s.label}</span>)}
       </div>
     </div>
   </div>

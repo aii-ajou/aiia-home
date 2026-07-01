@@ -1,15 +1,11 @@
 ---
 /**
  * Header.astro — 상단 고정 GNB (로고 · 전역 내비게이션 · 협력문의 CTA)
+ * 콘텐츠(nav/cta)는 Directus 에서 온다.
  */
-const navItems = [
-  { label: "연구원 소개", href: "#about" },
-  { label: "연구센터", href: "#centers" },
-  { label: "구성원", href: "#members" },
-  { label: "소식", href: "#news" },
-  { label: "오시는 길", href: "#contact" },
-  { label: "협력문의", href: "#inquiry" },
-];
+import type { NavView, CtaView } from "../lib/directus/queries";
+interface Props { nav: NavView[]; cta: CtaView }
+const { nav, cta } = Astro.props;
 ---
 
 <header class="gnb">
@@ -22,9 +18,9 @@ const navItems = [
       </span>
     </a>
     <nav class="gnb__nav">
-      {navItems.map((n) => <a href={n.href}>{n.label}</a>)}
+      {nav.map((n) => <a href={n.href}>{n.label}</a>)}
     </nav>
-    <a href="#inquiry" class="btn btn--primary btn--sm">협력 문의</a>
+    <a href={cta.href} class="btn btn--primary btn--sm">{cta.label}</a>
   </div>
 </header>
 

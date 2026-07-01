@@ -1,15 +1,11 @@
 ---
 /**
  * Members.astro — 주요 구성원 카드 그리드
+ * 콘텐츠는 Directus 에서 온다. 사진(photo)이 없으면 accent 색 + placeholder 유지.
  */
-const members = [
-  { name: "김민준 교수", role: "연구원장", area: "Generative AI", color: "var(--aiia-blue)" },
-  { name: "이서연 교수", role: "부원장", area: "Vision & Robotics", color: "var(--aiia-blue-deep)" },
-  { name: "박도현 교수", role: "자연어처리 센터장", area: "NLP", color: "var(--aiia-gold)" },
-  { name: "정하윤 교수", role: "AI 헬스케어 센터장", area: "Medical AI", color: "var(--aiia-blue-bright)" },
-  { name: "최지우 교수", role: "신뢰가능 AI 센터장", area: "Trustworthy AI", color: "var(--aiia-success)" },
-  { name: "강준서 교수", role: "데이터·MLOps 센터장", area: "Infra", color: "var(--aiia-silver)" },
-];
+import type { MemberView } from "../lib/directus/queries";
+interface Props { members: MemberView[] }
+const { members } = Astro.props;
 ---
 
 <section id="members" class="section section--alt">
@@ -24,8 +20,11 @@ const members = [
     <div class="grid grid--members">
       {members.map((m) => (
         <div class="card member">
-          <div class="member__photo" style={`background-color:${m.color}`}>
-            <span class="placeholder-chip placeholder-chip--dark">member photo</span>
+          <div
+            class="member__photo"
+            style={m.photo ? `background-image:url(${m.photo});background-size:cover;background-position:center` : `background-color:${m.color}`}
+          >
+            {m.photo ? null : <span class="placeholder-chip placeholder-chip--dark">member photo</span>}
           </div>
           <div class="member__body">
             <div class="member__name">{m.name}</div>

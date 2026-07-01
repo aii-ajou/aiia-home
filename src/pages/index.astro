@@ -1,9 +1,8 @@
 ---
 /**
- * index.astro — AIIA 홈페이지
- * 각 섹션은 src/components/*.astro 로 분리되어 있습니다.
- * 이 파일은 Base 레이아웃 안에서 섹션 컴포넌트를 순서대로 조합하는 역할만 합니다.
- * 콘텐츠(연구센터·구성원·소식 등)는 각 컴포넌트 프런트매터의 배열을 수정하세요.
+ * index.astro — AIIA 홈페이지 (SSR)
+ * 콘텐츠는 Directus(CMS)에서 조회한다. 이 파일은 데이터를 받아 각 섹션 컴포넌트에
+ * props 로 분배하는 조합 역할만 한다. 콘텐츠 편집은 Directus 관리자에서 한다.
  */
 import Base from "../layouts/Base.astro";
 import UtilityBar from "../components/UtilityBar.astro";
@@ -17,18 +16,25 @@ import News from "../components/News.astro";
 import Inquiry from "../components/Inquiry.astro";
 import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
+import { loadHomePageData } from "../lib/directus/queries";
+
+const data = await loadHomePageData();
 ---
 
-<Base>
+<Base
+  title={data.site.title}
+  description={data.site.description}
+  ogImage={data.site.ogImage ?? undefined}
+>
   <UtilityBar />
-  <Header />
-  <Hero />
-  <About />
-  <Stats />
-  <Centers />
-  <Members />
-  <News />
-  <Inquiry />
-  <Contact />
-  <Footer />
+  <Header nav={data.nav} cta={data.site.headerCta} />
+  <Hero hero={data.hero} />
+  <About about={data.about} />
+  <Stats stats={data.stats} />
+  <Centers centers={data.centers} />
+  <Members members={data.members} />
+  <News news={data.news} />
+  <Inquiry inquiry={data.inquiry} />
+  <Contact contact={data.contact} />
+  <Footer footer={data.footer} />
 </Base>

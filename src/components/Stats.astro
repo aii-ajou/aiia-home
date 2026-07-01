@@ -1,21 +1,19 @@
 ---
 /**
  * Stats.astro — 핵심 지표 스트립 (딥블루 배경)
+ * 콘텐츠는 Directus 에서 온다.
  */
-const stats = [
-  { v: "6", k: "연구센터" },
-  { v: "42", k: "참여 교수" },
-  { v: "130+", k: "SCI급 논문 / 년" },
-  { v: "35+", k: "산학·정부 협약" },
-];
+import type { StatView } from "../lib/directus/queries";
+interface Props { stats: StatView[] }
+const { stats } = Astro.props;
 ---
 
 <section class="stats">
   <div class="aiia-container stats__grid">
     {stats.map((s) => (
       <div class="stat">
-        <div class="stat__value">{s.v}</div>
-        <div class="stat__key">{s.k}</div>
+        <div class="stat__value">{s.value}</div>
+        <div class="stat__key">{s.label}</div>
       </div>
     ))}
   </div>

@@ -1,0 +1,126 @@
+---
+/**
+ * Footer.astro — 하단 (주소·연락처 · 링크 컬럼 · 카피라이트 · 소셜)
+ * 배경은 항상 어두운 톤(#0B1220)으로 고정합니다.
+ */
+const footerCols = [
+  { title: "연구원", links: ["소개", "비전", "연혁", "오시는 길"] },
+  { title: "연구", links: ["연구센터", "연구성과", "논문", "세미나"] },
+  { title: "참여", links: ["구성원", "채용", "연구연수생", "협력문의"] },
+];
+---
+
+<footer class="footer">
+  <div class="aiia-container">
+    <div class="footer__top">
+      <div>
+        <div class="footer__brand">
+          <img class="footer__mark" src="/brand/aiia-symbol.png" alt="" width="26" height="32" />
+          <span class="footer__name">AIIA</span>
+        </div>
+        <p class="footer__addr">
+          16499 경기도 수원시 영통구<br />
+          월드컵로 206 아주대학교 인공지능연구원<br />
+          T. 031-219-0000 · aiia@ajou.ac.kr
+        </p>
+      </div>
+      {footerCols.map((col) => (
+        <div>
+          <div class="footer__col-title">{col.title}</div>
+          {col.links.map((l) => <a href="#top" class="footer__link">{l}</a>)}
+        </div>
+      ))}
+    </div>
+    <div class="footer__bottom">
+      <span class="footer__copy">© 2026 AI Institute of Ajou University. All Rights Reserved.</span>
+      <div class="footer__social">
+        <span>IG</span><span>YT</span><span>FB</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: #0b1220;
+    padding: 56px 0 40px;
+  }
+  .footer__top {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: var(--aiia-space-8);
+    padding-bottom: var(--aiia-space-8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .footer__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: var(--aiia-space-4);
+  }
+  .footer__name {
+    font-family: var(--aiia-font-display);
+    font-weight: 700;
+    font-size: 19px;
+    color: var(--aiia-sky);
+    letter-spacing: 0.5px;
+  }
+  .footer__addr {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.75;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .footer__col-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: var(--aiia-space-3);
+  }
+  .footer__link {
+    display: block;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    padding: 5px 0;
+    transition: color var(--aiia-dur) var(--aiia-ease);
+  }
+  .footer__link:hover {
+    color: var(--aiia-sky);
+  }
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--aiia-space-4);
+    padding-top: var(--aiia-space-6);
+  }
+  .footer__copy {
+    font-family: var(--aiia-font-display);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .footer__social {
+    display: flex;
+    gap: 10px;
+  }
+  .footer__social span {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--aiia-r-full);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--aiia-font-display);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  @media (max-width: 900px) {
+    .footer__top {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

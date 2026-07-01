@@ -1,0 +1,121 @@
+---
+/**
+ * Hero.astro — 첫 화면 (헤드라인 · 소개 · 주요 CTA · 비주얼 자리표시자)
+ */
+---
+
+<section id="top" class="hero">
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <p class="eyebrow eyebrow--primary">RESEARCH · EDUCATION · PARTNERSHIP</p>
+      <h1 class="hero__title">아주대학교<br />인공지능연구원</h1>
+      <p class="hero__lede">
+        기초 연구부터 산업 응용까지 — 6개 연구센터와 40여 명의 연구진이 함께
+        인공지능의 최전선을 넓혀갑니다.
+      </p>
+      <div class="hero__actions">
+        <a href="#centers" class="btn btn--primary">연구센터 보기</a>
+        <a href="#inquiry" class="btn btn--outline-gold">협력문의</a>
+      </div>
+    </div>
+    <div class="hero__visual">
+      <span class="placeholder-chip">main visual / lab image</span>
+      <div class="hero__badge">
+        <div class="hero__badge-num">6</div>
+        <div class="hero__badge-label">전문 연구센터<br />운영 중</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background: var(--aiia-bg);
+  }
+  .hero__inner {
+    max-width: var(--aiia-container);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: stretch;
+  }
+  .hero__copy {
+    padding: 88px 40px 88px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .hero__title {
+    margin: 0 0 22px;
+    font-weight: 800;
+    font-size: clamp(32px, 4.2vw, 52px);
+    line-height: 1.16;
+    letter-spacing: -0.01em;
+    color: var(--aiia-ink);
+    text-wrap: balance;
+  }
+  .hero__lede {
+    margin: 0 0 34px;
+    max-width: 460px;
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--aiia-ink-soft);
+  }
+  .hero__actions {
+    display: flex;
+    gap: var(--aiia-space-3);
+    flex-wrap: wrap;
+  }
+  .hero__visual {
+    position: relative;
+    min-height: 420px;
+    background-color: var(--aiia-surface-2);
+    background-image: repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 13px,
+      rgba(0, 91, 172, 0.06) 13px,
+      rgba(0, 91, 172, 0.06) 14px
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero__badge {
+    position: absolute;
+    left: -36px;
+    bottom: 48px;
+    background: var(--aiia-surface);
+    border: 1px solid var(--aiia-line);
+    border-radius: var(--aiia-r-lg);
+    box-shadow: var(--aiia-shadow-lg);
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: var(--aiia-space-4);
+  }
+  .hero__badge-num {
+    font-family: var(--aiia-font-display);
+    font-weight: 700;
+    font-size: 34px;
+    color: var(--aiia-primary);
+    line-height: 1;
+  }
+  .hero__badge-label {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--aiia-ink-soft);
+  }
+
+  @media (max-width: 900px) {
+    .hero__inner {
+      grid-template-columns: 1fr;
+    }
+    .hero__copy {
+      padding: 56px 24px;
+    }
+    .hero__badge {
+      left: 24px;
+    }
+  }
+</style>

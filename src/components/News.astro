@@ -1,0 +1,87 @@
+---
+/**
+ * News.astro — 소식/공지 카드 그리드
+ */
+const news = [
+  { cat: "공지", color: "var(--aiia-blue)", date: "2026.06.24", title: "2026학년도 2학기 AIIA 연구연수생(인턴) 모집" },
+  { cat: "세미나", color: "var(--aiia-gold)", date: "2026.06.18", title: "AI Frontier Seminar: 대규모 언어모델의 정렬과 안전성" },
+  { cat: "채용", color: "var(--aiia-success)", date: "2026.06.10", title: "생성형 AI 연구센터 박사후연구원(Post-Doc) 채용" },
+  { cat: "성과", color: "var(--aiia-warning)", date: "2026.05.29", title: "AIIA 연구팀, NeurIPS 2026 논문 4편 채택" },
+];
+---
+
+<section id="news" class="section">
+  <div class="aiia-container">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow eyebrow--gold">News &amp; Notice</p>
+        <h2 class="section__title">소식</h2>
+      </div>
+      <a href="#news" class="section__link">전체 소식 →</a>
+    </div>
+    <div class="grid grid--news">
+      {news.map((n) => (
+        <a href="#news" class="card news-card">
+          <div class="news-card__thumb">
+            <span class="tag tag--solid" style={`background:${n.color}`}>{n.cat}</span>
+          </div>
+          <div class="news-card__body">
+            <div class="news-card__date">{n.date}</div>
+            <div class="news-card__title">{n.title}</div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid--news {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .news-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    text-decoration: none;
+    transition: border-color var(--aiia-dur) var(--aiia-ease),
+      box-shadow var(--aiia-dur) var(--aiia-ease);
+  }
+  .news-card:hover {
+    border-color: var(--aiia-primary);
+    box-shadow: var(--aiia-shadow-lg);
+  }
+  .news-card__thumb {
+    height: 120px;
+    background-color: var(--aiia-surface-2);
+    background-image: repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 9px,
+      rgba(0, 91, 172, 0.06) 9px,
+      rgba(0, 91, 172, 0.06) 10px
+    );
+    display: flex;
+    align-items: flex-start;
+    padding: 14px;
+  }
+  .news-card__body {
+    padding: 16px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .news-card__date {
+    font-family: var(--aiia-font-display);
+    font-size: 12px;
+    color: var(--aiia-ink-mute);
+  }
+  .news-card__title {
+    font-weight: 700;
+    font-size: 15.5px;
+    line-height: 1.5;
+    color: var(--aiia-ink);
+  }
+</style>

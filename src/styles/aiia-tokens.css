@@ -1,0 +1,169 @@
+/* =========================================================================
+   AIIA Design Tokens  ·  아주대학교 인공지능연구원 (AI Institute of Ajou University)
+   v1.0 — Based on Ajou University UI guidelines (AJOU BLUE / AJOU GOLD)
+
+   Usage:
+     @import "./aiia-tokens.css";
+     .btn { background: var(--aiia-primary); color: var(--aiia-on-primary); }
+
+   Dark mode:
+     <html data-theme="dark">   (explicit)
+     …also auto-applies via prefers-color-scheme when no data-theme is set.
+   ========================================================================= */
+
+:root {
+  /* ---- Brand (fixed spec colors, theme-independent) -------------------- */
+  --aiia-blue:          #005BAC;   /* AJOU BLUE  · Pantone 285  · primary   */
+  --aiia-blue-deep:     #003D75;   /* deep blue for headers / overlays      */
+  --aiia-blue-bright:   #0072CE;   /* interactive / hover                   */
+  --aiia-gold:          #B08D3E;   /* AJOU GOLD  · Pantone 874  · secondary */
+  --aiia-gold-bright:   #D4A94E;
+  --aiia-sky:           #8FC6EA;   /* AJOU SKY   · Pantone 283  · sub        */
+  --aiia-yellow:        #FFA300;   /* AJOU YELLOW· Pantone 137  · sub        */
+  --aiia-silver:        #97999B;   /* AJOU SILVER· Pantone 877  · sub        */
+
+  /* ---- Semantic status ------------------------------------------------- */
+  --aiia-success:       #1F8A5B;
+  --aiia-warning:       #C77700;
+  --aiia-danger:        #C23B3B;
+  --aiia-info:          #005BAC;
+
+  /* ---- Typography ------------------------------------------------------ */
+  --aiia-font-sans:     "Nanum Gothic", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --aiia-font-display:  "Space Grotesk", "Nanum Gothic", sans-serif; /* Latin display / numbers / labels */
+  --aiia-font-mono:     "Space Grotesk", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --aiia-text-display:  clamp(34px, 5vw, 60px);
+  --aiia-text-h1:       44px;
+  --aiia-text-h2:       32px;
+  --aiia-text-h3:       24px;
+  --aiia-text-body-lg:  18px;
+  --aiia-text-body:     16px;
+  --aiia-text-small:    14px;
+  --aiia-text-label:    13px;
+  --aiia-leading-tight: 1.15;
+  --aiia-leading-body:  1.7;
+
+  /* ---- Spacing (4px base) ---------------------------------------------- */
+  --aiia-space-1:  4px;
+  --aiia-space-2:  8px;
+  --aiia-space-3:  12px;
+  --aiia-space-4:  16px;
+  --aiia-space-6:  24px;
+  --aiia-space-8:  32px;
+  --aiia-space-12: 48px;
+  --aiia-space-16: 64px;
+  --aiia-space-24: 96px;
+
+  /* ---- Radius ---------------------------------------------------------- */
+  --aiia-r-xs:   4px;
+  --aiia-r-sm:   8px;
+  --aiia-r-md:   12px;
+  --aiia-r-lg:   16px;
+  --aiia-r-xl:   24px;
+  --aiia-r-full: 999px;
+
+  /* ---- Layout ---------------------------------------------------------- */
+  --aiia-container:      1200px;
+  --aiia-container-wide: 1400px;
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --aiia-ease:       cubic-bezier(.4, 0, .2, 1);
+  --aiia-ease-out:   cubic-bezier(.16, 1, .3, 1);
+  --aiia-dur-fast:   140ms;
+  --aiia-dur:        220ms;
+  --aiia-dur-slow:   400ms;
+
+  /* =====================================================================
+     THEME — LIGHT (default)
+     Semantic surface/ink tokens. Build UI against THESE, not the raw brand
+     colors above, so dark mode just works.
+     ===================================================================== */
+  --aiia-bg:            #FFFFFF;
+  --aiia-bg-alt:        #F4F7FB;
+  --aiia-surface:       #FFFFFF;
+  --aiia-surface-2:     #F0F4F9;
+
+  --aiia-ink:           #0E1B2E;
+  --aiia-ink-soft:      #3A4A5F;
+  --aiia-ink-mute:      #6B7B8F;
+
+  --aiia-line:          #E1E8F0;
+  --aiia-line-strong:   #C9D4E0;
+
+  --aiia-brand:         var(--aiia-blue);
+  --aiia-brand-bright:  var(--aiia-blue-bright);
+  --aiia-brand-tint:    #E8F1FA;
+
+  --aiia-primary:       var(--aiia-blue);        /* main action color       */
+  --aiia-primary-bright:var(--aiia-blue-bright);
+  --aiia-on-primary:    #FFFFFF;
+  --aiia-on-brand:      #FFFFFF;
+
+  --aiia-shadow-sm:     0 1px 2px rgba(14, 27, 46, .06);
+  --aiia-shadow:        0 4px 16px rgba(14, 27, 46, .08);
+  --aiia-shadow-lg:     0 16px 40px rgba(14, 27, 46, .14);
+}
+
+/* =====================================================================
+   THEME — DARK
+   Applies when <html data-theme="dark">, OR automatically by OS preference
+   when no explicit data-theme is set.
+   ===================================================================== */
+:root[data-theme="dark"] {
+  --aiia-bg:            #0B1220;
+  --aiia-bg-alt:        #0E1626;
+  --aiia-surface:       #131E30;
+  --aiia-surface-2:     #1A2740;
+
+  --aiia-ink:           #EAF1F8;
+  --aiia-ink-soft:      #B4C4D6;
+  --aiia-ink-mute:      #7E90A4;
+
+  --aiia-line:          #233248;
+  --aiia-line-strong:   #33455F;
+
+  --aiia-brand:         #3E92E0;   /* lightened for contrast on dark */
+  --aiia-brand-bright:  #5AA6EE;
+  --aiia-brand-tint:    #12253C;
+
+  --aiia-primary:       #3E92E0;
+  --aiia-primary-bright:#5AA6EE;
+  --aiia-on-primary:    #06121F;
+  --aiia-on-brand:      #06121F;
+
+  --aiia-gold:          #D4A94E;
+  --aiia-gold-bright:   #E6C169;
+  --aiia-yellow:        #FFB733;
+
+  --aiia-shadow-sm:     0 1px 2px rgba(0, 0, 0, .40);
+  --aiia-shadow:        0 6px 20px rgba(0, 0, 0, .50);
+  --aiia-shadow-lg:     0 20px 50px rgba(0, 0, 0, .60);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --aiia-bg:            #0B1220;
+    --aiia-bg-alt:        #0E1626;
+    --aiia-surface:       #131E30;
+    --aiia-surface-2:     #1A2740;
+    --aiia-ink:           #EAF1F8;
+    --aiia-ink-soft:      #B4C4D6;
+    --aiia-ink-mute:      #7E90A4;
+    --aiia-line:          #233248;
+    --aiia-line-strong:   #33455F;
+    --aiia-brand:         #3E92E0;
+    --aiia-brand-bright:  #5AA6EE;
+    --aiia-brand-tint:    #12253C;
+    --aiia-primary:       #3E92E0;
+    --aiia-primary-bright:#5AA6EE;
+    --aiia-on-primary:    #06121F;
+    --aiia-on-brand:      #06121F;
+    --aiia-gold:          #D4A94E;
+    --aiia-gold-bright:   #E6C169;
+    --aiia-yellow:        #FFB733;
+    --aiia-shadow-sm:     0 1px 2px rgba(0, 0, 0, .40);
+    --aiia-shadow:        0 6px 20px rgba(0, 0, 0, .50);
+    --aiia-shadow-lg:     0 20px 50px rgba(0, 0, 0, .60);
+  }
+}

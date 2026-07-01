@@ -1,0 +1,50 @@
+---
+/**
+ * Stats.astro — 핵심 지표 스트립 (딥블루 배경)
+ */
+const stats = [
+  { v: "6", k: "연구센터" },
+  { v: "42", k: "참여 교수" },
+  { v: "130+", k: "SCI급 논문 / 년" },
+  { v: "35+", k: "산학·정부 협약" },
+];
+---
+
+<section class="stats">
+  <div class="aiia-container stats__grid">
+    {stats.map((s) => (
+      <div class="stat">
+        <div class="stat__value">{s.v}</div>
+        <div class="stat__key">{s.k}</div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .stats {
+    background: var(--aiia-blue-deep);
+    padding-block: 56px;
+  }
+  .stats__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--aiia-space-6);
+  }
+  .stat {
+    text-align: center;
+    padding: var(--aiia-space-2) 0;
+  }
+  .stat__value {
+    font-family: var(--aiia-font-display);
+    font-weight: 700;
+    font-size: 46px;
+    line-height: 1;
+    color: #fff;
+  }
+  .stat__key {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--aiia-sky);
+  }
+</style>

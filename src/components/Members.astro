@@ -1,0 +1,83 @@
+---
+/**
+ * Members.astro — 주요 구성원 카드 그리드
+ */
+const members = [
+  { name: "김민준 교수", role: "연구원장", area: "Generative AI", color: "var(--aiia-blue)" },
+  { name: "이서연 교수", role: "부원장", area: "Vision & Robotics", color: "var(--aiia-blue-deep)" },
+  { name: "박도현 교수", role: "자연어처리 센터장", area: "NLP", color: "var(--aiia-gold)" },
+  { name: "정하윤 교수", role: "AI 헬스케어 센터장", area: "Medical AI", color: "var(--aiia-blue-bright)" },
+  { name: "최지우 교수", role: "신뢰가능 AI 센터장", area: "Trustworthy AI", color: "var(--aiia-success)" },
+  { name: "강준서 교수", role: "데이터·MLOps 센터장", area: "Infra", color: "var(--aiia-silver)" },
+];
+---
+
+<section id="members" class="section section--alt">
+  <div class="aiia-container">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow eyebrow--gold">Members</p>
+        <h2 class="section__title">구성원</h2>
+      </div>
+      <a href="#members" class="section__link">전체 구성원 보기 →</a>
+    </div>
+    <div class="grid grid--members">
+      {members.map((m) => (
+        <div class="card member">
+          <div class="member__photo" style={`background-color:${m.color}`}>
+            <span class="placeholder-chip placeholder-chip--dark">member photo</span>
+          </div>
+          <div class="member__body">
+            <div class="member__name">{m.name}</div>
+            <div class="member__role">{m.role}</div>
+            <div class="member__area">{m.area}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid--members {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 18px;
+  }
+  .member {
+    overflow: hidden;
+  }
+  .member__photo {
+    height: 150px;
+    background-image: repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.08) 10px,
+      rgba(255, 255, 255, 0.08) 11px
+    );
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 14px;
+  }
+  .member__body {
+    padding: 16px 18px 20px;
+  }
+  .member__name {
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--aiia-ink);
+  }
+  .member__role {
+    font-size: 12.5px;
+    color: var(--aiia-primary);
+    font-weight: 700;
+    margin-top: 3px;
+  }
+  .member__area {
+    font-family: var(--aiia-font-display);
+    font-size: 11.5px;
+    color: var(--aiia-ink-mute);
+    margin-top: 6px;
+  }
+</style>

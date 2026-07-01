@@ -1,0 +1,92 @@
+---
+/**
+ * Header.astro — 상단 고정 GNB (로고 · 전역 내비게이션 · 협력문의 CTA)
+ */
+const navItems = [
+  { label: "연구원 소개", href: "#about" },
+  { label: "연구센터", href: "#centers" },
+  { label: "구성원", href: "#members" },
+  { label: "소식", href: "#news" },
+  { label: "오시는 길", href: "#contact" },
+  { label: "협력문의", href: "#inquiry" },
+];
+---
+
+<header class="gnb">
+  <div class="gnb__inner">
+    <a href="#top" class="brand">
+      <img class="brand__mark" src="/brand/aiia-symbol.png" alt="" width="29" height="36" />
+      <span class="brand__text">
+        <span class="brand__name">AIIA</span>
+        <span class="brand__sub">아주대학교 인공지능연구원</span>
+      </span>
+    </a>
+    <nav class="gnb__nav">
+      {navItems.map((n) => <a href={n.href}>{n.label}</a>)}
+    </nav>
+    <a href="#inquiry" class="btn btn--primary btn--sm">협력 문의</a>
+  </div>
+</header>
+
+<style>
+  .gnb {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--aiia-bg) 88%, transparent);
+    border-bottom: 1px solid var(--aiia-line);
+    backdrop-filter: blur(8px);
+  }
+  .gnb__inner {
+    max-width: var(--aiia-container);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--aiia-space-6);
+    padding: var(--aiia-space-4) 24px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    text-decoration: none;
+  }
+  .brand__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+  }
+  .brand__name {
+    font-family: var(--aiia-font-display);
+    font-weight: 700;
+    font-size: 21px;
+    letter-spacing: 0.5px;
+    color: var(--aiia-primary);
+  }
+  .brand__sub {
+    font-size: 11px;
+    color: var(--aiia-ink-mute);
+  }
+  .gnb__nav {
+    display: flex;
+    gap: 30px;
+  }
+  .gnb__nav a {
+    font-weight: 500;
+    font-size: 15.5px;
+    color: var(--aiia-ink-soft);
+    text-decoration: none;
+    transition: color var(--aiia-dur) var(--aiia-ease);
+  }
+  .gnb__nav a:hover {
+    color: var(--aiia-brand-bright);
+    font-weight: 700;
+  }
+
+  @media (max-width: 900px) {
+    .gnb__nav {
+      display: none;
+    }
+  }
+</style>

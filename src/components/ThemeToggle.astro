@@ -1,0 +1,63 @@
+---
+/**
+ * ThemeToggle.astro — 라이트/다크 전환 버튼
+ * Base.astro의 초기화 스크립트와 짝을 이룹니다 (localStorage 키: "aiia-theme").
+ * GNB 유틸리티 영역 등에 <ThemeToggle /> 로 배치하세요.
+ */
+---
+
+<button
+  type="button"
+  class="aiia-theme-toggle"
+  aria-label="라이트/다크 모드 전환"
+>
+  <span data-theme-label>테마</span>
+</button>
+
+<style>
+  .aiia-theme-toggle {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: var(--aiia-r-full);
+    border: 1px solid var(--aiia-line-strong);
+    background: var(--aiia-surface-2);
+    color: var(--aiia-ink);
+    font-family: var(--aiia-font-display);
+    font-size: 12px;
+    font-weight: 600;
+    transition: border-color var(--aiia-dur) var(--aiia-ease);
+  }
+  .aiia-theme-toggle:hover {
+    border-color: var(--aiia-primary);
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var btn = document.currentScript.previousElementSibling;
+    // <style> 사이에 있을 수 있으니 안전하게 최근 토글 버튼을 찾음
+    if (!btn || !btn.classList || !btn.classList.contains("aiia-theme-toggle")) {
+      var all = document.querySelectorAll(".aiia-theme-toggle");
+      btn = all[all.length - 1];
+    }
+    if (!btn) return;
+    var label = btn.querySelector("[data-theme-label]");
+    function sync() {
+      var t = document.documentElement.dataset.theme || "light";
+      if (label) label.textContent = t === "dark" ? "☀ LIGHT" : "☾ DARK";
+    }
+    btn.addEventListener("click", function () {
+      var next =
+        document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      try {
+        localStorage.setItem("aiia-theme", next);
+      } catch (e) {}
+      sync();
+    });
+    sync();
+  })();
+</script>

@@ -1,0 +1,189 @@
+/* global.css — 전역 스타일 진입점
+ * 이 파일은 Base.astro에서 한 번만 import 됩니다.
+ * 디자인 토큰을 먼저 불러오고, 필요한 전역 유틸만 아래에 최소로 추가하세요.
+ * (색/간격을 새로 정의하지 말고 항상 --aiia-* 변수를 사용) */
+
+@import "./aiia-tokens.css";
+
+/* 공용 레이아웃 컨테이너 (필요 시 사용) */
+.aiia-container {
+  max-width: var(--aiia-container); /* 1200px */
+  margin: 0 auto;
+  padding-inline: 24px;
+}
+
+/* 섹션 상단 앵커가 고정 헤더에 가리지 않도록 */
+:where(section[id]) {
+  scroll-margin-top: 120px;
+}
+
+/* 접근성: 키보드 포커스 링 */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--aiia-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================================
+   공용 프리미티브 (여러 섹션 컴포넌트에서 공유)
+   섹션 고유 스타일은 각 컴포넌트의 <style>(scoped)에 두고,
+   버튼·카드·섹션 헤더처럼 반복되는 요소만 여기에 전역으로 둡니다.
+   ========================================================================= */
+
+/* ---- section shell ---- */
+.section {
+  background: var(--aiia-bg);
+  padding-block: var(--aiia-space-24);
+}
+.section--alt {
+  background: var(--aiia-bg-alt);
+}
+.section__title {
+  margin: 0;
+  font-weight: 800;
+  font-size: var(--aiia-text-h2);
+  line-height: 1.25;
+  color: var(--aiia-ink);
+}
+.section__title--mb {
+  margin-bottom: var(--aiia-space-12);
+}
+.section__lede {
+  margin: 0;
+  font-size: var(--aiia-text-body);
+  line-height: 1.8;
+  color: var(--aiia-ink-soft);
+}
+.section__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--aiia-space-6);
+  margin-bottom: var(--aiia-space-12);
+  flex-wrap: wrap;
+}
+.section__aside {
+  margin: 0;
+  max-width: 380px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--aiia-ink-soft);
+}
+.section__link {
+  text-decoration: none;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--aiia-primary);
+}
+
+/* ---- eyebrow (섹션 상단 라벨) ---- */
+.eyebrow {
+  margin: 0 0 var(--aiia-space-3);
+  font-family: var(--aiia-font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+}
+.eyebrow--primary {
+  letter-spacing: 1.8px;
+  color: var(--aiia-primary);
+  margin-bottom: var(--aiia-space-4);
+}
+.eyebrow--gold {
+  color: var(--aiia-gold);
+}
+
+/* ---- card ---- */
+.card {
+  background: var(--aiia-surface);
+  border: 1px solid var(--aiia-line);
+  border-radius: var(--aiia-r-lg);
+}
+
+/* ---- button ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  padding: 14px 28px;
+  border-radius: var(--aiia-r-full);
+  font-family: var(--aiia-font-sans);
+  font-weight: 700;
+  font-size: 15.5px;
+  transition: filter var(--aiia-dur) var(--aiia-ease),
+    background var(--aiia-dur) var(--aiia-ease),
+    color var(--aiia-dur) var(--aiia-ease),
+    border-color var(--aiia-dur) var(--aiia-ease);
+}
+.btn--sm {
+  padding: 10px 20px;
+  font-size: 13.5px;
+}
+.btn--block {
+  width: 100%;
+  margin-top: var(--aiia-space-4);
+}
+.btn--primary {
+  background: var(--aiia-primary);
+  color: var(--aiia-on-primary);
+}
+.btn--primary:hover {
+  filter: brightness(1.08);
+}
+.btn--outline-gold {
+  background: transparent;
+  border: 1.5px solid var(--aiia-gold);
+  color: var(--aiia-gold);
+}
+.btn--outline-gold:hover {
+  background: var(--aiia-gold);
+  color: #fff;
+}
+
+/* ---- tag ---- */
+.tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--aiia-primary);
+  background: var(--aiia-brand-tint);
+  padding: 6px 13px;
+  border-radius: var(--aiia-r-full);
+}
+.tag--solid {
+  color: #fff;
+}
+
+/* ---- grid base (Centers · Members · News 가 modifier로 열 구성) ---- */
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+/* ---- placeholder (시안용 이미지 자리표시자) ---- */
+.placeholder-chip {
+  font-family: var(--aiia-font-mono);
+  font-size: 12.5px;
+  color: var(--aiia-ink-mute);
+  background: var(--aiia-surface);
+  padding: 7px 14px;
+  border-radius: var(--aiia-r-full);
+  border: 1px solid var(--aiia-line);
+}
+.placeholder-chip--dark {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.18);
+  border: none;
+  font-size: 11px;
+}

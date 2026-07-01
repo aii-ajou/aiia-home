@@ -1,0 +1,108 @@
+---
+/**
+ * Centers.astro — 연구센터 카드 그리드
+ */
+const centers = [
+  { mono: "GA", color: "var(--aiia-blue)", ko: "생성형 AI 센터", en: "Generative AI", desc: "대규모 언어·멀티모달 모델과 생성 기술을 연구합니다.", tag: "LLM · Multimodal" },
+  { mono: "VR", color: "var(--aiia-blue-deep)", ko: "비전·로보틱스 센터", en: "Vision & Robotics", desc: "인식·제어·자율 시스템으로 물리 세계와 AI를 연결합니다.", tag: "Perception" },
+  { mono: "NL", color: "var(--aiia-gold)", ko: "자연어처리 센터", en: "NLP", desc: "한국어 중심 언어 이해·생성과 지식 처리를 연구합니다.", tag: "Language" },
+  { mono: "HC", color: "var(--aiia-blue-bright)", ko: "AI 헬스케어 센터", en: "AI Healthcare", desc: "아주대병원과 협력해 의료 AI를 개발·검증합니다.", tag: "Medical AI" },
+  { mono: "TA", color: "var(--aiia-success)", ko: "신뢰가능 AI 센터", en: "Trustworthy AI", desc: "안전성·공정성·설명가능성을 연구합니다.", tag: "Safety" },
+  { mono: "DM", color: "var(--aiia-silver)", ko: "데이터·MLOps 센터", en: "Data & MLOps", desc: "대규모 데이터 파이프라인과 모델 운영을 다룹니다.", tag: "Infra" },
+];
+---
+
+<section id="centers" class="section">
+  <div class="aiia-container">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow eyebrow--gold">Research Centers</p>
+        <h2 class="section__title">연구센터</h2>
+      </div>
+      <p class="section__aside">
+        각 센터는 고유한 연구 주제를 중심으로 협력하며 AI 연구의 전 영역을 아우릅니다.
+      </p>
+    </div>
+    <div class="grid grid--centers">
+      {centers.map((c) => (
+        <div class="card center">
+          <div class="center__head">
+            <div class="center__mono" style={`background:${c.color}`}>{c.mono}</div>
+            <div>
+              <div class="center__ko">{c.ko}</div>
+              <div class="center__en">{c.en}</div>
+            </div>
+          </div>
+          <p class="center__desc">{c.desc}</p>
+          <div class="center__foot">
+            <span class="tag">{c.tag}</span>
+            <span class="center__more">자세히 →</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid--centers {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  }
+  .center {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--aiia-space-4);
+    transition: border-color var(--aiia-dur) var(--aiia-ease),
+      box-shadow var(--aiia-dur) var(--aiia-ease);
+  }
+  .center:hover {
+    border-color: var(--aiia-primary);
+    box-shadow: var(--aiia-shadow);
+  }
+  .center__head {
+    display: flex;
+    align-items: center;
+    gap: var(--aiia-space-3);
+  }
+  .center__mono {
+    width: 56px;
+    height: 56px;
+    flex: 0 0 auto;
+    border-radius: var(--aiia-r-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--aiia-font-display);
+    font-weight: 700;
+    font-size: 19px;
+    color: #fff;
+  }
+  .center__ko {
+    font-weight: 800;
+    font-size: 19px;
+    color: var(--aiia-ink);
+  }
+  .center__en {
+    font-family: var(--aiia-font-display);
+    font-size: 12.5px;
+    color: var(--aiia-ink-mute);
+  }
+  .center__desc {
+    margin: 0;
+    flex: 1;
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--aiia-ink-soft);
+  }
+  .center__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .center__more {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--aiia-primary);
+  }
+</style>

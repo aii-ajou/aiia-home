@@ -1,0 +1,44 @@
+---
+/**
+ * UtilityBar.astro — 최상단 유틸리티 바 (아주대학교 · LOGIN · ENG · 테마 토글)
+ */
+import ThemeToggle from "./ThemeToggle.astro";
+---
+
+<div class="utilbar">
+  <div class="utilbar__inner">
+    <span class="utilbar__link">아주대학교</span>
+    <span class="utilbar__sep"></span>
+    <span class="utilbar__link mono">LOGIN</span>
+    <span class="utilbar__link mono">ENG</span>
+    <ThemeToggle />
+  </div>
+</div>
+
+<style>
+  .utilbar {
+    background: var(--aiia-blue-deep);
+  }
+  .utilbar__inner {
+    max-width: var(--aiia-container);
+    margin: 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--aiia-space-4);
+    padding: var(--aiia-space-2) 24px;
+  }
+  .utilbar__link {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .utilbar__link.mono {
+    font-family: var(--aiia-font-display);
+    letter-spacing: 0.3px;
+  }
+  .utilbar__sep {
+    width: 1px;
+    height: 11px;
+    background: rgba(255, 255, 255, 0.25);
+  }
+</style>

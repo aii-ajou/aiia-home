@@ -3,7 +3,7 @@
  * Centers.astro — 연구센터 카드 그리드
  * 콘텐츠는 Directus 에서 온다.
  */
-import type { CenterView } from "../lib/directus/queries";
+import type { CenterView } from "../lib/content/queries";
 interface Props { centers: CenterView[] }
 const { centers } = Astro.props;
 ---

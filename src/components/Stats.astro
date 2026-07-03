@@ -3,7 +3,7 @@
  * Stats.astro — 핵심 지표 스트립 (딥블루 배경)
  * 콘텐츠는 Directus 에서 온다.
  */
-import type { StatView } from "../lib/directus/queries";
+import type { StatView } from "../lib/content/queries";
 interface Props { stats: StatView[] }
 const { stats } = Astro.props;
 ---

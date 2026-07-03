@@ -3,7 +3,7 @@
  * News.astro — 소식/공지 카드 그리드
  * 콘텐츠는 Directus 에서 온다. 썸네일이 없으면 기본 배경 유지.
  */
-import type { NewsView } from "../lib/directus/queries";
+import type { NewsView } from "../lib/content/queries";
 interface Props { news: NewsView[] }
 const { news } = Astro.props;
 ---

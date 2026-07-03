@@ -3,8 +3,8 @@
  * About.astro — 연구원 소개 + 4대 지향점(pillars) 카드
  * 콘텐츠는 Directus 에서 온다.
  */
-import type { AboutView } from "../lib/directus/queries";
-import { nl2br } from "../lib/directus/html";
+import type { AboutView } from "../lib/content/queries";
+import { nl2br } from "../lib/content/html";
 interface Props { about: AboutView }
 const { about } = Astro.props;
 ---

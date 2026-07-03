@@ -3,7 +3,7 @@
  * Contact.astro — 오시는 길 (연락처 + 지도)
  * 콘텐츠는 Directus 에서 온다. 지도 이미지/임베드가 없으면 placeholder 유지.
  */
-import type { ContactView } from "../lib/directus/queries";
+import type { ContactView } from "../lib/content/queries";
 interface Props { contact: ContactView }
 const { contact } = Astro.props;
 ---

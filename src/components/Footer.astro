@@ -3,8 +3,8 @@
  * Footer.astro — 하단 (주소·연락처 · 링크 컬럼 · 카피라이트 · 소셜)
  * 배경은 항상 어두운 톤(#0B1220)으로 고정합니다. 콘텐츠는 Directus 에서 온다.
  */
-import type { FooterView } from "../lib/directus/queries";
-import { nl2br } from "../lib/directus/html";
+import type { FooterView } from "../lib/content/queries";
+import { nl2br } from "../lib/content/html";
 interface Props { footer: FooterView }
 const { footer } = Astro.props;
 ---

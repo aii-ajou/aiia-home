@@ -5,8 +5,8 @@
  * 폼 입력 필드(라벨/placeholder/옵션)와 제출 처리는 백엔드 연동과 함께 추후 CMS화한다
  * (docs/BACKLOG.md "협력문의 폼 백엔드"). 현재 폼은 제출 시 동작하지 않는다.
  */
-import type { InquiryView } from "../lib/directus/queries";
-import { nl2br } from "../lib/directus/html";
+import type { InquiryView } from "../lib/content/queries";
+import { nl2br } from "../lib/content/html";
 interface Props { inquiry: InquiryView }
 const { inquiry } = Astro.props;
 ---

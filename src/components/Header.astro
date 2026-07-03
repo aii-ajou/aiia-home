@@ -3,7 +3,7 @@
  * Header.astro — 상단 고정 GNB (로고 · 전역 내비게이션 · 협력문의 CTA)
  * 콘텐츠(nav/cta)는 Directus 에서 온다.
  */
-import type { NavView, CtaView } from "../lib/directus/queries";
+import type { NavView, CtaView } from "../lib/content/queries";
 interface Props { nav: NavView[]; cta: CtaView }
 const { nav, cta } = Astro.props;
 ---

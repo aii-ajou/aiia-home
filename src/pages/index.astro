@@ -1,8 +1,9 @@
 ---
 /**
- * index.astro — AIIA 홈페이지 (SSR)
- * 콘텐츠는 Directus(CMS)에서 조회한다. 이 파일은 데이터를 받아 각 섹션 컴포넌트에
- * props 로 분배하는 조합 역할만 한다. 콘텐츠 편집은 Directus 관리자에서 한다.
+ * index.astro — AIIA 홈페이지 (SSG)
+ * 콘텐츠는 git(src/content/, Content Collections)에서 빌드 시 조회한다. 이 파일은
+ * 데이터를 받아 각 섹션 컴포넌트에 props 로 분배하는 조합 역할만 한다.
+ * 콘텐츠 편집은 관리 UI(/admin) 또는 src/content/ 파일 수정으로 한다.
  */
 import Base from "../layouts/Base.astro";
 import UtilityBar from "../components/UtilityBar.astro";
@@ -16,7 +17,7 @@ import News from "../components/News.astro";
 import Inquiry from "../components/Inquiry.astro";
 import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
-import { loadHomePageData } from "../lib/directus/queries";
+import { loadHomePageData } from "../lib/content/queries";
 
 const data = await loadHomePageData();
 ---

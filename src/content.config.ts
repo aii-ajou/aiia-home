@@ -11,7 +11,7 @@
 import { defineCollection } from "astro:content";
 import { file, glob } from "astro/loaders";
 import { z } from "astro/zod";
-import { ACCENT_KEYS } from "./lib/directus/accent";
+import { ACCENT_KEYS } from "./lib/content/accent";
 
 const accent = z.enum(ACCENT_KEYS);
 const status = z.enum(["published", "draft", "archived"]).default("published");

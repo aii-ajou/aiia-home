@@ -1,0 +1,255 @@
+# Decap CMS 설정 — 편집자용 관리 UI (/admin)
+#
+# ⚠ 콘텐츠 모델의 정본은 src/content.config.ts(zod)다. 필드를 추가/변경하면
+#   반드시 양쪽을 함께 갱신할 것 (여기는 편집 폼 정의 + 한국어 라벨).
+# 색상 규칙: 강조색은 hex 입력이 아니라 accent 키 드롭다운만 제공한다.
+
+backend:
+  name: github
+  repo: aii-ajou/aiia-home
+  branch: main # go-live 시 운영 브랜치 확인
+  # base_url: OAuth 릴레이 주소 — 배포 마일스톤(M5)에서 설정
+
+# 로컬 개발: `npx decap-server` 실행 시 localhost 에서는 GitHub 대신
+# 로컬 파일(작업 트리)을 직접 편집한다. 운영 도메인에서는 무시됨.
+local_backend: true
+
+locale: ko # UI 한국어 (decap-cms 전체 번들은 모든 로케일 포함)
+
+media_folder: public/uploads # 업로드 파일 저장 위치(저장소 내)
+public_folder: /uploads # 콘텐츠에 기록되는 공개 경로
+
+editor:
+  preview: false # 프리뷰 템플릿 미구성 — 실제 확인은 게시 후 사이트에서
+
+# 공용 필드 조각 --------------------------------------------------------------
+# (YAML anchor 로 반복 정의 제거)
+_accent: &accent
+  label: 강조색
+  name: accent
+  widget: select
+  hint: 디자인 토큰 키만 선택 가능 (원시 색상값 입력 불가)
+  options: [blue, blue-deep, blue-bright, gold, sky, yellow, silver, success, warning, danger]
+  default: blue
+_sort: &sort
+  label: 정렬 순서
+  name: sort
+  widget: number
+  value_type: int
+  hint: 작은 숫자가 먼저 표시됩니다
+  default: 100
+_status: &status
+  label: 게시 상태
+  name: status
+  widget: select
+  options:
+    - { label: 게시, value: published }
+    - { label: 임시저장, value: draft }
+  default: published
+
+collections:
+  # ---- 싱글톤(페이지 영역별 설정) -------------------------------------------
+  - name: pages
+    label: 페이지 영역
+    files:
+      - name: site_settings
+        label: 사이트 설정
+        file: src/content/site_settings.json
+        fields:
+          - { label: 사이트 제목, name: site_title, widget: string }
+          - { label: 사이트 설명(검색/공유용), name: site_description, widget: text }
+          - { label: OG 이미지(공유 미리보기), name: og_image, widget: image, required: false }
+          - { label: 파비콘, name: favicon, widget: image, required: false }
+          - { label: 브랜드 심볼, name: brand_symbol, widget: image, required: false }
+          - { label: 주소, name: contact_address, widget: text }
+          - { label: 전화, name: contact_tel, widget: string }
+          - { label: 이메일, name: contact_email, widget: string }
+          - { label: 헤더 버튼 문구, name: header_cta_label, widget: string }
+          - { label: 헤더 버튼 링크, name: header_cta_href, widget: string }
+          - label: 소셜 링크
+            name: social_links
+            widget: list
+            required: false
+            fields:
+              - { label: 표시 텍스트, name: label, widget: string }
+              - { label: URL, name: url, widget: string }
+              - { label: 아이콘 키, name: icon, widget: string, required: false }
+      - name: hero
+        label: 히어로(첫 화면)
+        file: src/content/hero.json
+        fields:
+          - { label: 상단 소제목, name: eyebrow, widget: string }
+          - { label: 제목(줄바꿈 유지), name: title, widget: text }
+          - { label: 소개 문단, name: lede, widget: text }
+          - { label: 주 버튼 문구, name: cta_primary_label, widget: string }
+          - { label: 주 버튼 링크, name: cta_primary_href, widget: string }
+          - { label: 보조 버튼 문구, name: cta_secondary_label, widget: string }
+          - { label: 보조 버튼 링크, name: cta_secondary_href, widget: string }
+          - { label: 배지 숫자, name: badge_number, widget: string }
+          - { label: 배지 설명, name: badge_label, widget: text }
+          - { label: 비주얼 이미지, name: visual_image, widget: image, required: false }
+      - name: about
+        label: 연구원 소개
+        file: src/content/about.json
+        fields:
+          - { label: 상단 소제목, name: eyebrow, widget: string }
+          - { label: 제목(줄바꿈 유지), name: title, widget: text }
+          - { label: 소개 문단, name: lede, widget: text }
+          - label: 핵심 가치(필러)
+            name: pillars
+            widget: list
+            fields:
+              - { label: 약자(1글자), name: mono, widget: string }
+              - *accent
+              - { label: 제목, name: title, widget: string }
+              - { label: 설명, name: desc, widget: text }
+      - name: inquiry
+        label: 협력 문의
+        file: src/content/inquiry.json
+        fields:
+          - { label: 상단 소제목, name: eyebrow, widget: string }
+          - { label: 제목(줄바꿈 유지), name: title, widget: text }
+          - { label: 소개 문단, name: lede, widget: text }
+          - label: 협력 유형
+            name: coop_modes
+            widget: list
+            fields:
+              - { label: 유형, name: mode, widget: string }
+          - label: 문의 폼 항목
+            name: form_fields
+            widget: list
+            fields:
+              - { label: 라벨, name: label, widget: string }
+              - label: 입력 종류
+                name: type
+                widget: select
+                options: [text, email, select, textarea]
+              - label: 선택지(입력 종류가 select 일 때)
+                name: options
+                widget: list
+                required: false
+                field: { label: 선택지, name: option, widget: string }
+          - { label: 개인정보 동의 문구, name: consent_label, widget: string }
+          - { label: 보내기 버튼 문구, name: submit_label, widget: string }
+      - name: contact
+        label: 오시는 길
+        file: src/content/contact.json
+        fields:
+          - { label: 상단 소제목, name: eyebrow, widget: string }
+          - { label: 제목, name: title, widget: string }
+          - label: 연락처 항목
+            name: items
+            widget: list
+            fields:
+              - { label: 라벨, name: label, widget: string }
+              - { label: 내용, name: value, widget: text }
+          - { label: 지도 임베드 URL, name: map_embed, widget: string, required: false }
+          - { label: 지도 이미지, name: map_image, widget: image, required: false }
+      - name: footer
+        label: 푸터(하단)
+        file: src/content/footer.json
+        fields:
+          - { label: 주소/연락처(줄바꿈 유지), name: address_html, widget: text }
+          - label: 링크 묶음
+            name: columns
+            widget: list
+            fields:
+              - { label: 묶음 제목, name: title, widget: string }
+              - label: 링크 목록
+                name: links
+                widget: list
+                field: { label: 링크 텍스트, name: link, widget: string }
+          - { label: 저작권 문구, name: copyright, widget: string }
+          - label: 소셜 링크
+            name: social_links
+            widget: list
+            required: false
+            fields:
+              - { label: 표시 텍스트, name: label, widget: string }
+              - { label: URL, name: url, widget: string }
+
+  # ---- 목록 컬렉션 -----------------------------------------------------------
+  - name: nav_items
+    label: 상단 메뉴
+    folder: src/content/nav_items
+    extension: json
+    create: true
+    identifier_field: label
+    summary: "{{label}} → {{href}}"
+    sortable_fields: [sort, label]
+    fields:
+      - { label: 메뉴 이름, name: label, widget: string }
+      - { label: 이동 링크, name: href, widget: string, hint: "예: #about 또는 https://…" }
+      - *sort
+      - *status
+
+  - name: stats
+    label: 통계 숫자
+    folder: src/content/stats
+    extension: json
+    create: true
+    identifier_field: label
+    summary: "{{value}} — {{label}}"
+    sortable_fields: [sort, label]
+    fields:
+      - { label: "숫자(예: 130+)", name: value, widget: string }
+      - { label: 설명, name: label, widget: string }
+      - *sort
+      - *status
+
+  - name: centers
+    label: 연구센터
+    folder: src/content/centers
+    extension: json
+    create: true
+    identifier_field: name_ko
+    summary: "{{name_ko}} ({{name_en}})"
+    sortable_fields: [sort, name_ko]
+    fields:
+      - { label: 약자(2글자), name: mono, widget: string }
+      - *accent
+      - { label: 센터명(한글), name: name_ko, widget: string }
+      - { label: 센터명(영문), name: name_en, widget: string }
+      - { label: 소개, name: description, widget: text }
+      - { label: "태그(예: LLM · Multimodal)", name: tag, widget: string }
+      - { label: 상세 페이지 URL, name: detail_url, widget: string, required: false }
+      - *sort
+      - *status
+
+  - name: members
+    label: 구성원
+    folder: src/content/members
+    extension: json
+    create: true
+    identifier_field: name
+    summary: "{{name}} — {{role}}"
+    sortable_fields: [sort, name]
+    fields:
+      - { label: 이름(직함 포함), name: name, widget: string }
+      - { label: 보직/역할, name: role, widget: string }
+      - { label: 연구 분야, name: area, widget: string }
+      - *accent
+      - { label: 사진, name: photo, widget: image, required: false }
+      - { label: 소개(선택), name: bio, widget: text, required: false }
+      - { label: 이메일(선택), name: email, widget: string, required: false }
+      - *sort
+      - *status
+
+  - name: news
+    label: 소식
+    folder: src/content/news
+    extension: json
+    create: true
+    identifier_field: title
+    slug: "{{fields.date}}-{{slug}}"
+    summary: "[{{category}}] {{title}} ({{date}})"
+    sortable_fields: [sort, date, title]
+    fields:
+      - { label: "분류(예: 공지/세미나/채용/성과)", name: category, widget: string }
+      - *accent
+      - { label: 날짜, name: date, widget: string, hint: "YYYY-MM-DD 형식", pattern: ['^\d{4}-\d{2}-\d{2}$', "YYYY-MM-DD 형식으로 입력하세요"] }
+      - { label: 제목, name: title, widget: string }
+      - { label: 본문(상세 페이지용 · 선택), name: body, widget: text, required: false }
+      - { label: 썸네일, name: thumbnail, widget: image, required: false }
+      - *sort
+      - *status

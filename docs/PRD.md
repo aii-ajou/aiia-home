@@ -1,191 +1,174 @@
-# PRD — AIIA 홈페이지 CMS 기반 재구축
+# PRD — AIIA 홈페이지 정적 아키텍처 재구축 (v2)
 
 **제품:** 아주대학교 인공지능연구원(AIIA, AI Institute of Ajou University) 홈페이지
-**버전:** v1 (재구축)
-**작성일:** 2026-07-01
-**상태:** 승인됨 · 구현 착수
-**관련 문서:** 구현 계획 `/home/dkyoon/.claude/plans/glistening-sleeping-hummingbird.md`, `CLAUDE.md`
+**버전:** v2 (정적 회귀 재설계) — v1(Directus+SSR, 2026-07-01)을 대체. v1 전문은 git 이력 참조.
+**작성일:** 2026-07-03
+**상태:** 방향 승인됨 · 구현 착수 전
+**관련 문서:** `CLAUDE.md`(구현 완료 후 갱신), `docs/BACKLOG.md`
 
 ---
 
-## 1. 배경 & 문제 정의
+## 1. 배경 — 왜 v1(Directus+SSR)을 폐기하는가
 
-현재 `aiia-home`은 **정적(Static) Astro 사이트**이며, 홈페이지의 모든 콘텐츠 —
-연구원 소개, 연구센터, 구성원, 소식, 통계, 협력문의, 연락처, 푸터 — 가 각 섹션
-컴포넌트(`src/components/*.astro`)의 frontmatter에 **하드코딩된 JavaScript 배열**로
-들어 있다.
+v1 은 "비전문 교직원이 코드 없이 편집"이라는 목표를 위해 Directus(self-host)+Astro SSR 를
+구축했고 로컬에서 완전히 동작했다. 그러나 배포 전 재검토에서 다음이 확인됐다:
 
-그 결과:
-- 콘텐츠 한 줄(예: 신임 교수 추가, 소식 게시)을 바꾸려면 **코드 수정 → 빌드 → 배포**가 필요하다.
-- 비전문 교직원이 스스로 갱신할 수 없어, 개발자에게 의존하고 업데이트가 지연된다.
-- 조직 개편·인사 변동·행사 공지 등 **자주 바뀌는 정보**가 최신 상태로 유지되기 어렵다.
+1. **라이선스 리스크.** Directus 12(2026-05)부터 BSL → MSCL 로 전환되며 기술적 강제
+   (등록 키/entitlement)가 도입됐다. 무료 Core 티어는 필터 규칙 권한(우리의
+   `status=published` 공개 읽기)이 차단되고, 전 기능 무료인 Open Innovation Grant 는
+   "연 매출 $5M 미만 + 50인 미만" 법인 기준이라 대학은 대상이 아닐 가능성이 높다.
+2. **운영 비용의 불균형.** 사이트의 실체는 랜딩 페이지 1장 + 콘텐츠 11종 + 월 수 회
+   편집이다. 이를 위해 Node SSR + Directus + Postgres + 업로드 볼륨 + 야간 백업 +
+   캐시 무효화 파이프라인 + Admin 보안을 대학 서버에서 상시 운영하는 것은 과도하다.
+   v1 리스크 표의 과반이 "백엔드가 살아있어야 한다"에서 파생된 리스크였다.
+3. **즉시 게시(~1초)는 자체 부과 요구사항.** 연구원 홈페이지에서 게시 반영이 1초냐
+   수 분이냐는 실질 차이가 없다. 이 요구를 "수 분 내"로 완화하면 상시 백엔드가
+   불필요해진다.
 
 ## 2. 목표 (Goals)
 
-1. **조직도·구성원·연구센터·프로젝트·소식·홍보 등 홈페이지의 거의 모든 콘텐츠를,
-   권한 있는 교직원이 코드 수정 없이 관리자 화면에서 편집/업로드하고 즉시 게시**할 수 있게 한다.
+1. **권한 있는 교직원이 git/GitHub 지식 없이, 웹 관리 화면에서 폼 입력으로 콘텐츠를
+   편집·업로드하고 수 분 내 게시**할 수 있게 한다. (v1 목표 1 유지, 반영 시간만 완화)
 2. 현재의 **디자인 시스템과 화면(레이아웃·색·다크모드·타이포)을 픽셀 단위로 유지**한다.
-   변경되는 것은 콘텐츠의 *출처*뿐이다(하드코딩 배열 → CMS).
-3. **리치 미디어**(구성원 사진, 소식 썸네일·PDF 첨부, 브랜드/OG 이미지)를 지원한다.
-4. **로컬에서 완결적으로 개발·검증**한 뒤 대학 서버로 테스트 배포할 수 있는 경로를 갖춘다.
-5. 향후 **아주대 SSO 연동**과 **영문 버전**으로 저비용 확장 가능한 구조를 남긴다.
+3. **리치 미디어**(구성원 사진, 소식 썸네일, 브랜드/OG 이미지)를 지원한다.
+4. **공개 사이트는 순수 정적 파일**로 산출한다 — 대학 서버 요구사항은 nginx 뿐.
+5. **모든 콘텐츠 변경 이력이 git 에 영구 기록**되고, 임의 시점 롤백이 가능하다.
+6. 오픈소스(MIT 등) 구성요소만 사용해 **라이선스 리스크를 제거**한다.
 
-## 3. 비목표 (Non-Goals, v1 범위 제외)
+## 3. 비목표 (Non-Goals, v2 범위 제외)
 
-- **아주대 SSO 실제 연동** — 구조는 pluggable로 남기되, v1은 CMS 내장 인증 + 더미 계정으로 개발.
-- **영문(EN) 콘텐츠 편집** — 데이터 모델은 i18n 친화적으로 두되, v1은 한국어만 편집.
-- **초안→승인(draft→approval) 워크플로** — v1은 권한 있는 사용자가 즉시 게시.
-- 협력문의 폼의 백엔드 처리(메일 발송/스팸 방지 등)의 고도화 — 폼 필드 구성은 CMS화하되, 제출 처리 파이프라인은 별도 논의.
-- 검색, 다중 페이지 라우팅(상세 페이지) 등은 데이터 모델에 확장 여지(예: `news.slug`, `news.body`)만 두고 v1 화면에는 미노출.
+- 영문(EN) 버전 — Astro i18n 라우팅으로 후속 확장 (백로그).
+- 소식 상세 페이지(`/news/[slug]`) — content collections 의 body 필드로 확장 여지만 유지 (백로그).
+- 협력문의 폼 제출 백엔드 — v1 과 동일하게 별도 논의 (백로그).
+- 초안→승인 워크플로 — Decap editorial workflow 로 후속 도입 가능 (백로그).
+- 아주대 SSO — 편집자 인증이 GitHub 계정 기반으로 바뀌므로 요구 자체가 소멸.
 
 ## 4. 사용자 & 이해관계자
 
 | 역할 | 설명 | 필요 |
 |---|---|---|
-| **편집자(교직원)** | 비전문 사용자. 콘텐츠 편집/게시 담당 | 쉽고 안전한 관리자 UI, 코드/git 불필요, 즉시 반영 |
-| **관리자** | 초기 설정·계정·배포 담당(기술 인력) | 스키마 재현, 권한 관리, 배포/백업 |
-| **방문자** | 일반 공개 사용자 | 빠르고 안정적인 공개 사이트, 다크모드 |
+| **편집자(교직원)** | 비전문 사용자 1~3명 | 한국어 폼 UI, git 개념 노출 0, 저장→수 분 내 반영 |
+| **관리자(기술)** | 초기 설정·계정·배포 담당 | 재현 가능한 설정, 이력/롤백, 최소 운영 부담 |
+| **방문자** | 일반 공개 사용자 | 빠르고 절대 죽지 않는 정적 사이트, 다크모드 |
 
 ## 5. 확정된 제품 결정
 
 | 항목 | 결정 | 근거 |
 |---|---|---|
-| 호스팅 | 아주대 서버(Node+DB, on-prem, self-host) | 데이터 주권, 대학 인프라 |
-| CMS 엔진 | **Directus**(self-host, Postgres) | 완성형 Admin·RBAC·리치미디어/이미지 변환·REST+GraphQL을 코딩 없이 제공 → 비전문 편집자 적합, 관리자 UI 자체 개발 불필요 |
-| 렌더링 | **Astro SSR**(`@astrojs/node`) | 요청 시 CMS 조회 + 캐시로 게시 **즉시 반영**, 재빌드 파이프라인 불필요 |
-| 인증 | Directus 내장(더미 계정) → SSO는 env 설정만으로 후속 연결 | go-live가 SSO 준비에 묶이지 않게 |
-| 게시 | 권한 사용자 즉시 publish | v1 단순화 |
-| 다국어 | 한국어만 편집(모델은 i18n 친화) | 범위 관리 |
-| 리치 미디어 | 지원 | 요구사항 |
-| 품질 게이트 | `npm audit`=0, tsconfig strict, `astro check`=0, `astro build` green | 기존 저장소 규약 유지 |
+| 렌더링 | **Astro SSG** (`output: 'static'`, 어댑터 제거) | 공개 사이트를 정적 파일로 — 서버 런타임·장애 모드 제거 |
+| 콘텐츠 저장소 | **git 저장소 내 `src/content/`** (Astro Content Collections, zod 스키마) | 이력·롤백·백업이 git 으로 공짜, 타입 안전 |
+| 편집 UI | **Decap CMS** (MIT, 정적 `/admin` 페이지) | **한국어 UI 로케일 보유(확인됨)** — 비전문 교직원 요구의 결정 기준. 폼 위젯(select/image/datetime/list)로 전 콘텐츠 유형 커버 |
+| 편집 UI 이중화 | 설정은 **Decap 호환 포맷** 유지 | Sveltia CMS(활발한 후속작, 현재 en/ja만)가 같은 설정을 읽는 drop-in — ko 지원 시 파일 교체로 이전 가능, 잠금 없음 |
+| 편집자 인증 | GitHub 계정(저장소 collaborator) + **자체 호스팅 OAuth 릴레이**(스테이트리스 소형 서비스) | 편집자별 감사 이력. 릴레이는 DB/상태 없음 — 대학 서버 또는 무료 워커에 배치 |
+| 빌드·배포 | **GitHub Actions**: push → `astro build` → 대학 서버로 rsync(또는 서버 준비 전 임시 정적 호스팅) | 게시 자동화, 빌드 실패 시 이전 버전 유지 |
+| 이미지 | **`astro:assets`** 빌드 타임 변환(webp/리사이즈) | Directus 이미지 변환 대체, 결과물 정적 |
+| accent 색 규율 | zod **enum**(`blue`,`gold`,…) + 기존 `accent.ts` 매핑 유지 | "DB/콘텐츠에 원시 hex 금지" 수용 기준 유지 |
+| 품질 게이트 | `npm audit`=0, tsconfig strict, `astro check`=0, `astro build` green | 기존 규약 유지 |
 
-## 6. 최우선 설계 제약 (디자인 시스템 보존)
+## 6. 최우선 설계 제약 (디자인 시스템 보존 — v1 §6 전문 유지)
 
 - **디자인 시스템 동결:** `src/styles/aiia-tokens.css`, `src/styles/global.css`,
-  `src/layouts/Base.astro`, 공유 primitive(`.section*`, `.card`, `.btn*`, `.tag*`, `.grid`,
-  `.eyebrow*`, `.placeholder-chip*`), 각 컴포넌트의 scoped `<style>`은 **수정하지 않는다.**
-- **컴포넌트 리팩터는 기계적:** `const centers = [...]` → `const { centers } = Astro.props;`.
-  마크업·`.map()` 렌더 루프·클래스명·스타일 그대로.
-- **색상은 hex 금지:** 현재 `color` 필드는 hex가 아니라 **디자인 토큰 참조**
-  (`var(--aiia-blue)`, `var(--aiia-gold)` 등)다. CMS에서는 **accent 키의 고정 드롭다운**으로
-  만들고 데이터 계층(`accent.ts`)에서 `키 → var(--aiia-*)`로 해석한다. **원시 hex가 DB에
-  절대 저장되지 않는다** → 다크모드·아주 브랜드 규정 유지.
-  - accent 키 집합: `blue`, `blue-deep`, `blue-bright`, `gold`, `success`, `warning`, `silver`
-    (필요 시 `sky`, `yellow` 추가). 매핑 원본은 `aiia-tokens.css`의 `--aiia-*` 변수.
-- **미디어 미입력 시:** 파일 필드가 비어 있으면 기존 `.placeholder-chip` 마크업을 유지 →
-  콘텐츠를 채워가는 동안에도 시각적 회귀가 없다.
+  `src/layouts/Base.astro`, 공유 primitive, 각 컴포넌트 scoped `<style>` 은 수정하지 않는다.
+- **컴포넌트는 이미 props 기반**(v1 산출물) — Directus 를 모르므로 **무수정 재사용**한다.
+  바뀌는 것은 데이터 계층뿐: `src/lib/directus/` → content collections 로더.
+- **색상은 hex 금지:** accent 키(zod enum) → `accent.ts` 가 `var(--aiia-*)` 로 해석.
+- **미디어 미입력 시:** 기존 `.placeholder-chip` 유지.
 
-## 7. 콘텐츠 모델 (인벤토리 → Directus 매핑)
+## 7. 콘텐츠 모델 (v1 인벤토리 → Content Collections 매핑)
 
-두 유형: **싱글톤**(1행, "single object") / **컬렉션**(N행, 정렬 가능). 파일은 Directus
-`directus_files`에 M2O(단일)/M2M(다중)으로 연결하고, 이미지 변환은
-`/assets/:id?width=…&format=webp&quality=…`로 무료 제공.
+콘텐츠 유형과 필드는 v1 과 동일(검증된 모델). 저장 형태만 바뀐다.
 
-**공통 규약:** 모든 콘텐츠는 `status`(`published`/`draft`, Public role은 `published`만 read) +
-`sort`(수동 정렬) + `date_updated`/`user_updated`를 갖는다. accent 필드는 위 고정 드롭다운.
-
-### 싱글톤
-| 컬렉션 | 매핑 대상 | 주요 필드 |
+| 유형 | v1 (Directus) | v2 (git) |
 |---|---|---|
-| `site_settings` | 사이트 전역·연락처·SNS·브랜드 | `site_title`, `site_description`, `og_image`(file), `favicon`(file), `brand_symbol`(file), `contact_address`, `contact_tel`, `contact_email`, `social_links`(JSON `[{label,url,icon}]`), `header_cta_label/href` |
-| `hero` | Hero 섹션 | `eyebrow`, `title`(개행), `lede`, `cta_primary_label/href`, `cta_secondary_label/href`, `badge_number`, `badge_label`, `visual_image`(file, nullable) |
-| `about` | About 섹션 | `eyebrow`, `title`, `lede` + `about_pillars`(O2M: `mono`, `accent`, `title`, `desc`, `sort`) |
-| `inquiry` | 협력문의 섹션+폼 설정 | `eyebrow`, `title`, `lede`, `coop_modes`(JSON/O2M), `form_fields`(JSON repeater: label·type·options), `consent_label`, `submit_label` |
-| `contact` | 오시는 길 | `eyebrow`, `title`, `items`(JSON `[{label,value}]`: Address/Tel/Email), `map_embed`(text, sanitize), `map_image`(file, nullable) |
-| `footer` | 푸터 | `address_html`, `columns`(O2M `footer_columns` → `footer_links`: `label`,`href`,`sort`), `copyright`, `social_links` |
+| 싱글톤 6종 (`site_settings`,`hero`,`about`,`inquiry`,`contact`,`footer`) | 싱글톤 컬렉션 | `src/content/<name>.json` 단일 파일 (`type: 'data'` 컬렉션 또는 파일 로더) |
+| 목록 5종 (`nav_items`,`stats`,`centers`,`members`,`news`) | 컬렉션(행) | `src/content/<name>/*.md|json` 항목 파일. `sort` 필드로 수동 정렬, `status`(`published`/`draft`) 유지 — draft 는 빌드에서 제외 |
+| 파일(사진/썸네일/OG) | `directus_files` | 저장소 내 이미지 + `astro:assets` (frontmatter 에 상대 경로) |
+| accent | 고정 드롭다운 | zod enum + Decap `select` 위젯 (동일 선택지) |
 
-### 컬렉션
-| 컬렉션 | 매핑 대상 | 주요 필드 |
-|---|---|---|
-| `nav_items` | GNB | `label`, `href`, `sort`, `status` |
-| `stats` | 통계 | `value`(예 "130+"), `label`, `sort`, `status` |
-| `centers` | 연구센터 | `mono`, `accent`, `name_ko`, `name_en`, `description`, `tag`, `detail_url`(nullable), `sort`, `status` |
-| `members` | 구성원 | `name`, `role`, `area`, `accent`, `photo`(file, nullable), `bio`(nullable), `email`(nullable), `sort`, `status` |
-| `news` | 소식 | `category`, `accent`, `date`, `title`, `body`(rich/markdown, nullable), `thumbnail`(file, nullable), `attachments`(M2M files, nullable), `slug`(unique), `sort`, `status` |
-
-> 선택: `news_categories`(`name`, `accent`)로 카테고리→색 중앙화(권장, v1 필수 아님).
-> i18n: v1은 Directus Translations 미사용. `centers.name_ko/name_en`처럼 명시적 `_ko/_en`
-> 유지 → 후속 EN 확장 시 기계적 마이그레이션.
+Decap `config.yml` 이 위 스키마를 **한국어 라벨과 함께** 미러링한다(컬렉션명·필드
+라벨·안내문 전부 한국어). zod 스키마와 Decap 설정의 이중 정의가 어긋나지 않도록
+필드 추가 절차를 문서화한다(§11).
 
 ## 8. 아키텍처
 
 ```
-방문자 ── HTTPS ──▶ Astro SSR(@astrojs/node) ──(SWR 캐시)──▶ Directus REST/SDK ──▶ Postgres
-                              ▲                                     │
-편집자 ── HTTPS ──▶ Directus Studio(Admin) ──(Flow 웹훅)──▶ /api/revalidate(캐시 퍼지)
-                                                              파일/에셋 ── /assets (이미지 변환)
+방문자 ── HTTPS ──▶ nginx(대학 서버) ──▶ 정적 파일(dist/)          ← 서버 런타임 없음
+편집자 ── HTTPS ──▶ /admin (Decap CMS, 정적 페이지, 한국어 UI)
+                       │  GitHub OAuth (소형 스테이트리스 릴레이)
+                       ▼
+                    GitHub 저장소 (src/content/* 커밋 = 콘텐츠 + 전체 이력)
+                       │  push 트리거
+                       ▼
+                    GitHub Actions: astro build → 검증 → rsync → 대학 서버
+                    (빌드 실패 시 배포 생략 — 사이트는 이전 버전 그대로)
 ```
 
-- **데이터 접근 계층**(`src/lib/directus/`): `@directus/sdk` 하나로 통일. `queries.ts`의
-  `getHomePageData()`가 섹션별 쿼리를 `Promise.all` 병렬 조회 → accent는 CSS var로, 파일
-  id는 URL로 정규화한 **view-ready** 형태 반환. **컴포넌트는 Directus를 모른다.**
-- **게시 즉시 반영:** 짧은 TTL 인메모리 SWR 캐시 + Directus Flow가 콘텐츠 변경 시
-  `/api/revalidate`(공유 시크릿)로 웹훅 → `cache.purge()`. 편집자 저장 후 1회 요청 내 반영.
-- **복원력:** `stale-if-error`로 Directus 장애 시 마지막 정상본 서빙. 콜드 스타트+Directus
-  다운 시 seed된 상수 fallback으로 500 방지.
-- **저장소 구조:** Astro는 루트 유지(churn 최소·audit 표면=Astro만). Directus는 컨테이너/별도
-  런타임(루트 `package-lock`에 미포함). `cms/`(스키마 스냅샷+seed), `infra/`(compose·env),
-  `src/lib/directus/`(데이터 계층), `docs/`(문서), `.claude/`(하네스) 추가.
+- **데이터 접근 계층:** `src/lib/content/` 가 content collections 를 조회해 v1 과 동일한
+  view-ready 타입(`HomePageData` 등)으로 정규화. **컴포넌트 인터페이스 불변.**
+  `cache.ts`/`revalidate` 엔드포인트/Flow 는 폐기(정적이라 불필요).
+- **`astro.config.mjs`:** `output` 기본(static)으로 회귀, `@astrojs/node` 어댑터 제거,
+  `security.checkOrigin` 해제(웹훅 소멸), `astro:env` 는 잔존 필요 변수만.
 
 ## 9. 인증 & 권한
 
-- **공개 사이트는 익명 read**(Public role, `status=published`). v1 프론트엔드에 로그인 없음.
-- **편집자 인증 = Directus 내장**(email/password), 더미 계정 seed. `Editor` role = 콘텐츠 CRUD +
-  파일 업로드, 스키마/유저관리 권한 없음. 즉시 publish.
-- **SSO = env 설정만**(Directus 네이티브 OpenID/OAuth2/SAML/LDAP). `.env.directus.example`에
-  주석 처리된 provider 블록을 미리 문서화 → 아주 SSO 준비되면 **앱/스키마 코드 변경 0**.
+- **공개 사이트:** 인증 없음(정적).
+- **편집자:** GitHub 계정(관리자가 생성·저장소 collaborator 초대, 1회) → `/admin` 에서
+  "GitHub 로 로그인" 1회 연결 후 자동. 편집자는 github.com 을 직접 쓰지 않는다.
+- **감사 이력:** 모든 편집이 편집자 명의의 커밋으로 기록.
+- **OAuth 릴레이:** 토큰 교환만 하는 스테이트리스 서비스(수십 줄). 대학 서버(nginx 뒤
+  경로 하나) 또는 무료 워커에 배치. DB·세션·백업 없음.
 
 ## 10. 배포 & 운영
 
-- **로컬:** Directus + Postgres + Astro(SSR)를 로컬에서 실행. 더미 계정/콘텐츠 seed.
-  `cms:apply`(스키마) → `cms:seed`(콘텐츠) → 프론트 실행 → 편집→즉시 반영 확인.
-- **대학 서버 테스트 배포:** 동일 토폴로지 + 실 env/시크릿, 리버스 프록시(nginx)+TLS(대학 에지),
-  Postgres 볼륨/업로드 볼륨 영속화, **야간 백업**(`pg_dump` + 업로드 스냅샷, 오프박스 보관),
-  schema apply + 운영 seed. Directus Admin은 내부/SSO 뒤로.
-- **재현성:** 스키마는 `cms/schema/snapshot.yaml`로 버전관리(`directus schema apply`).
-  콘텐츠/역할/유저는 멱등 `cms/seed/seed.mjs`. **클릭 전용 설정 금지.**
+- **로컬 개발:** `npm run dev` 만으로 완결(별도 CMS 런타임 불필요). Decap 은 로컬
+  백엔드 모드(`decap-server`)로 관리 UI 까지 로컬 검증 가능.
+- **대학 서버:** nginx 정적 서빙 + OAuth 릴레이 1개. TLS 는 대학 에지. **DB·Node
+  런타임·백업 시스템 불필요.** 서버 준비 전에는 임시 정적 호스팅으로 즉시 공개 가능.
+- **백업:** git 자체가 콘텐츠 원본+이력. 저장소 미러 외 추가 백업 불필요.
+- **재현성:** 콘텐츠·스키마·CMS 설정·CI 전부 저장소 안. "클릭 전용 설정 금지" 유지.
 
-## 11. 마일스톤 (단계)
+## 11. 마일스톤
 
-각 단계 종료 게이트: `npm audit`=0 · `astro check`=0 · `astro build` green + 단계별 검증.
+각 단계 게이트: `npm audit`=0 · `astro check`=0 · `astro build` green.
 
-0. **PRD + 스캐폴딩 + 하네스** — 본 문서, Node 어댑터, infra/cms/데이터계층 골격, `.claude/` 하네스.
-1. **데이터 모델 + 재현 스키마** — Directus 모델 구축 → snapshot + 멱등 seed.
-2. **데이터 접근 계층** — `getHomePageData()` 타입 안전·view-ready.
-3. **컴포넌트 리팩터(스타일 동결)** — 섹션별 배열→props, 라이트/다크 시각 diff 게이트.
-4. **캐시 + 즉시 게시 + 복원력** — SWR 캐시, revalidate 웹훅, stale-if-error.
-5. **로컬 풀스택 스모크 + 하드닝** — 에셋/OG/사진/PDF, 비전문 편집자 e2e.
-6. **대학 서버 테스트 배포** — 실 env, 프록시+TLS, 백업, SSO stub.
+0. **PRD v2 + 백로그 개편** — 본 문서.
+1. **콘텐츠 이전** — `cms/seed/seed.mjs` 의 시드 콘텐츠를 `src/content/` 파일로 변환
+   (스크립트로 기계 변환), zod 스키마 정의(accent enum 포함).
+2. **데이터 계층 교체 + SSG 회귀** — `src/lib/content/` 신설(view 타입 유지),
+   `index.astro` 전환, `output:'static'`, 어댑터/캐시/revalidate 제거.
+3. **시각 회귀 검증** — 라이트/다크 픽셀 diff 로 v1 렌더와 동일 확인.
+4. **관리 UI** — Decap `/admin`(한국어 라벨 config), 로컬 백엔드 모드로 편집 e2e 검증.
+5. **CI/CD** — GitHub Actions 빌드+배포 워크플로, OAuth 릴레이, 빌드 실패 알림.
+6. **정리** — `cms/`·`@directus/sdk`·`src/lib/directus/` 제거, `CLAUDE.md`·README 갱신.
 
 ## 12. 수용 기준 (Acceptance Criteria)
 
-- [ ] 비전문 편집자가 관리자 UI에서 **연구센터/구성원/소식/소개/통계/연락처/푸터/네비**를
-      코드 없이 추가·수정·삭제·정렬·게시할 수 있다.
-- [ ] 편집자가 **이미지/PDF를 업로드**해 구성원 사진·소식 썸네일·첨부·OG 이미지로 쓸 수 있다.
-- [ ] 게시(저장) 후 공개 사이트에 **~1초 내 반영**된다(캐시 웹훅).
-- [ ] 재구축된 공개 사이트가 기존과 **라이트/다크 모두 픽셀 동일**하다.
-- [ ] Postgres 볼륨 삭제 후 `cms:apply && cms:seed`로 **모델·콘텐츠·더미계정이 완전 재현**된다.
-- [ ] Directus 중단 시 사이트가 **마지막 정상본을 계속 서빙**하고, 재기동 시 자동 복구된다.
-- [ ] 모든 단계에서 `npm audit`=0, `astro check`=0, `astro build` green 유지.
-- [ ] DB에 원시 hex 색상 값이 저장되지 않는다(accent는 드롭다운 키만).
+- [ ] 비전문 편집자가 `/admin` 한국어 폼 UI 에서 전 콘텐츠 유형을 git 노출 없이
+      추가·수정·삭제·정렬·게시할 수 있다.
+- [ ] 편집자가 이미지를 업로드해 구성원 사진·소식 썸네일·OG 이미지로 쓸 수 있다.
+- [ ] 저장 후 공개 사이트에 **5분 내** 반영된다.
+- [ ] 재구축된 사이트가 v1 과 **라이트/다크 모두 픽셀 동일**하다.
+- [ ] 공개 서빙에 필요한 것이 **정적 파일 + nginx 뿐**이다.
+- [ ] 모든 콘텐츠 변경이 편집자 명의 커밋으로 기록되고 임의 시점 롤백이 가능하다.
+- [ ] 빌드 실패 시 사이트가 이전 버전을 계속 서빙하고 관리자에게 알림이 간다.
+- [ ] `npm audit`=0, `astro check`=0, `astro build` green.
+- [ ] 콘텐츠에 원시 hex 색상 값이 저장되지 않는다(accent 는 enum 키만).
 
 ## 13. 리스크 & 완화
 
 | 리스크 | 완화 |
 |---|---|
-| SSR↔Directus 가용성 결합 | SWR + stale-if-error, seed 상수 fallback, 동일 서버 공존, 헬스체크/자동 재기동 |
-| 캐시 vs 즉시성 | 짧은 TTL + 웹훅 퍼지(웹훅 실패 시 TTL 폴백) |
-| 이미지 파생물 남발 | `assets.ts` named preset 화이트리스트, 업로드 크기/타입 제한 |
-| 콘텐츠가 git에 없음(백업) | go-live 전 야간 `pg_dump` + 업로드 볼륨 스냅샷, 복구 절차 문서화 |
-| audit 0 유지 | 신규 deps는 `@astrojs/node`,`@directus/sdk`뿐(Directus는 별도 런타임), 추가 시마다 audit, `yaml` override 유지 |
-| 디자인 시스템 훼손 | accent enum→`var(--aiia-*)`(hex 차단), 컴포넌트 `<style>` 무수정, 토큰/Base/primitive 수정 범위 밖, 시각 diff 게이트 |
-| 리치텍스트/임베드 주입 | 렌더 시 sanitize, 원시 HTML 대신 마크다운, `map_embed`는 허용 provider URL 패턴만 |
-| SSO 지연 | Directus 네이티브 provider(설정만), env 블록 사전 문서화, 내장 계정으로 go-live |
+| Decap 프로젝트 유지보수 둔화 | 설정을 Decap 호환 포맷으로 유지 → Sveltia(활발한 후속작) drop-in 이전 경로 확보 |
+| zod 스키마 ↔ Decap config 이중 정의 드리프트 | 필드 추가 절차 문서화 + CI 에서 시드 콘텐츠 스키마 검증 |
+| 편집자 GitHub 계정 거부감 | 관리자가 계정 생성·초대까지 대행, 편집자는 /admin 로그인 1회 |
+| OAuth 릴레이 운영 | 스테이트리스 수십 줄 — 장애 시에도 공개 사이트 무영향(편집만 일시 불가) |
+| 이미지로 저장소 비대화 | 업로드 가이드(크기 제한) + 필요 시 Git LFS 후속 검토 |
+| 빌드 파이프라인 실패 | 배포 전 `astro check`/build 게이트, 실패 시 배포 생략+알림, 사이트 무영향 |
 
 ## 14. 향후 확장 (Future)
 
-- 아주대 SSO 실제 연동(그룹→role 매핑).
-- 영문 버전(Directus Translations 또는 `_ko/_en` 확장).
-- 소식 상세 페이지(`/news/[slug]`, `news.body`), 구성원 상세, 검색.
-- 초안→승인 게시 워크플로(다인 편집 조직 시).
-- 협력문의 제출 백엔드(메일/스팸/저장).
+- 영문 버전(Astro i18n 라우팅 + `_ko/_en` 필드).
+- 소식 상세(`/news/[slug]`, markdown body — content collections 의 기본기라 v1 보다 쉬움).
+- 초안→승인 워크플로(Decap editorial workflow = PR 기반, 인프라 추가 없음).
+- 협력문의 제출 백엔드(대학 메일 릴레이로 보내는 초소형 스테이트리스 엔드포인트).
+- Sveltia CMS 로 관리 UI 업그레이드(ko 로케일 출시 시).

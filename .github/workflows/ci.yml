@@ -1,0 +1,20 @@
+# PR 품질 게이트: audit=0 · astro check=0 · astro build green (저장소 규약).
+name: ci
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm audit
+      - run: npm run check
+      - run: npm run build

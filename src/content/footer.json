@@ -1,0 +1,47 @@
+{
+  "address_html": "16499 경기도 수원시 영통구\n월드컵로 206 아주대학교 인공지능연구원\nT. 031-219-0000 · aiia@ajou.ac.kr",
+  "columns": [
+    {
+      "title": "연구원",
+      "links": [
+        "소개",
+        "비전",
+        "연혁",
+        "오시는 길"
+      ]
+    },
+    {
+      "title": "연구",
+      "links": [
+        "연구센터",
+        "연구성과",
+        "논문",
+        "세미나"
+      ]
+    },
+    {
+      "title": "참여",
+      "links": [
+        "구성원",
+        "채용",
+        "연구연수생",
+        "협력문의"
+      ]
+    }
+  ],
+  "copyright": "© 2026 AI Institute of Ajou University. All Rights Reserved.",
+  "social_links": [
+    {
+      "label": "IG",
+      "url": "#"
+    },
+    {
+      "label": "YT",
+      "url": "#"
+    },
+    {
+      "label": "FB",
+      "url": "#"
+    }
+  ]
+}

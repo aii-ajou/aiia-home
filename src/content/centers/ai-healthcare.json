@@ -1,0 +1,10 @@
+{
+  "mono": "HC",
+  "accent": "blue-bright",
+  "name_ko": "AI 헬스케어 센터",
+  "name_en": "AI Healthcare",
+  "description": "아주대병원과 협력해 의료 AI를 개발·검증합니다.",
+  "tag": "Medical AI",
+  "sort": 4,
+  "status": "published"
+}

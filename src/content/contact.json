@@ -1,0 +1,19 @@
+{
+  "eyebrow": "Location",
+  "title": "오시는 길",
+  "items": [
+    {
+      "label": "Address",
+      "value": "경기도 수원시 영통구 월드컵로 206\n아주대학교 인공지능연구원"
+    },
+    {
+      "label": "Tel",
+      "value": "031-219-0000"
+    },
+    {
+      "label": "Email",
+      "value": "aiia@ajou.ac.kr"
+    }
+  ],
+  "map_embed": ""
+}

@@ -1,0 +1,10 @@
+{
+  "mono": "GA",
+  "accent": "blue",
+  "name_ko": "생성형 AI 센터",
+  "name_en": "Generative AI",
+  "description": "대규모 언어·멀티모달 모델과 생성 기술을 연구합니다.",
+  "tag": "LLM · Multimodal",
+  "sort": 1,
+  "status": "published"
+}

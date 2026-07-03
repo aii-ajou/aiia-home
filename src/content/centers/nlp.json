@@ -1,0 +1,10 @@
+{
+  "mono": "NL",
+  "accent": "gold",
+  "name_ko": "자연어처리 센터",
+  "name_en": "NLP",
+  "description": "한국어 중심 언어 이해·생성과 지식 처리를 연구합니다.",
+  "tag": "Language",
+  "sort": 3,
+  "status": "published"
+}

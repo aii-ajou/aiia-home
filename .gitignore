@@ -12,20 +12,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# environment variables
+# environment variables (예시 *.example 만 커밋 — infra/oauth-relay/.env 포함)
 .env
 .env.production
-# infra 실제 env (예시 *.example 만 커밋)
-infra/env/.env.*
-!infra/env/.env.*.example
-
-# Directus 로컬 런타임 (npm/SQLite) — 커밋하지 않음
-cms/node_modules/
-cms/uploads/
-cms/data/
-cms/*.db
-cms/*.sqlite
-cms/.env
 
 # macOS-generated files
 .DS_Store

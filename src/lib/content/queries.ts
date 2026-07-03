@@ -27,6 +27,12 @@ export interface StatView { value: string; label: string }
 export interface CenterView { mono: string; color: string; ko: string; en: string; desc: string; tag: string; detailUrl: string | null }
 export interface MemberView { name: string; role: string; area: string; color: string; photo: string | null }
 export interface NewsView { cat: string; color: string; date: string; title: string; slug: string | null; thumbnail: string | null }
+/** 소식 상세 페이지(/news/[slug]) 전용 — body·원본 날짜·첨부까지 포함한다. */
+export interface NewsDetailView {
+  slug: string; cat: string; color: string;
+  dateISO: string; dateDisplay: string;
+  title: string; body: string | null; thumbnail: string | null; attachment: string | null;
+}
 export interface InquiryView {
   eyebrow: string; title: string; lede: string;
   coopModes: string[]; formFields: FormField[]; consentLabel: string; submitLabel: string;
@@ -142,4 +148,21 @@ export async function loadHomePageData(): Promise<HomePageData> {
       social: footer.social_links.map((s) => ({ label: s.label, url: s.url })),
     },
   };
+}
+
+// ---- 소식 상세 조회 (/news/[slug] getStaticPaths 가 사용) ---------------------
+/** published 소식 전체를 상세 뷰로 반환한다. slug = 엔트리 id(파일명). */
+export async function loadNewsDetails(): Promise<NewsDetailView[]> {
+  const news = published(await getCollection("news"));
+  return news.map(({ id, data: n }) => ({
+    slug: id,
+    cat: n.category,
+    color: resolveAccent(n.accent),
+    dateISO: n.date,
+    dateDisplay: n.date.replaceAll("-", "."),
+    title: n.title,
+    body: n.body,
+    thumbnail: n.thumbnail,
+    attachment: n.attachment,
+  }));
 }

@@ -251,5 +251,6 @@ collections:
       - { label: 제목, name: title, widget: string }
       - { label: 본문(상세 페이지용 · 선택), name: body, widget: text, required: false }
       - { label: 썸네일, name: thumbnail, widget: image, required: false }
+      - { label: 첨부파일(PDF 등 · 선택), name: attachment, widget: file, required: false }
       - *sort
       - *status

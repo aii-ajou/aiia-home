@@ -1,0 +1,125 @@
+---
+/**
+ * news/[slug].astro — 소식 상세 페이지 (SSG)
+ * published 소식마다 정적 페이지를 생성한다. slug = 콘텐츠 파일명(엔트리 id).
+ * 크롬(UtilityBar/Header/Footer)은 홈과 동일한 콘텐츠(loadHomePageData)를,
+ * 기사 본문은 loadNewsDetails() 를 받아 조합만 한다.
+ */
+import Base from "../../layouts/Base.astro";
+import UtilityBar from "../../components/UtilityBar.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { loadHomePageData, loadNewsDetails } from "../../lib/content/queries";
+import { nl2br } from "../../lib/content/html";
+import { withBase } from "../../lib/url";
+
+export async function getStaticPaths() {
+  const [chrome, details] = await Promise.all([loadHomePageData(), loadNewsDetails()]);
+  return details.map((news) => ({
+    params: { slug: news.slug },
+    props: { news, chrome },
+  }));
+}
+
+const { news, chrome } = Astro.props;
+const pageTitle = `${news.title} · 소식 · ${chrome.site.title}`;
+const pageDesc = news.body
+  ? news.body.replace(/\s+/g, " ").trim().slice(0, 120)
+  : `${chrome.site.title} 소식`;
+---
+
+<Base
+  title={pageTitle}
+  description={pageDesc}
+  ogImage={news.thumbnail ?? chrome.site.ogImage ?? undefined}
+>
+  <UtilityBar />
+  <Header nav={chrome.nav} cta={chrome.site.headerCta} />
+
+  <main class="section news-detail">
+    <div class="aiia-container news-detail__wrap">
+      <a href={withBase("#news")} class="news-detail__back">← 소식 목록</a>
+
+      <article>
+        <div class="news-detail__meta">
+          <span class="tag tag--solid" style={`background:${news.color}`}>{news.cat}</span>
+          <time class="news-detail__date" datetime={news.dateISO}>{news.dateDisplay}</time>
+        </div>
+
+        <h1 class="news-detail__title">{news.title}</h1>
+
+        {news.thumbnail && (
+          <img class="news-detail__hero" src={news.thumbnail} alt="" loading="lazy" />
+        )}
+
+        {news.body
+          ? <div class="news-detail__body" set:html={nl2br(news.body)}></div>
+          : <p class="news-detail__empty">상세 내용은 준비 중입니다.</p>}
+
+        {news.attachment && (
+          <p class="news-detail__attach">
+            <a href={news.attachment} class="btn btn--outline-gold" download>첨부파일 내려받기</a>
+          </p>
+        )}
+      </article>
+    </div>
+  </main>
+
+  <Footer footer={chrome.footer} />
+</Base>
+
+<style>
+  .news-detail__wrap {
+    max-width: 760px;
+  }
+  .news-detail__back {
+    display: inline-block;
+    margin-bottom: var(--aiia-space-8);
+    font-family: var(--aiia-font-display);
+    font-size: 13px;
+    color: var(--aiia-ink-soft);
+    text-decoration: none;
+    transition: color var(--aiia-dur) var(--aiia-ease);
+  }
+  .news-detail__back:hover {
+    color: var(--aiia-primary);
+  }
+  .news-detail__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--aiia-space-4);
+    margin-bottom: var(--aiia-space-4);
+  }
+  .news-detail__date {
+    font-family: var(--aiia-font-display);
+    font-size: 13px;
+    color: var(--aiia-ink-mute);
+  }
+  .news-detail__title {
+    margin: 0 0 var(--aiia-space-8);
+    font-weight: 800;
+    font-size: var(--aiia-text-h2);
+    line-height: 1.3;
+    color: var(--aiia-ink);
+  }
+  .news-detail__hero {
+    width: 100%;
+    height: auto;
+    border-radius: var(--aiia-r-lg);
+    border: 1px solid var(--aiia-line);
+    margin-bottom: var(--aiia-space-8);
+  }
+  .news-detail__body {
+    font-size: var(--aiia-text-body);
+    line-height: 1.9;
+    color: var(--aiia-ink-soft);
+  }
+  .news-detail__empty {
+    font-size: var(--aiia-text-body);
+    line-height: 1.8;
+    color: var(--aiia-ink-mute);
+  }
+  .news-detail__attach {
+    margin-top: var(--aiia-space-12);
+  }
+</style>

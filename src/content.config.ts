@@ -166,6 +166,7 @@ const news = rowCollection(
     title: z.string(),
     body: z.string().nullable().default(null),
     thumbnail: z.string().nullable().default(null),
+    attachment: z.string().nullable().default(null),
     sort: z.number().int(),
     status,
   }),

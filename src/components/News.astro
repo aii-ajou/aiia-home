@@ -4,6 +4,7 @@
  * 콘텐츠는 Directus 에서 온다. 썸네일이 없으면 기본 배경 유지.
  */
 import type { NewsView } from "../lib/content/queries";
+import { withBase } from "../lib/url";
 interface Props { news: NewsView[] }
 const { news } = Astro.props;
 ---
@@ -19,7 +20,7 @@ const { news } = Astro.props;
     </div>
     <div class="grid grid--news">
       {news.map((n) => (
-        <a href="#news" class="card news-card">
+        <a href={n.slug ? withBase(`news/${n.slug}`) : "#news"} class="card news-card">
           <div
             class="news-card__thumb"
             style={n.thumbnail ? `background-image:url(${n.thumbnail});background-size:cover;background-position:center` : undefined}

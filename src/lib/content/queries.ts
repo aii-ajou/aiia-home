@@ -19,7 +19,7 @@ export interface SiteView { title: string; description: string; ogImage: string 
 export interface HeroView {
   eyebrow: string; title: string; lede: string;
   ctaPrimary: CtaView; ctaSecondary: CtaView;
-  badgeNumber: string; badgeLabel: string; visual: string | null;
+  badgeNumber: string | null; badgeLabel: string | null; visual: string | null;
 }
 export interface PillarView { mono: string; color: string; title: string; desc: string }
 export interface AboutView { eyebrow: string; title: string; lede: string; pillars: PillarView[] }

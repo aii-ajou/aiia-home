@@ -5,7 +5,5 @@
   "cta_primary_label": "연구센터 보기",
   "cta_primary_href": "#centers",
   "cta_secondary_label": "협력문의",
-  "cta_secondary_href": "#inquiry",
-  "badge_number": "6",
-  "badge_label": "전문 연구센터\n운영 중"
+  "cta_secondary_href": "#inquiry"
 }

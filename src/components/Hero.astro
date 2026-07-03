@@ -25,10 +25,12 @@ const { hero } = Astro.props;
       style={hero.visual ? `background-image:url(${hero.visual});background-size:cover;background-position:center` : undefined}
     >
       {hero.visual ? null : <span class="placeholder-chip">main visual / lab image</span>}
-      <div class="hero__badge">
-        <div class="hero__badge-num">{hero.badgeNumber}</div>
-        <div class="hero__badge-label" set:html={nl2br(hero.badgeLabel)}></div>
-      </div>
+      {hero.badgeNumber && (
+        <div class="hero__badge">
+          <div class="hero__badge-num">{hero.badgeNumber}</div>
+          <div class="hero__badge-label" set:html={nl2br(hero.badgeLabel)}></div>
+        </div>
+      )}
     </div>
   </div>
 </section>

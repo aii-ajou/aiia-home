@@ -85,8 +85,8 @@ collections:
           - { label: 주 버튼 링크, name: cta_primary_href, widget: string }
           - { label: 보조 버튼 문구, name: cta_secondary_label, widget: string }
           - { label: 보조 버튼 링크, name: cta_secondary_href, widget: string }
-          - { label: 배지 숫자, name: badge_number, widget: string }
-          - { label: 배지 설명, name: badge_label, widget: text }
+          - { label: 배지 숫자(비우면 배지 숨김 · 선택), name: badge_number, widget: string, required: false }
+          - { label: 배지 설명(선택), name: badge_label, widget: text, required: false }
           - { label: 비주얼 이미지, name: visual_image, widget: image, required: false }
       - name: about
         label: 연구원 소개

@@ -61,8 +61,8 @@ const hero = singleton(
     cta_primary_href: z.string(),
     cta_secondary_label: z.string(),
     cta_secondary_href: z.string(),
-    badge_number: z.string(),
-    badge_label: z.string(),
+    badge_number: z.string().nullable().default(null),
+    badge_label: z.string().nullable().default(null),
     visual_image: z.string().nullable().default(null),
   }),
 );

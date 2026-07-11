@@ -1,0 +1,10 @@
+{
+  "mono": "SE",
+  "accent": "blue-deep",
+  "name_ko": "AI+반도체",
+  "name_en": "AI × Semiconductor",
+  "description": "지능형반도체공학을 기반으로 반도체 설계·공정에 AI를 접목합니다.",
+  "tag": "지능형반도체",
+  "sort": 5,
+  "status": "published"
+}

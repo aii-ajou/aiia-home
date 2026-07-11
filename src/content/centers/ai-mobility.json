@@ -1,0 +1,10 @@
+{
+  "mono": "MB",
+  "accent": "blue",
+  "name_ko": "AI+모빌리티",
+  "name_en": "AI × Mobility",
+  "description": "교통시스템공학을 기반으로 자율주행과 지능형 교통 시스템에 AI를 접목합니다.",
+  "tag": "자율주행 · 지능형교통",
+  "sort": 2,
+  "status": "published"
+}

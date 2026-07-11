@@ -1,0 +1,10 @@
+{
+  "mono": "SC",
+  "accent": "success",
+  "name_ko": "AI+사이버보안",
+  "name_en": "AI × Security",
+  "description": "AI 기반 위협 탐지·대응 기술로 사이버보안 역량을 고도화합니다.",
+  "tag": "위협탐지 · 대응",
+  "sort": 4,
+  "status": "published"
+}

@@ -21,3 +21,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# 내부 참고 자료(전략 PDF 등) — 저장소에 공개하지 않음
+materials/

@@ -103,6 +103,40 @@ collections:
               - *accent
               - { label: 제목, name: title, widget: string }
               - { label: 설명, name: desc, widget: text }
+      - name: organization
+        label: 조직도(조직구조)
+        file: src/content/organization.json
+        fields:
+          - { label: 상단 소제목, name: eyebrow, widget: string }
+          - { label: 제목, name: title, widget: string }
+          - { label: 소개 문단, name: lede, widget: text }
+          - label: 지배구조(원장·운영위원회)
+            name: leadership
+            widget: list
+            fields:
+              - { label: 명칭, name: label, widget: string }
+              - { label: 인선(이름·확정 시 입력), name: person, widget: string, required: false }
+              - { label: 설명, name: note, widget: string }
+          - label: 연구기획 TF 기능
+            name: functions
+            widget: list
+            fields:
+              - { label: 기능명, name: title, widget: string }
+              - { label: 설명, name: desc, widget: text }
+          - label: 연구센터 유형
+            name: center_groups
+            widget: list
+            hint: 개별 센터는 수요에 따라 유연하게 설치되므로 유형·설명만 기재
+            fields:
+              - { label: 유형명, name: title, widget: string }
+              - { label: 설명, name: desc, widget: text }
+          - label: 기업 파트너십 3-Tier
+            name: tiers
+            widget: list
+            fields:
+              - { label: 등급, name: tier, widget: string }
+              - { label: 파트너 유형, name: name, widget: string }
+              - { label: 운영 내용, name: detail, widget: text }
       - name: inquiry
         label: 협력 문의
         file: src/content/inquiry.json
@@ -225,9 +259,9 @@ collections:
     summary: "{{name}} — {{role}}"
     sortable_fields: [sort, name]
     fields:
-      - { label: 이름(직함 포함), name: name, widget: string }
-      - { label: 보직/역할, name: role, widget: string }
-      - { label: 연구 분야, name: area, widget: string }
+      - { label: 이름(한글), name: name, widget: string }
+      - { label: 직위 / 연구분야, name: role, widget: string }
+      - { label: 영문명, name: area, widget: string, required: false }
       - *accent
       - { label: 사진, name: photo, widget: image, required: false }
       - { label: 소개(선택), name: bio, widget: text, required: false }

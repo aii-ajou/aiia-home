@@ -1,9 +1,10 @@
 {
-  "eyebrow": "RESEARCH · EDUCATION · PARTNERSHIP",
+  "eyebrow": "AX HUB · DOMAIN AI · PARTNERSHIP",
   "title": "아주대학교\n인공지능연구원",
-  "lede": "아주대학교가 강점을 가지고 있는 다양한 도메인에서의 AX 플랫폼 역할을 합니다. ",
+  "lede": "아주대학교가 강점을 가진 도메인과 AI의 융합을 가속화하는 AX(AI Transformation) 허브입니다. 대학 전체의 AI 역량을 결집해 산업 현장의 실질적 변화를 만듭니다.",
   "cta_primary_label": "연구센터 보기",
   "cta_primary_href": "#centers",
   "cta_secondary_label": "협력문의",
-  "cta_secondary_href": "#inquiry"
+  "cta_secondary_href": "#inquiry",
+  "visual_image": "/uploads/aiia-opening-ceremony.png"
 }

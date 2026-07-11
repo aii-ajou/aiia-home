@@ -33,6 +33,15 @@ export interface NewsDetailView {
   dateISO: string; dateDisplay: string;
   title: string; body: string | null; thumbnail: string | null; attachment: string | null;
 }
+export interface OrgLeadershipView { label: string; person: string; note: string }
+export interface OrgFunctionView { title: string; desc: string }
+export interface OrgCenterGroupView { title: string; desc: string }
+export interface OrgTierView { tier: string; name: string; detail: string }
+export interface OrganizationView {
+  eyebrow: string; title: string; lede: string;
+  leadership: OrgLeadershipView[]; functions: OrgFunctionView[];
+  centerGroups: OrgCenterGroupView[]; tiers: OrgTierView[];
+}
 export interface InquiryView {
   eyebrow: string; title: string; lede: string;
   coopModes: string[]; formFields: FormField[]; consentLabel: string; submitLabel: string;
@@ -48,6 +57,7 @@ export interface HomePageData {
   nav: NavView[];
   hero: HeroView;
   about: AboutView;
+  organization: OrganizationView;
   stats: StatView[];
   centers: CenterView[];
   members: MemberView[];
@@ -80,6 +90,7 @@ export async function loadHomePageData(): Promise<HomePageData> {
   const site = singleData(await getCollection("site_settings"), "site_settings");
   const hero = singleData(await getCollection("hero"), "hero");
   const about = singleData(await getCollection("about"), "about");
+  const organization = singleData(await getCollection("organization"), "organization");
   const inquiry = singleData(await getCollection("inquiry"), "inquiry");
   const contact = singleData(await getCollection("contact"), "contact");
   const footer = singleData(await getCollection("footer"), "footer");
@@ -114,6 +125,15 @@ export async function loadHomePageData(): Promise<HomePageData> {
       pillars: about.pillars.map((p) => ({
         mono: p.mono, color: resolveAccent(p.accent), title: p.title, desc: p.desc,
       })),
+    },
+    organization: {
+      eyebrow: organization.eyebrow,
+      title: organization.title,
+      lede: organization.lede,
+      leadership: organization.leadership,
+      functions: organization.functions,
+      centerGroups: organization.center_groups,
+      tiers: organization.tiers,
     },
     stats: stats.map(({ data: s }) => ({ value: s.value, label: s.label })),
     centers: centers.map(({ data: c }) => ({

@@ -94,6 +94,29 @@ const inquiry = singleton(
   }),
 );
 
+const organization = singleton(
+  "organization",
+  z.object({
+    eyebrow: z.string(),
+    title: z.string(),
+    lede: z.string(),
+    /** 최상위 지배구조 (원장 / 운영위원회 …). person: 확정 인선(선택) */
+    leadership: z
+      .array(z.object({ label: z.string(), person: z.string().default(""), note: z.string() }))
+      .default([]),
+    /** 연구기획 TF 기능 */
+    functions: z.array(z.object({ title: z.string(), desc: z.string() })).default([]),
+    /** 연구센터 유형 그룹 (도메인별 / 기업 브랜드) — 개별 센터는 수요 기반 유연 설치 */
+    center_groups: z
+      .array(z.object({ title: z.string(), desc: z.string() }))
+      .default([]),
+    /** 기업 브랜드 연구센터 3-Tier 운영모델 */
+    tiers: z
+      .array(z.object({ tier: z.string(), name: z.string(), detail: z.string() }))
+      .default([]),
+  }),
+);
+
 const contact = singleton(
   "contact",
   z.object({
@@ -147,7 +170,7 @@ const members = rowCollection(
   z.object({
     name: z.string(),
     role: z.string(),
-    area: z.string(),
+    area: z.string().default(""),
     accent,
     photo: z.string().nullable().default(null),
     bio: z.string().nullable().default(null),
@@ -176,6 +199,7 @@ export const collections = {
   site_settings,
   hero,
   about,
+  organization,
   inquiry,
   contact,
   footer,

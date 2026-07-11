@@ -45,9 +45,9 @@ comments are in Korean; the default `lang` is `ko` (Base.astro also supports `en
   Content Collections 를 조회해 각 섹션 컴포넌트에 **props 로 분배**한다. 컴포넌트는 콘텐츠
   저장 방식을 모르고 정규화된 문자열/URL 만 받는다. **콘텐츠 변경은 `/admin` 또는
   `src/content/` 파일 수정으로** 한다 — 컴포넌트 코드에 콘텐츠 배열은 없다.
-- **`src/content/`** — 콘텐츠 정본. 싱글톤 6종은 flat JSON 파일(`site_settings.json`,
-  `hero.json`, `about.json`, `inquiry.json`, `contact.json`, `footer.json`), 목록 5종은 폴더
-  (`nav_items/`, `stats/`, `centers/`, `members/`, `news/`)에 항목별 JSON. 목록 항목은
+- **`src/content/`** — 콘텐츠 정본. 싱글톤 7종은 flat JSON 파일(`site_settings.json`,
+  `hero.json`, `about.json`, `organization.json`, `inquiry.json`, `contact.json`, `footer.json`),
+  목록 5종은 폴더 (`nav_items/`, `stats/`, `centers/`, `members/`, `news/`)에 항목별 JSON. 목록 항목은
   `sort`(수동 정렬) + `status`(`published`/`draft` — draft 는 렌더 제외)를 갖는다.
 - **`src/content.config.ts`** — 컬렉션 zod 스키마(빌드 타임 검증). accent 는
   `ACCENT_KEYS` enum — **원시 hex 는 스키마 단계에서 거부**된다.
@@ -70,7 +70,7 @@ comments are in Korean; the default `lang` is `ko` (Base.astro also supports `en
 - **`infra/oauth-relay/`** — 편집자 GitHub 로그인용 셀프호스트 OAuth 릴레이(의존성 0,
   스테이트리스). 설정 절차는 해당 README.
 - **`src/pages/`** — `index.astro` 는 데이터 로드 + `<Base>` 안에서 섹션을 순서대로 조합
-  (`UtilityBar → Header → Hero → About → Stats → Centers → Members → News → Inquiry → Contact → Footer`).
+  (`UtilityBar → Header → Hero → About → Stats → Centers → Organization → Members → News → Inquiry → Contact → Footer`).
 - **`src/layouts/Base.astro`** — 페이지 셸(폰트, `global.css`, SEO/OG props, FOUC 방지 테마
   초기화 스크립트). `title/description/ogImage` 는 `index.astro` 가 `site_settings` 에서
   넣는다. **동결.**

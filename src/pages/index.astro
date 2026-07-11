@@ -12,6 +12,7 @@ import Hero from "../components/Hero.astro";
 import About from "../components/About.astro";
 import Stats from "../components/Stats.astro";
 import Centers from "../components/Centers.astro";
+import Organization from "../components/Organization.astro";
 import Members from "../components/Members.astro";
 import News from "../components/News.astro";
 import Inquiry from "../components/Inquiry.astro";
@@ -33,6 +34,7 @@ const data = await loadHomePageData();
   <About about={data.about} />
   <Stats stats={data.stats} />
   <Centers centers={data.centers} />
+  <Organization organization={data.organization} />
   <Members members={data.members} />
   <News news={data.news} />
   <Inquiry inquiry={data.inquiry} />

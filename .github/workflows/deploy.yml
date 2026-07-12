@@ -39,6 +39,8 @@ jobs:
             -e 's|href="/brand/|href="/aiia-home/brand/|g' \
             -e 's|content="/brand/|content="/aiia-home/brand/|g' \
             -e 's|src="/uploads/|src="/aiia-home/uploads/|g' \
+            -e 's|url(/brand/|url(/aiia-home/brand/|g' \
+            -e 's|url(/uploads/|url(/aiia-home/uploads/|g' \
             {} +
       - uses: actions/upload-pages-artifact@v3
         with:

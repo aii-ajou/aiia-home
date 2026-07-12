@@ -12,7 +12,8 @@ backend:
 
 # 로컬 개발: `npx decap-server` 실행 시 localhost 에서는 GitHub 대신
 # 로컬 파일(작업 트리)을 직접 편집한다. 운영 도메인에서는 무시됨.
-local_backend: true
+local_backend:
+  url: http://localhost:8200/api/v1 # 8081~8123 은 Windows/Hyper-V 예약 대역이라 8200 사용 (localhost 접속에서만 유효, 운영 배포엔 무시)
 
 locale: ko # UI 한국어 (decap-cms 전체 번들은 모든 로케일 포함)
 

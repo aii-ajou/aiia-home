@@ -3,7 +3,7 @@
 **아주대학교 인공지능연구원(AIIA) 홈페이지** — 완전 정적(Astro SSG) 사이트.
 콘텐츠는 저장소 안 `src/content/`(git)에 있고, 편집은 `/admin`(Decap CMS, 한국어 UI)에서
 폼으로 한다. **저장 = 커밋 → CI 빌드 → 배포**이며, 공개 서빙에 필요한 것은 정적 파일과
-웹서버(nginx)뿐이다. 상세 설계는 `docs/PRD.md`, 미룬 작업은 `docs/BACKLOG.md`.
+웹서버(nginx)뿐이다. 상세설계는 `docs/PRD.md`, 미룬 작업은 `docs/BACKLOG.md`.
 
 ## 로컬 개발
 

@@ -17,7 +17,7 @@
 
    등록 위치: 각 저장소 **Settings → Secrets and variables → Actions → New repository secret**. 이름을 위와 동일하게 입력합니다. 토큰은 문서·코드·채팅에 쓰지 않습니다. 만료 전에 같은 secret 값을 교체합니다.
 
-4. **aiia-home → Actions → Deploy GitHub Pages → Run workflow**를 실행해 첫 배포를 확인합니다.
+4. 토큰 등록 후 [전환 PR #11](https://github.com/aii-ajou/aiia-home/pull/11)을 `main`에 병합하면 첫 배포가 시작됩니다. 이후 수동 재배포는 **aiia-home → Actions → Deploy GitHub Pages → Run workflow**로 실행합니다.
 
 ## 편집자 추가·삭제
 

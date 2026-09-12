@@ -1,128 +1,159 @@
 ---
-/**
- * Hero.astro — 첫 화면 (헤드라인 · 소개 · 주요 CTA · 비주얼)
- * 콘텐츠는 Directus 에서 온다. visual 이 없으면 placeholder-chip 유지.
- */
 import type { HeroView } from "../lib/content/queries";
-import { nl2br } from "../lib/content/html";
-interface Props { hero: HeroView }
+import { siteUrl } from "../lib/url";
+interface Props {
+  hero: HeroView;
+}
 const { hero } = Astro.props;
 ---
 
-<section id="top" class="hero">
-  <div class="hero__inner">
-    <div class="hero__copy">
-      <p class="eyebrow eyebrow--primary">{hero.eyebrow}</p>
-      <h1 class="hero__title" set:html={nl2br(hero.title)}></h1>
-      <p class="hero__lede">{hero.lede}</p>
-      <div class="hero__actions">
-        <a href={hero.ctaPrimary.href} class="btn btn--primary">{hero.ctaPrimary.label}</a>
-        <a href={hero.ctaSecondary.href} class="btn btn--outline-gold">{hero.ctaSecondary.label}</a>
-      </div>
-    </div>
-    <div
-      class="hero__visual"
-      style={hero.visual ? `background-image:url(${hero.visual});background-size:cover;background-position:center` : undefined}
-    >
-      {hero.visual ? null : <span class="placeholder-chip">main visual / lab image</span>}
-      {hero.badgeNumber && (
-        <div class="hero__badge">
-          <div class="hero__badge-num">{hero.badgeNumber}</div>
-          <div class="hero__badge-label" set:html={nl2br(hero.badgeLabel)}></div>
-        </div>
-      )}
+<section id="top" class="hero aiia-container">
+  <div class="hero__copy">
+    <p class="eyebrow">
+      <span class="hero__dot"></span>
+      {hero.eyebrow}
+    </p>
+    <h1 class="text-heading">{hero.title}</h1>
+    <p class="hero__lede text-body">{hero.lede}</p>
+    <div class="hero__actions">
+      <a class="btn btn--primary" href={siteUrl(hero.ctaPrimary.href)}>
+        {hero.ctaPrimary.label}
+        <span aria-hidden="true">↗</span>
+      </a>
+      <a class="text-link" href={siteUrl(hero.ctaSecondary.href)}>
+        {hero.ctaSecondary.label}
+        <span aria-hidden="true">→</span>
+      </a>
     </div>
   </div>
+  <figure class="hero__visual">
+    {hero.visual && (
+      <img
+        src={siteUrl(hero.visual)}
+        alt={hero.visualAlt}
+        width="600"
+        height="620"
+        fetchpriority="high"
+      />
+    )}
+    <figcaption>
+      <span>{hero.visualCaption}</span>
+      <span aria-hidden="true">37.283° N · 127.046° E</span>
+    </figcaption>
+    <span class="hero__image-label" aria-hidden="true">
+      A place for
+      <br />
+      new possibilities.
+    </span>
+  </figure>
 </section>
-
 <style>
   .hero {
-    background: var(--aiia-bg);
-  }
-  .hero__inner {
-    max-width: var(--aiia-container);
-    margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    align-items: stretch;
+    grid-template-columns: 1.06fr 1fr;
+    gap: 52px;
+    align-items: center;
+    padding-block: 40px;
   }
   .hero__copy {
-    padding: 88px 40px 88px 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    padding-block: 25px;
   }
-  .hero__title {
-    margin: 0 0 22px;
-    font-weight: 800;
-    font-size: clamp(32px, 4.2vw, 52px);
-    line-height: 1.16;
-    letter-spacing: -0.01em;
-    color: var(--aiia-ink);
-    text-wrap: balance;
+  .hero__copy .eyebrow {
+    font-size: var(--aiia-text-caption);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.12em;
+    margin-bottom: 28px;
+  }
+  .hero__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--aiia-primary);
+  }
+  h1 {
+    margin: 0 0 28px;
   }
   .hero__lede {
-    margin: 0 0 34px;
-    max-width: 460px;
-    font-size: 17px;
-    line-height: 1.75;
+    white-space: pre-line;
     color: var(--aiia-ink-soft);
+    margin-bottom: 24px;
   }
   .hero__actions {
     display: flex;
-    gap: var(--aiia-space-3);
+    gap: 25px;
+    align-items: center;
     flex-wrap: wrap;
   }
   .hero__visual {
     position: relative;
-    min-height: 420px;
-    background-color: var(--aiia-surface-2);
-    background-image: repeating-linear-gradient(
-      135deg,
-      transparent,
-      transparent 13px,
-      rgba(0, 91, 172, 0.06) 13px,
-      rgba(0, 91, 172, 0.06) 14px
-    );
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin: 0;
+    padding: 0 0 29px;
   }
-  .hero__badge {
+  .hero__visual > img {
+    width: 100%;
+    height: 430px;
+    object-fit: cover;
+    object-position: 53% center;
+    border-radius: 150px 3px 3px 3px;
+  }
+  .hero__visual figcaption {
     position: absolute;
-    left: -36px;
-    bottom: 48px;
-    background: var(--aiia-surface);
-    border: 1px solid var(--aiia-line);
-    border-radius: var(--aiia-r-lg);
-    box-shadow: var(--aiia-shadow-lg);
-    padding: 18px 22px;
+    bottom: 0;
+    width: 100%;
     display: flex;
-    align-items: center;
-    gap: var(--aiia-space-4);
+    justify-content: space-between;
+    gap: 12px;
+    font-size: var(--aiia-text-caption);
+    color: var(--aiia-ink-mute);
   }
-  .hero__badge-num {
-    font-family: var(--aiia-font-display);
-    font-weight: 700;
-    font-size: 34px;
-    color: var(--aiia-primary);
-    line-height: 1;
+  .hero__image-label {
+    position: absolute;
+    bottom: 55px;
+    left: 26px;
+    font: 500 var(--aiia-text-subheading)/1.5 var(--aiia-font-sans);
+    letter-spacing: -0.03em;
+    color: #fff;
+    text-shadow: 0 1px 12px #0009;
   }
-  .hero__badge-label {
-    font-size: 13px;
-    line-height: 1.4;
-    color: var(--aiia-ink-soft);
+  @media (max-width: 1000px) {
+    .hero {
+      gap: 30px;
+    }
+    .hero__visual > img {
+      height: 390px;
+    }
+    .hero__lede {
+      white-space: normal;
+    }
   }
-
-  @media (max-width: 900px) {
-    .hero__inner {
+  @media (max-width: 720px) {
+    .hero {
       grid-template-columns: 1fr;
+      padding-block: 28px 32px;
+      gap: 24px;
+    }
+    h1 {
+      margin-bottom: 20px;
     }
     .hero__copy {
-      padding: 56px 24px;
+      padding: 0;
     }
-    .hero__badge {
-      left: 24px;
+    .hero__copy .eyebrow {
+      margin-bottom: 20px;
+      font-size: var(--aiia-text-caption);
+    }
+    .hero__visual > img {
+      height: 270px;
+      border-top-left-radius: 90px;
+    }
+    .hero__lede {
+      margin-bottom: 24px;
+      max-width: 450px;
+    }
+    .hero__actions {
+      gap: 18px;
     }
   }
 </style>

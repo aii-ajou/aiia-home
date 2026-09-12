@@ -1,156 +1,78 @@
 ---
-/**
- * Inquiry.astro — 협력 문의 (협력 모델 소개 + 문의 폼)
- * 섹션 텍스트/협력모델/동의·제출 라벨은 Directus 에서 온다.
- * 폼 입력 필드(라벨/placeholder/옵션)와 제출 처리는 백엔드 연동과 함께 추후 CMS화한다
- * (docs/BACKLOG.md "협력문의 폼 백엔드"). 현재 폼은 제출 시 동작하지 않는다.
- */
 import type { InquiryView } from "../lib/content/queries";
-import { nl2br } from "../lib/content/html";
-interface Props { inquiry: InquiryView }
-const { inquiry } = Astro.props;
+interface Props {
+  inquiry: InquiryView;
+  email: string;
+}
+const { inquiry, email } = Astro.props;
 ---
 
-<section id="inquiry" class="section section--alt">
-  <div class="aiia-container inquiry">
+<section id="inquiry" class="section inquiry">
+  <div class="aiia-container inquiry__inner">
     <div>
-      <p class="eyebrow eyebrow--gold">{inquiry.eyebrow}</p>
-      <h2 class="section__title inquiry__title" set:html={nl2br(inquiry.title)}></h2>
-      <p class="section__lede inquiry__lede">{inquiry.lede}</p>
-      <ul class="coop">
+      <p class="eyebrow">{inquiry.eyebrow}</p>
+      <h2 class="section__title">{inquiry.title}</h2>
+      <p class="section__lede">{inquiry.lede}</p>
+    </div>
+    <div class="inquiry__actions">
+      <ul>
         {inquiry.coopModes.map((m) => (
-          <li class="coop__item"><span class="coop__dot"></span>{m}</li>
+          <li>
+            {m}
+            <span aria-hidden="true">↗</span>
+          </li>
         ))}
       </ul>
+      <a
+        class="btn btn--primary"
+        href={`mailto:${email}?subject=${encodeURIComponent("[AIIA 협력 문의]")}`}
+      >
+        {inquiry.submitLabel}
+        <span aria-hidden="true">↗</span>
+      </a>
+      <p>{email}</p>
     </div>
-
-    <form class="card form" onsubmit="return false">
-      <div class="form__row">
-        <label class="field">
-          <span class="field__label">기관 / 성함</span>
-          <input class="field__input" placeholder="예: (주)아주테크 김아주" />
-        </label>
-        <label class="field">
-          <span class="field__label">이메일</span>
-          <input class="field__input" type="email" placeholder="name@company.com" />
-        </label>
-      </div>
-      <label class="field">
-        <span class="field__label">문의 유형</span>
-        <select class="field__input">
-          <option>산학협력 / 공동연구</option>
-          <option>기술 자문 / 용역</option>
-          <option>지자체 협력 사업</option>
-          <option>대학원 진학 문의</option>
-        </select>
-      </label>
-      <label class="field">
-        <span class="field__label">내용</span>
-        <textarea class="field__input" rows="4" placeholder="협력 희망 분야와 내용을 입력해 주세요."></textarea>
-      </label>
-      <label class="consent">
-        <input type="checkbox" checked />
-        {inquiry.consentLabel}
-      </label>
-      <button type="submit" class="btn btn--primary btn--block">{inquiry.submitLabel}</button>
-    </form>
   </div>
 </section>
-
 <style>
   .inquiry {
-    display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    gap: 56px;
-    align-items: start;
+    background: var(--aiia-brand-tint);
   }
-  .inquiry__title {
-    margin: 0 0 18px;
-  }
-  .inquiry__lede {
-    margin-bottom: 28px;
-  }
-  .coop {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .coop__item {
-    display: flex;
-    align-items: center;
-    gap: var(--aiia-space-3);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--aiia-ink);
-  }
-  .coop__dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    background: var(--aiia-gold);
-    transform: rotate(45deg);
-    flex: 0 0 auto;
-  }
-  .form {
-    padding: var(--aiia-space-8);
-    border-radius: var(--aiia-r-xl);
-    box-shadow: var(--aiia-shadow);
-  }
-  .form__row {
+  .inquiry__inner {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--aiia-space-4);
-  }
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    margin-top: var(--aiia-space-4);
-  }
-  .form__row .field {
-    margin-top: 0;
-  }
-  .field__label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--aiia-ink);
-  }
-  .field__input {
-    padding: 12px 14px;
-    border: 1.5px solid var(--aiia-line-strong);
-    border-radius: var(--aiia-r-sm);
-    background: var(--aiia-bg);
-    color: var(--aiia-ink);
-    font-family: var(--aiia-font-sans);
-    font-size: 14px;
-    outline: none;
-    resize: vertical;
-    transition: border-color var(--aiia-dur) var(--aiia-ease);
-  }
-  .field__input:focus {
-    border-color: var(--aiia-primary);
-  }
-  .consent {
-    display: flex;
+    gap: 100px;
     align-items: center;
-    gap: var(--aiia-space-2);
-    margin-top: var(--aiia-space-4);
-    font-size: 13.5px;
+  }
+  .section__lede {
+    font-size: var(--aiia-text-body);
+    margin: 22px 0 0;
+  }
+  .inquiry__actions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 28px;
+  }
+  .inquiry__actions li {
+    border-bottom: 1px solid var(--aiia-line-strong);
+    padding: 13px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--aiia-text-body);
+  }
+  .inquiry__actions li span {
+    color: var(--aiia-primary);
+  }
+  .inquiry__actions > p {
+    font: 400 var(--aiia-text-small) var(--aiia-font-display);
     color: var(--aiia-ink-soft);
-    cursor: pointer;
+    margin: 12px 0;
+    display: block;
   }
-  .consent input {
-    width: 17px;
-    height: 17px;
-    accent-color: var(--aiia-primary);
-  }
-
-  @media (max-width: 900px) {
-    .inquiry {
+  @media (max-width: 720px) {
+    .inquiry__inner {
       grid-template-columns: 1fr;
+      gap: 28px;
     }
   }
 </style>

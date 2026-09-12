@@ -1,0 +1,26 @@
+# 콘텐츠 저장소의 .github/workflows/publish-site.yml에 설치합니다.
+name: Update AIIA website
+on:
+  push:
+    branches: [main]
+    paths: ["content/**", "uploads/**", "content-manifest.json"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: notify-site
+  cancel-in-progress: true
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request website deployment
+        env:
+          GH_TOKEN: ${{ secrets.SITE_DEPLOY_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo '::error::SITE_DEPLOY_TOKEN이 필요합니다. aiia-home/docs/OPERATIONS.md를 확인하세요.'
+            exit 1
+          fi
+          gh api --method POST repos/aii-ajou/aiia-home/actions/workflows/deploy.yml/dispatches -f ref=main
+          echo '홈페이지 배포를 요청했습니다. 실제 결과: https://github.com/aii-ajou/aiia-home/actions/workflows/deploy.yml' >> "$GITHUB_STEP_SUMMARY"

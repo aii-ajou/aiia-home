@@ -1,80 +1,83 @@
 ---
-/**
- * About.astro — 연구원 소개 + 4대 지향점(pillars) 카드
- * 콘텐츠는 Directus 에서 온다.
- */
 import type { AboutView } from "../lib/content/queries";
-import { nl2br } from "../lib/content/html";
-interface Props { about: AboutView }
+interface Props {
+  about: AboutView;
+}
 const { about } = Astro.props;
 ---
 
-<section id="about" class="section section--alt">
-  <div class="aiia-container about">
-    <div>
-      <p class="eyebrow eyebrow--gold">{about.eyebrow}</p>
-      <h2 class="section__title about__title" set:html={nl2br(about.title)}></h2>
-      <p class="section__lede">{about.lede}</p>
+<section id="about" class="section about">
+  <div class="aiia-container">
+    <div class="about__intro">
+      <div>
+        <p class="eyebrow">{about.eyebrow}</p>
+        <h2 class="section__title">{about.title}</h2>
+      </div>
+      <div>
+        <p class="section__lede">{about.lede}</p>
+        <a href="#organization" class="text-link">
+          연구원 운영 체계 <span aria-hidden="true">↓</span>
+        </a>
+      </div>
     </div>
     <div class="pillars">
-      {about.pillars.map((p) => (
-        <div class="card pillar">
-          <div class="pillar__icon" style={`background:${p.color}`}>{p.mono}</div>
-          <div class="pillar__title">{p.title}</div>
-          <p class="pillar__desc">{p.desc}</p>
-        </div>
+      {about.pillars.map((p, i) => (
+        <article>
+          <span class="pillar-index">
+            0{i + 1} / {p.mono}
+          </span>
+          <h3 class="text-subheading">{p.title}</h3>
+          <p>{p.desc}</p>
+        </article>
       ))}
     </div>
   </div>
 </section>
-
 <style>
   .about {
-    display: grid;
-    grid-template-columns: 1fr 1.15fr;
-    gap: 56px;
-    align-items: start;
+    border-top: 1px solid var(--aiia-line);
   }
-  .about__title {
-    margin: 0 0 20px;
+  .about__intro {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .about__intro .section__lede {
+    margin-bottom: 18px;
   }
   .pillars {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--aiia-space-4);
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: 36px;
+    gap: 34px;
   }
-  .pillar {
-    padding: var(--aiia-space-6);
+  .pillars article {
+    border-top: 1px solid var(--aiia-line-strong);
+    padding-top: 20px;
   }
-  .pillar__icon {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--aiia-r-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--aiia-font-display);
-    font-weight: 700;
-    font-size: 15px;
-    color: #fff;
-    margin-bottom: var(--aiia-space-4);
+  .pillar-index {
+    font: 500 var(--aiia-text-caption) var(--aiia-font-display);
+    color: var(--aiia-ink-mute);
+    letter-spacing: 0.08em;
   }
-  .pillar__title {
-    font-weight: 800;
-    font-size: 16.5px;
-    color: var(--aiia-ink);
-    margin-bottom: var(--aiia-space-2);
+  .pillars h3 {
+    margin: 17px 0 9px;
   }
-  .pillar__desc {
-    margin: 0;
-    font-size: 13.5px;
-    line-height: 1.65;
+  .pillars p {
+    font-size: var(--aiia-text-body);
     color: var(--aiia-ink-soft);
+    margin: 0;
   }
-
-  @media (max-width: 900px) {
-    .about {
+  @media (max-width: 720px) {
+    .about__intro {
       grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .pillars {
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 24px;
+      margin-top: 32px;
     }
   }
 </style>

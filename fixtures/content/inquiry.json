@@ -1,0 +1,46 @@
+{
+  "eyebrow": "Partnership",
+  "title": "함께 풀어갈 문제를\n기다립니다.",
+  "lede": "공동연구부터 기술 자문, 인재 양성까지.\n기업과 지역사회의 질문이 새로운 연구의 시작이 됩니다.",
+  "coop_modes": [
+    {
+      "mode": "공동연구 · 위탁연구"
+    },
+    {
+      "mode": "기업 브랜드 연구센터 (3-Tier)"
+    },
+    {
+      "mode": "경기도·지자체 협력 · 인력 양성"
+    }
+  ],
+  "form_fields": [
+    {
+      "label": "기관 / 성함",
+      "type": "text",
+      "options": []
+    },
+    {
+      "label": "이메일",
+      "type": "email",
+      "options": []
+    },
+    {
+      "label": "문의 유형",
+      "type": "select",
+      "options": [
+        "산학협력 / 공동연구",
+        "기업 브랜드 연구센터",
+        "기술 자문 / 용역",
+        "경기도·지자체 협력 사업",
+        "대학원 진학 문의"
+      ]
+    },
+    {
+      "label": "내용",
+      "type": "textarea",
+      "options": []
+    }
+  ],
+  "consent_label": "개인정보 수집·이용에 동의합니다",
+  "submit_label": "이메일로 협력 문의"
+}

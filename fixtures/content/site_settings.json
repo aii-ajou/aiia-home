@@ -1,0 +1,27 @@
+{
+  "site_title": "AIIA · 개발용 샘플",
+  "site_description": "아주대학교 인공지능연구원(AIIA) — 강점 도메인과 AI의 융합을 가속화하는 AX(AI Transformation) 허브.",
+  "contact_address": "경기도 수원시 영통구 월드컵로 206\n아주대학교 인공지능연구원",
+  "contact_tel": "",
+  "contact_email": "sample@example.com",
+  "header_cta_label": "협력 문의",
+  "header_cta_href": "#inquiry",
+  "social_links": [
+    {
+      "label": "IG",
+      "url": "#",
+      "icon": "instagram"
+    },
+    {
+      "label": "YT",
+      "url": "#",
+      "icon": "youtube"
+    },
+    {
+      "label": "FB",
+      "url": "#",
+      "icon": "facebook"
+    }
+  ],
+  "og_image": null
+}

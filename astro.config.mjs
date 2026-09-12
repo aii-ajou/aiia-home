@@ -7,6 +7,7 @@ const ghPages = process.env.GITHUB_PAGES === "true";
 
 // https://astro.build/config
 export default defineConfig({
+  devToolbar: { enabled: false },
   // 정식 도메인 — Base.astro의 canonical/OG URL 해석에 필요. 유지할 것.
   site: ghPages ? "https://aii-ajou.github.io" : "https://aiia.ajou.ac.kr",
   base: ghPages ? "/aiia-home" : undefined,

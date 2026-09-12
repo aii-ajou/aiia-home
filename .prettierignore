@@ -1,0 +1,12 @@
+dist
+node_modules
+package-lock.json
+.astro
+materials
+playwright-report
+test-results
+
+.content-repository
+.aiia
+src/content
+public/uploads

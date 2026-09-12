@@ -1,0 +1,144 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { loadHomePageData } from "../../lib/content/queries";
+import { siteUrl, withBase } from "../../lib/url";
+export async function getStaticPaths() {
+  const data = await loadHomePageData();
+  return data.members.map((member) => ({
+    params: { slug: member.slug },
+    props: { member, data },
+  }));
+}
+const { member: m, data } = Astro.props;
+---
+
+<Base title={`${m.name} 교수 · ${data.site.title}`}>
+  <Header nav={data.nav} cta={data.site.headerCta} />
+  <main id="main" class="aiia-container profile">
+    <a href={withBase("members/")} class="text-link">
+      ← 연구자 목록
+    </a>
+    <article>
+      <div class="portrait">
+        {m.photo ? (
+          <img
+            src={siteUrl(m.photo)}
+            alt={`${m.name} 교수`}
+            width="420"
+            height="540"
+          />
+        ) : (
+          <span aria-hidden="true">{m.name.slice(0, 1)}</span>
+        )}
+      </div>
+      <div>
+        <p class="eyebrow">People of AIIA</p>
+        <h1 class="text-heading">
+          {m.name}
+          <small>교수</small>
+        </h1>
+        <p class="name-en">{m.nameEn}</p>
+        <p>{m.role}</p>
+        {m.area && (
+          <>
+            <h2>연구 분야</h2>
+            <p>{m.area}</p>
+          </>
+        )}
+        {m.bio && (
+          <>
+            <h2>소개</h2>
+            <p class="bio">{m.bio}</p>
+          </>
+        )}
+        <div class="profile-links">
+          {m.email && (
+            <a class="btn" href={`mailto:${m.email}`}>
+              이메일 문의 ↗
+            </a>
+          )}
+          {m.profileUrl && (
+            <a
+              class="text-link"
+              href={siteUrl(m.profileUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              공식 프로필 ↗
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  </main>
+  <Footer footer={data.footer} />
+</Base>
+<style>
+  .profile {
+    padding-block: 32px var(--aiia-section-space);
+  }
+  .profile article {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 70px;
+    max-width: 900px;
+    margin: 44px auto 0;
+  }
+  .portrait {
+    background: var(--aiia-surface-2);
+    align-self: start;
+  }
+  .portrait img {
+    width: 100%;
+    height: auto;
+  }
+  .portrait > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 330px;
+    font: 400 64px var(--aiia-font-serif);
+    color: var(--aiia-ink-mute);
+  }
+  .profile h1 {
+    margin-bottom: 0;
+  }
+  .profile h1 small {
+    font-size: var(--aiia-text-body);
+    margin-left: 12px;
+    color: var(--aiia-ink-soft);
+  }
+  .profile .name-en {
+    font-family: var(--aiia-font-display);
+    color: var(--aiia-ink-mute);
+    font-size: var(--aiia-text-small);
+  }
+  .profile h2 {
+    font-size: var(--aiia-text-subheading);
+    font-weight: 500;
+    margin-top: 32px;
+  }
+  .profile p:not(.eyebrow) {
+    color: var(--aiia-ink-soft);
+  }
+  .bio {
+    white-space: pre-line;
+  }
+  .profile-links {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+  @media (max-width: 640px) {
+    .profile article {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .portrait {
+      max-width: 230px;
+    }
+  }
+</style>

@@ -1,281 +1,160 @@
 ---
-/**
- * Organization.astro — 조직구조 및 운영모델(조직도)
- * 콘텐츠는 src/content/organization.json (싱글톤) 에서 props 로 온다.
- * 전략 PDF(추진전략 p.11~12)의 원장 직속 체계 · 연구기획 TF · 연구센터 유형 ·
- * 기업 브랜드 3-Tier 모델을 계층도로 렌더한다. 색/간격은 --aiia-* 토큰만 사용.
- */
 import type { OrganizationView } from "../lib/content/queries";
-interface Props { organization: OrganizationView }
-const { organization: org } = Astro.props;
+interface Props {
+  organization: OrganizationView;
+}
+const { organization: o } = Astro.props;
 ---
 
-<section id="organization" class="section">
-  <div class="aiia-container">
-    <div class="section__head">
-      <div>
-        <p class="eyebrow eyebrow--gold">{org.eyebrow}</p>
-        <h2 class="section__title">{org.title}</h2>
-      </div>
-      <p class="section__aside">{org.lede}</p>
-    </div>
-
-    <div class="org">
-      {/* 1. 지배구조 (원장 · 운영위원회) */}
-      <div class="org__lead">
-        {org.leadership.map((l, i) => (
-          <div class={`org__lead-box${i === 0 ? " is-head" : ""}`}>
-            <div class="org__lead-label">{l.label}</div>
-            {l.person && <div class="org__lead-person">{l.person}</div>}
-            <div class="org__lead-note">{l.note}</div>
-          </div>
+<section id="organization" class="organization aiia-container">
+  <details>
+    <summary>
+      <span>
+        <span class="eyebrow">{o.eyebrow}</span>
+        <strong>{o.title}</strong>
+      </span>
+      <span class="org-open">
+        자세히 보기 <b aria-hidden="true">+</b>
+      </span>
+    </summary>
+    <div class="organization__body">
+      <p class="section__lede">{o.lede}</p>
+      <div class="org-leaders">
+        {o.leadership.map((l) => (
+          <article>
+            <small>{l.label}</small>
+            <h3>{l.person}</h3>
+            <p>{l.note}</p>
+          </article>
         ))}
       </div>
-
-      <div class="org__stem" aria-hidden="true"></div>
-
-      {/* 2. 연구기획 TF */}
-      <div class="org__block">
-        <div class="org__block-title">연구기획 TF</div>
-        <div class="org__funcs">
-          {org.functions.map((f) => (
-            <div class="card org__func">
-              <div class="org__func-title">{f.title}</div>
-              <p class="org__func-desc">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 3. 연구센터 유형 */}
-      <div class="org__groups">
-        {org.centerGroups.map((g) => (
-          <div class="card org__group">
-            <div class="org__group-title">{g.title}</div>
-            <div class="org__ghosts" aria-hidden="true">
-              <span class="org__ghost">센터</span>
-              <span class="org__ghost">센터</span>
-              <span class="org__ghost">센터</span>
-              <span class="org__ghost-more">···</span>
-            </div>
-            <p class="org__group-desc">{g.desc}</p>
-          </div>
+      <h3>연구기획 TF</h3>
+      <div class="org-grid">
+        {o.functions.map((f) => (
+          <article>
+            <h4>{f.title}</h4>
+            <p>{f.desc}</p>
+          </article>
         ))}
       </div>
-    </div>
-
-    {/* 4. 기업 브랜드 연구센터 3-Tier */}
-    <div class="org__tiers">
-      <div class="org__tiers-title">기업 브랜드 연구센터 · 3-Tier 운영모델</div>
-      <div class="org__tier-list">
-        {org.tiers.map((t) => (
-          <div class="card org__tier">
-            <span class="org__tier-badge">{t.tier}</span>
-            <div class="org__tier-name">{t.name}</div>
-            <p class="org__tier-detail">{t.detail}</p>
-          </div>
+      <h3>연구센터 운영</h3>
+      <div class="org-grid">
+        {o.centerGroups.map((g) => (
+          <article>
+            <h4>{g.title}</h4>
+            <p>{g.desc}</p>
+          </article>
+        ))}
+      </div>
+      <h3>기업 파트너십</h3>
+      <div class="org-grid">
+        {o.tiers.map((t) => (
+          <article>
+            <small>{t.tier}</small>
+            <h4>{t.name}</h4>
+            <p>{t.detail}</p>
+          </article>
         ))}
       </div>
     </div>
-  </div>
+  </details>
 </section>
-
 <style>
-  .org {
-    border: 1px solid var(--aiia-line);
-    border-radius: var(--aiia-r-lg);
+  .organization {
+    padding-block: 0 var(--aiia-section-space);
+  }
+  .organization details {
+    border-block: 1px solid var(--aiia-line);
+  }
+  .organization summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px 0;
+    cursor: pointer;
+    list-style: none;
+  }
+  .organization summary::-webkit-details-marker {
+    display: none;
+  }
+  summary > span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .eyebrow {
+    margin: 0;
+  }
+  summary strong {
+    font-size: var(--aiia-text-subheading);
+    font-weight: 500;
+  }
+  .org-open {
+    font-size: var(--aiia-text-control);
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    color: var(--aiia-ink-soft);
+  }
+  .org-open b {
+    font-weight: 400;
+    font-size: 22px;
+  }
+  details[open] .org-open b {
+    transform: rotate(45deg);
+  }
+  .organization__body {
+    padding: 10px 0 36px;
+  }
+  .organization__body > h3 {
+    font-size: var(--aiia-text-subheading);
+    font-weight: 500;
+    margin-top: 28px;
+  }
+  .org-leaders,
+  .org-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .org-leaders article,
+  .org-grid article {
     background: var(--aiia-bg-alt);
-    padding: var(--aiia-space-8);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 22px;
   }
-
-  /* ---- 지배구조 ---- */
-  .org__lead {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--aiia-space-4);
-    justify-content: center;
-    align-items: stretch;
+  .org-leaders h3 {
+    font-size: var(--aiia-text-subheading);
+    font-weight: 500;
+    margin: 8px 0;
   }
-  .org__lead-box {
-    min-width: 220px;
-    padding: var(--aiia-space-4) var(--aiia-space-6);
-    border-radius: var(--aiia-r-md);
-    border: 1px solid var(--aiia-line);
-    background: var(--aiia-surface);
-    text-align: center;
+  .organization p {
+    font-size: var(--aiia-text-body);
   }
-  .org__lead-box.is-head {
-    background: var(--aiia-blue-deep);
-    border-color: var(--aiia-blue-deep);
-  }
-  .org__lead-label {
-    font-family: var(--aiia-font-display);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+  .organization small {
+    font-size: var(--aiia-text-caption);
     color: var(--aiia-primary);
   }
-  .is-head .org__lead-label {
-    color: var(--aiia-sky);
+  .org-grid h4 {
+    font-size: var(--aiia-text-subheading);
+    margin: 8px 0;
+    font-weight: 500;
   }
-  .org__lead-person {
-    margin-top: var(--aiia-space-1);
-    font-weight: 800;
-    font-size: 17px;
-    color: var(--aiia-ink);
-  }
-  .is-head .org__lead-person {
-    color: #fff;
-  }
-  .org__lead-note {
-    margin-top: var(--aiia-space-1);
-    font-size: 13px;
-    color: var(--aiia-ink-mute);
-  }
-  .is-head .org__lead-note {
-    color: var(--aiia-sky);
-  }
-
-  /* ---- 세로 연결선 ---- */
-  .org__stem {
-    width: 2px;
-    height: var(--aiia-space-8);
-    background: var(--aiia-line-strong);
-  }
-
-  /* ---- 블록(연구기획 TF) ---- */
-  .org__block {
-    width: 100%;
-  }
-  .org__block-title,
-  .org__tiers-title {
-    text-align: center;
-    font-family: var(--aiia-font-display);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--aiia-primary);
-    margin-bottom: var(--aiia-space-4);
-  }
-  .org__funcs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--aiia-space-4);
-  }
-  .org__func {
-    padding: var(--aiia-space-6);
-  }
-  .org__func-title {
-    font-weight: 800;
-    font-size: 15.5px;
-    color: var(--aiia-ink);
-  }
-  .org__func-desc {
-    margin: var(--aiia-space-2) 0 0;
-    font-size: 13.5px;
-    line-height: 1.65;
-    color: var(--aiia-ink-soft);
-  }
-
-  /* ---- 연구센터 유형 ---- */
-  .org__groups {
-    width: 100%;
-    margin-top: var(--aiia-space-6);
-    display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    gap: var(--aiia-space-4);
-  }
-  .org__group {
-    padding: var(--aiia-space-6);
-  }
-  .org__group-title {
-    font-weight: 800;
-    font-size: 15.5px;
-    color: var(--aiia-ink);
-    margin-bottom: var(--aiia-space-4);
-  }
-  .org__ghosts {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--aiia-space-2);
-    margin-bottom: var(--aiia-space-4);
-  }
-  .org__ghost {
-    font-family: var(--aiia-font-display);
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--aiia-ink-mute);
-    background: transparent;
-    border: 1px dashed var(--aiia-line-strong);
-    padding: 5px 14px;
-    border-radius: var(--aiia-r-sm);
-  }
-  .org__ghost-more {
-    font-family: var(--aiia-font-display);
-    font-weight: 700;
-    color: var(--aiia-ink-mute);
-    letter-spacing: 1px;
-  }
-  .org__group-desc {
-    margin: 0;
-    font-size: 13.5px;
-    line-height: 1.6;
-    color: var(--aiia-ink-soft);
-  }
-
-  /* ---- 3-Tier ---- */
-  .org__tiers {
-    margin-top: var(--aiia-space-12);
-  }
-  .org__tier-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--aiia-space-4);
-  }
-  .org__tier {
-    padding: var(--aiia-space-6);
-    display: flex;
-    flex-direction: column;
-    gap: var(--aiia-space-2);
-  }
-  .org__tier-badge {
-    align-self: flex-start;
-    font-family: var(--aiia-font-display);
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-    color: var(--aiia-gold);
-    background: transparent;
-    border: 1.5px solid var(--aiia-gold);
-    padding: 4px 12px;
-    border-radius: var(--aiia-r-full);
-  }
-  .org__tier-name {
-    font-weight: 800;
-    font-size: 16px;
-    color: var(--aiia-ink);
-  }
-  .org__tier-detail {
-    margin: 0;
-    font-size: 13.5px;
-    line-height: 1.6;
-    color: var(--aiia-ink-soft);
-  }
-
-  @media (max-width: 820px) {
-    .org__funcs,
-    .org__groups,
-    .org__tier-list {
-      grid-template-columns: 1fr;
+  @media (max-width: 720px) {
+    summary > span:first-child {
+      display: block;
     }
-    .org {
-      padding: var(--aiia-space-6);
+    .eyebrow {
+      display: block;
+      margin-bottom: 10px;
+    }
+    .org-open {
+      white-space: nowrap;
+    }
+    .org-leaders,
+    .org-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
     }
   }
 </style>

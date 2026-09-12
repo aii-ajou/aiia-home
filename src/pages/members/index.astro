@@ -1,0 +1,63 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import MemberCard from "../../components/MemberCard.astro";
+import DirectoryControls from "../../components/DirectoryControls.astro";
+import DirectoryPagination from "../../components/DirectoryPagination.astro";
+import { loadHomePageData } from "../../lib/content/queries";
+import { withBase } from "../../lib/url";
+const data = await loadHomePageData();
+const entries = data.members;
+---
+
+<Base title={`함께하는 연구자 · ${data.site.title}`}>
+  <Header nav={data.nav} cta={data.site.headerCta} />
+  <main
+    id="main"
+    class="aiia-container directory"
+    data-directory
+    data-page-size="10"
+  >
+    <div class="page-intro">
+      <div class="breadcrumb">
+        <a href={withBase("")}>홈</a> / 함께하는 연구자
+      </div>
+      <h1>함께하는 연구자</h1>
+      <p>
+        다양한 전문성을 가진 연구자를 만나보세요. 이름, 소속 또는 연구 분야로
+        찾을 수 있습니다.
+      </p>
+    </div>
+    <DirectoryControls
+      categories={[...new Set(entries.map((e) => e.role))]}
+      placeholder="이름, 소속, 연구 분야 검색"
+      categoryLabel="소속"
+      count={entries.length}
+    />
+    <div class="directory-grid" data-results>
+      {entries.map((entry) => (
+        <MemberCard member={entry} />
+      ))}
+    </div>
+    <DirectoryPagination />
+  </main>
+  <Footer footer={data.footer} />
+</Base>
+<style>
+  .directory {
+    padding-bottom: 80px;
+  }
+  .directory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 220px);
+    gap: 28px 16px;
+    scroll-margin-top: 110px;
+  }
+  @media (max-width: 560px) {
+    .directory-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px 12px;
+    }
+  }
+</style>

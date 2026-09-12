@@ -1,16 +1,8 @@
 ---
-/**
- * index.astro — AIIA 홈페이지 (SSG)
- * 콘텐츠는 git(src/content/, Content Collections)에서 빌드 시 조회한다. 이 파일은
- * 데이터를 받아 각 섹션 컴포넌트에 props 로 분배하는 조합 역할만 한다.
- * 콘텐츠 편집은 관리 UI(/admin) 또는 src/content/ 파일 수정으로 한다.
- */
 import Base from "../layouts/Base.astro";
-import UtilityBar from "../components/UtilityBar.astro";
 import Header from "../components/Header.astro";
 import Hero from "../components/Hero.astro";
 import About from "../components/About.astro";
-import Stats from "../components/Stats.astro";
 import Centers from "../components/Centers.astro";
 import Organization from "../components/Organization.astro";
 import Members from "../components/Members.astro";
@@ -19,7 +11,6 @@ import Inquiry from "../components/Inquiry.astro";
 import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
 import { loadHomePageData } from "../lib/content/queries";
-
 const data = await loadHomePageData();
 ---
 
@@ -28,16 +19,16 @@ const data = await loadHomePageData();
   description={data.site.description}
   ogImage={data.site.ogImage ?? undefined}
 >
-  <UtilityBar />
   <Header nav={data.nav} cta={data.site.headerCta} />
-  <Hero hero={data.hero} />
-  <About about={data.about} />
-  <Stats stats={data.stats} />
-  <Centers centers={data.centers} />
-  <Organization organization={data.organization} />
-  <Members members={data.members} />
-  <News news={data.news} />
-  <Inquiry inquiry={data.inquiry} />
-  <Contact contact={data.contact} />
+  <main id="main">
+    <Hero hero={data.hero} />
+    <About about={data.about} />
+    <Centers centers={data.centers} />
+    <News news={data.news} />
+    <Members members={data.members} />
+    <Organization organization={data.organization} />
+    <Inquiry inquiry={data.inquiry} email={data.site.email} />
+    <Contact contact={data.contact} />
+  </main>
   <Footer footer={data.footer} />
 </Base>

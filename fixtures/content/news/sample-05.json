@@ -1,0 +1,14 @@
+{
+  "title": "개발용 소식 05 — 긴 제목의 줄바꿈과 카드 배치를 확인합니다",
+  "category": "공지",
+  "accent": "blue",
+  "date": "2026-01-05",
+  "body": "개발용 샘플 본문입니다.\n\n두 번째 문단입니다.",
+  "summary": "실제 운영 콘텐츠와 분리된 샘플 소식입니다.",
+  "source_name": "샘플 출처",
+  "source_url": "https://www.ajou.ac.kr/",
+  "featured": false,
+  "thumbnail": "/uploads/sample.svg",
+  "sort": 5,
+  "status": "published"
+}

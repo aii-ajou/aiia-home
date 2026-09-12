@@ -1,3 +1,7 @@
+> **Pages CMS 전환:** 현재 구현의 정본은 README.md와 docs/OPERATIONS.md다. 운영 콘텐츠는 별도 aiia-content 저장소에 있으며 src/content와 public/uploads는 생성 폴더다. 아래 Decap CMS·OAuth·같은 저장소 콘텐츠 안내는 과거 기록이며 적용하지 않는다. 필드 변경 시 src/content.config.ts, fixtures, cms/pages.yml 및 콘텐츠 저장소 .pages.yml을 함께 갱신한다.
+
+> **2026-09 개편 반영:** 사용자의 전면 개편 요청에 따라 아래 과거 디자인 동결 규칙은 해제되었다. 현재 화면 구조와 편집·배포 동작은 `docs/REMODEL.md`와 `README.md`를 따른다. 콘텐츠는 계속 JSON/Content Collections를 정본으로 하고, 스키마와 CMS 필드는 함께 갱신한다. 메인에는 소식 3건·연구자 5명을 표시하고 전체는 전용 목록 페이지에서 제공한다. 스타일을 이전 다색 디자인으로 되돌리지 않는다.
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.

@@ -19,14 +19,29 @@
 
 4. 토큰 등록 후 [전환 PR #11](https://github.com/aii-ajou/aiia-home/pull/11)을 `main`에 병합하면 첫 배포가 시작됩니다. 이후 수동 재배포는 **aiia-home → Actions → Deploy GitHub Pages → Run workflow**로 실행합니다.
 
+## 운영자 권한과 관리자 로그인
+
+**이메일로 초대받은 일반 편집자는 다른 편집자를 초대·삭제할 수 없습니다.** 편집자 관리는 **GitHub의 `aiia-content` 저장소에 Write 이상 권한이 있는 계정으로 Pages CMS에 로그인한 사람**이 합니다. Pages CMS 앱에도 해당 저장소 접근이 허용되어 있어야 합니다. 최초 설치자 한 사람에게만 한정되는 권한은 아닙니다. ([공개 구현의 권한 검사](https://github.com/pages-cms/pages-cms/blob/main/lib/authz-server.ts), [초대·삭제 처리](https://github.com/pages-cms/pages-cms/blob/main/lib/actions/collaborator.ts))
+
+운영자로 접속하는 방법:
+
+1. [Pages CMS](https://app.pagescms.org/)를 엽니다. 이미 편집자 이메일로 로그인되어 있다면 먼저 로그아웃합니다.
+2. **GitHub 로그인**을 선택하고, `aiia-content`에 Write 이상 권한이 있는 GitHub 계정으로 인증합니다.
+3. [aiia-content의 Collaborators 화면](https://app.pagescms.org/aii-ajou/aiia-content/main/collaborators)을 열어 편집자를 초대·삭제합니다.
+
+**운영자를 추가하려면** 저장소 관리자가 GitHub **aiia-content → Settings → Collaborators and teams**에서 해당 GitHub 계정에 Write 이상 권한을 부여합니다. 새 운영자는 위 순서로 로그인합니다. `aiia-home`에만 권한이 있거나, `aiia-content`의 Read 권한만 있는 것으로는 편집자 관리 권한이 충족되지 않습니다.
+
+Collaborators 메뉴가 안 보이거나 접근이 거부되면 **GitHub 로그인 여부 → aiia-content 권한 → Pages CMS 앱의 저장소 접근 허용** 순서로 확인합니다. Pages CMS 서비스 전체를 관리하는 별도 Admin 패널은 홈페이지 편집자 관리에 필요하지 않습니다.
+
 ## 편집자 추가·삭제
 
 **글·사진 편집자는 Pages CMS에서 초대합니다. GitHub 저장소의 Settings → Collaborators and teams와는 다른 메뉴입니다.**
 
-| 초대할 사람                | 초대 위치                                                   | 필요한 계정·권한                |
-| -------------------------- | ----------------------------------------------------------- | ------------------------------- |
-| 소식·교수 정보·사진 편집자 | **Pages CMS → aiia-content → main → Collaborators**         | 이메일 초대, GitHub 계정 불필요 |
-| 홈페이지 코드 개발자       | **GitHub → aiia-home → Settings → Collaborators and teams** | GitHub 계정, Write 권한         |
+| 초대할 사람                      | 초대 위치                                                      | 필요한 계정·권한                |
+| -------------------------------- | -------------------------------------------------------------- | ------------------------------- |
+| 소식·교수 정보·사진 편집자       | **Pages CMS → aiia-content → main → Collaborators**            | 이메일 초대, GitHub 계정 불필요 |
+| 홈페이지 코드 개발자             | **GitHub → aiia-home → Settings → Collaborators and teams**    | GitHub 계정, Write 권한         |
+| 편집자 초대·삭제를 담당할 운영자 | **GitHub → aiia-content → Settings → Collaborators and teams** | GitHub 계정, Write 이상 권한    |
 
 편집자 초대 순서:
 

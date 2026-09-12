@@ -94,7 +94,9 @@ const inquiry = singleton(
     eyebrow: z.string(),
     title: z.string(),
     lede: z.string(),
-    coop_modes: z.array(z.object({ mode: z.string() })).default([]),
+    coop_modes: z
+      .array(z.object({ mode: z.string(), description: optionalText }))
+      .default([]),
     form_fields: z
       .array(
         z.object({

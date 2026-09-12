@@ -119,6 +119,46 @@ test("research disclosure, saved theme and image fallbacks work", async ({
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
+test.describe("partnership descriptions", () => {
+  test.use({ javaScriptEnabled: false });
+  for (const width of [390, 1440])
+    test(`editable descriptions open with pointer and keyboard at ${width}px`, async ({
+      page,
+    }) => {
+      const inquiry = JSON.parse(
+        fs.readFileSync("src/content/inquiry.json", "utf8"),
+      );
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(url(""));
+      const rows = page.locator("#inquiry li");
+      await expect(rows).toHaveCount(inquiry.coop_modes.length);
+      for (const [index, mode] of inquiry.coop_modes.entries()) {
+        const row = rows.nth(index);
+        await expect(row).toContainText(mode.mode);
+        if (!mode.description?.trim()) {
+          await expect(row.locator("summary")).toHaveCount(0);
+          continue;
+        }
+        const summary = row.locator("summary");
+        const description = row.locator(".inquiry__description");
+        await expect(description).toBeHidden();
+        await summary.locator(".inquiry__toggle").click();
+        await expect(description).toBeVisible();
+        await expect(description).toHaveText(mode.description);
+        await summary.focus();
+        await page.keyboard.press("Enter");
+        await expect(description).toBeHidden();
+        await page.keyboard.press("Space");
+        await expect(description).toBeVisible();
+      }
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth + 1,
+        ),
+      ).toBe(true);
+      await expect(page.locator('#inquiry a[href^="mailto:"]')).toBeVisible();
+    });
+});
 for (const width of [390, 768, 1440])
   test(`responsive pages at ${width}px have no overflow or broken local assets`, async ({
     page,

@@ -18,8 +18,19 @@ const { inquiry, email } = Astro.props;
       <ul>
         {inquiry.coopModes.map((m) => (
           <li>
-            {m}
-            <span aria-hidden="true">↗</span>
+            {m.description.trim() ? (
+              <details>
+                <summary>
+                  <span>{m.mode}</span>
+                  <span class="inquiry__toggle" aria-hidden="true">
+                    +
+                  </span>
+                </summary>
+                <p class="inquiry__description">{m.description}</p>
+              </details>
+            ) : (
+              <span class="inquiry__label">{m.mode}</span>
+            )}
           </li>
         ))}
       </ul>
@@ -42,7 +53,7 @@ const { inquiry, email } = Astro.props;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 100px;
-    align-items: center;
+    align-items: start;
   }
   .section__lede {
     font-size: var(--aiia-text-body);
@@ -55,13 +66,41 @@ const { inquiry, email } = Astro.props;
   }
   .inquiry__actions li {
     border-bottom: 1px solid var(--aiia-line-strong);
-    padding: 13px 0;
-    display: flex;
-    justify-content: space-between;
     font-size: var(--aiia-text-body);
   }
-  .inquiry__actions li span {
+  summary,
+  .inquiry__label {
+    padding: 13px 0;
+    min-height: 44px;
+  }
+  .inquiry__label {
+    display: block;
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .inquiry__toggle {
     color: var(--aiia-primary);
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  details[open] .inquiry__toggle {
+    transform: rotate(45deg);
+  }
+  .inquiry__description {
+    margin: 0;
+    padding: 0 0 20px;
+    color: var(--aiia-ink-soft);
+    white-space: pre-line;
+    overflow-wrap: anywhere;
   }
   .inquiry__actions > p {
     font: 400 var(--aiia-text-small) var(--aiia-font-display);

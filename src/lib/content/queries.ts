@@ -141,7 +141,7 @@ export interface InquiryView {
   eyebrow: string;
   title: string;
   lede: string;
-  coopModes: string[];
+  coopModes: { mode: string; description: string }[];
   formFields: FormField[];
   consentLabel: string;
   submitLabel: string;
@@ -325,7 +325,7 @@ export async function loadHomePageData(): Promise<HomePageData> {
       eyebrow: inquiry.eyebrow,
       title: inquiry.title,
       lede: inquiry.lede,
-      coopModes: inquiry.coop_modes.map((m) => m.mode),
+      coopModes: inquiry.coop_modes,
       formFields: inquiry.form_fields,
       consentLabel: inquiry.consent_label,
       submitLabel: inquiry.submit_label,

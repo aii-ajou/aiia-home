@@ -450,6 +450,10 @@ content:
             label: 유형
             type: string
             required: true
+          - name: description
+            label: 협력 방식 설명
+            type: text
+            description: 항목을 누르면 펼쳐지는 설명입니다. 줄바꿈이 유지되며, 비워 두면 제목만 표시합니다.
       - name: submit_label
         label: 보내기 버튼 문구
         type: string

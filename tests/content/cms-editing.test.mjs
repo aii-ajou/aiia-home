@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import { randomUUID } from "node:crypto";
 import {
   mkdtemp,
   cp,
@@ -65,6 +66,7 @@ for (const scenario of ["null", "omitted", "uploads"])
     const root = await workspace(t);
     const save = (path, data) => writeFile(path, JSON.stringify(data));
     const markers = [];
+    const created = new Map();
     for (const entry of config.content) {
       if (entry.type === "file") {
         const path = join(root, "fixtures", entry.path);
@@ -91,14 +93,35 @@ for (const scenario of ["null", "omitted", "uploads"])
         // New records contain CMS fields only, plus configured defaults.
         const added = Object.fromEntries(
           entry.fields
-            .map((field) => [field.name, template[field.name] ?? field.default])
+            .map((field) => [
+              field.name,
+              field.type === "uuid"
+                ? randomUUID()
+                : (template[field.name] ?? field.default),
+            ])
             .filter(([, value]) => value !== undefined),
         );
         edit(added, entry.fields, scenario);
         added.status = "published";
         const title = entry.view.primary;
-        added[title] = `CMS-edit-${entry.name}`;
-        await save(join(dir, "cms-added.json"), added);
+        added[title] = "한글이름";
+        const filenames = [];
+        // Identical Korean names must produce distinct, valid JSON filenames.
+        for (let i = 0; i < 2; i++) {
+          added.entry_id = randomUUID();
+          const filename = entry.filename.template.replace(
+            "{fields.entry_id}",
+            added.entry_id,
+          );
+          assert.match(filename, /^[a-z]+-[0-9a-f-]+\.json$/);
+          filenames.push(filename);
+          await save(join(dir, filename), added);
+        }
+        assert.notEqual(filenames[0], filenames[1]);
+        created.set(
+          entry.name,
+          filenames.map((f) => f.slice(0, -5)),
+        );
         for (const file of files) {
           const path = join(dir, file);
           const data = edit(
@@ -145,18 +168,18 @@ for (const scenario of ["null", "omitted", "uploads"])
     const home = await readFile(join(root, "dist/index.html"), "utf8");
     for (const marker of markers)
       assert.ok(home.includes(marker), `Missing edited text: ${marker}`);
-    for (const name of ["centers", "nav_items"])
-      assert.ok(home.includes(`CMS-edit-${name}`));
+    assert.ok(home.includes("한글이름"));
     const news = await readFile(
-      join(root, "dist/news/cms-added/index.html"),
+      join(root, "dist/news", created.get("news")[0], "index.html"),
       "utf8",
     );
-    assert.ok(news.includes("CMS-edit-news"));
-    assert.ok(
-      (
-        await readFile(join(root, "dist/members/cms-added/index.html"), "utf8")
-      ).includes("CMS-edit-members"),
-    );
+    for (const name of ["members", "news"])
+      for (const slug of created.get(name))
+        assert.ok(
+          (
+            await readFile(join(root, "dist", name, slug, "index.html"), "utf8")
+          ).includes("한글이름"),
+        );
     if (scenario === "uploads") {
       assert.ok(home.includes("/aiia-home/uploads/cms-upload.svg"));
       assert.ok(news.includes("/aiia-home/uploads/documents/cms-file.pdf"));

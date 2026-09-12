@@ -98,7 +98,13 @@ test("Pages CMS preserves unexposed legacy fields and creates drafts with stable
     const c = config.content.find((c) => c.name === name);
     assert.equal(c.format, "json");
     assert.equal(c.operations.rename, false);
-    assert.equal(c.filename.field, "create");
+    assert.equal(c.filename.field, false);
+    assert.match(c.filename.template, /^[a-z]+-\{fields\.entry_id\}\.json$/);
+    const id = c.fields.find((f) => f.name === "entry_id");
+    assert.equal(id.type, "uuid");
+    assert.equal(id.hidden, true);
+    assert.equal(id.required, true);
+    assert.equal(id.default, undefined); // Pages CMS generates UUIDs by default.
     assert.equal(c.fields.find((f) => f.name === "status").default, "draft");
     for (const field of c.fields)
       assert.ok(
@@ -112,6 +118,7 @@ test("Pages CMS preserves unexposed legacy fields and creates drafts with stable
           "file",
           "date",
           "object",
+          "uuid",
         ].includes(field.type),
       );
   }

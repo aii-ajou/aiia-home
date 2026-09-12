@@ -35,8 +35,8 @@ content:
     format: json
     subfolders: false
     filename:
-      template: "{fields.date}-{primary}.json"
-      field: create
+      template: "news-{fields.entry_id}.json"
+      field: false
     operations:
       rename: false
     view:
@@ -48,6 +48,11 @@ content:
       sort: date
       order: desc
     fields:
+      - name: entry_id
+        label: 내부 식별자
+        type: uuid
+        required: true
+        hidden: true
       - name: title
         label: 제목
         type: string
@@ -139,8 +144,8 @@ content:
     format: json
     subfolders: false
     filename:
-      template: "{primary}.json"
-      field: create
+      template: "member-{fields.entry_id}.json"
+      field: false
     operations:
       rename: false
     view:
@@ -152,6 +157,11 @@ content:
       sort: sort
       order: asc
     fields:
+      - name: entry_id
+        label: 내부 식별자
+        type: uuid
+        required: true
+        hidden: true
       - name: name
         label: 이름(한글)
         type: string
@@ -512,8 +522,8 @@ content:
     format: json
     subfolders: false
     filename:
-      template: "{primary}.json"
-      field: create
+      template: "center-{fields.entry_id}.json"
+      field: false
     operations:
       rename: false
     view:
@@ -525,6 +535,11 @@ content:
       sort: sort
       order: asc
     fields:
+      - name: entry_id
+        label: 내부 식별자
+        type: uuid
+        required: true
+        hidden: true
       - name: mono
         label: 약자(2글자)
         type: string
@@ -581,8 +596,8 @@ content:
     format: json
     subfolders: false
     filename:
-      template: "{primary}.json"
-      field: create
+      template: "menu-{fields.entry_id}.json"
+      field: false
     operations:
       rename: false
     view:
@@ -594,6 +609,11 @@ content:
       sort: sort
       order: asc
     fields:
+      - name: entry_id
+        label: 내부 식별자
+        type: uuid
+        required: true
+        hidden: true
       - name: label
         label: 메뉴 이름
         type: string

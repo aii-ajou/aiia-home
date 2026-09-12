@@ -174,6 +174,7 @@ const footer = singleton(
 const nav_items = rowCollection(
   "nav_items",
   z.object({
+    entry_id: z.string().uuid().optional(),
     label: z.string(),
     href: z.string(),
     sort: z.number().int(),
@@ -194,6 +195,7 @@ const stats = rowCollection(
 const centers = rowCollection(
   "centers",
   z.object({
+    entry_id: z.string().uuid().optional(),
     mono: z.string(),
     accent,
     name_ko: z.string(),
@@ -209,6 +211,7 @@ const centers = rowCollection(
 const members = rowCollection(
   "members",
   z.object({
+    entry_id: z.string().uuid().optional(),
     name: z.string(),
     role: z.string(),
     area: optionalText,
@@ -228,6 +231,7 @@ const members = rowCollection(
 const news = rowCollection(
   "news",
   z.object({
+    entry_id: z.string().uuid().optional(),
     category: z.string(),
     accent,
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "YYYY-MM-DD"),

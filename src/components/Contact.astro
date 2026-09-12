@@ -1,6 +1,7 @@
 ---
 import type { ContactView } from "../lib/content/queries";
 import { siteUrl } from "../lib/url";
+import EmailText from "./EmailText.astro";
 interface Props {
   contact: ContactView;
 }
@@ -16,11 +17,9 @@ const { contact } = Astro.props;
     {contact.items.map((c) => (
       <p>
         <span>{c.label}</span>
-        {c.value.includes("@") ? (
-          <a href={`mailto:${c.value}`}>{c.value}</a>
-        ) : (
-          <strong>{c.value}</strong>
-        )}
+        <strong>
+          <EmailText text={c.value} />
+        </strong>
       </p>
     ))}
   </div>

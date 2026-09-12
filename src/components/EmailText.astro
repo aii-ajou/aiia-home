@@ -1,0 +1,28 @@
+---
+import { emailAddress, emailHref, emailParts } from "../lib/email";
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+---
+
+{emailParts(text).map((part, i) =>
+  i % 2 ? (
+    <a href={emailHref(part)} title="이메일 작성">
+      {emailAddress(part)}
+    </a>
+  ) : (
+    part
+  ),
+)}
+
+<style>
+  a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    overflow-wrap: anywhere;
+  }
+  a:hover {
+    color: var(--aiia-primary);
+  }
+</style>

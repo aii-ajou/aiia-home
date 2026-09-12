@@ -1,5 +1,7 @@
 ---
 import type { InquiryView } from "../lib/content/queries";
+import EmailText from "./EmailText.astro";
+import { emailHref } from "../lib/email";
 interface Props {
   inquiry: InquiryView;
   email: string;
@@ -34,14 +36,13 @@ const { inquiry, email } = Astro.props;
           </li>
         ))}
       </ul>
-      <a
-        class="btn btn--primary"
-        href={`mailto:${email}?subject=${encodeURIComponent("[AIIA 협력 문의]")}`}
-      >
+      <a class="btn btn--primary" href={emailHref(email, "[AIIA 협력 문의]")}>
         {inquiry.submitLabel}
         <span aria-hidden="true">↗</span>
       </a>
-      <p>{email}</p>
+      <p>
+        <EmailText text={email} />
+      </p>
     </div>
   </div>
 </section>

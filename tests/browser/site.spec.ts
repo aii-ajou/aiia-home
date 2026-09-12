@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 import YAML from "yaml";
+import { emailHref, emailParts } from "../../src/lib/email";
 const prefix =
   process.env.AIIA_TEST_BASE_PATH ||
   new URL(
@@ -21,6 +22,81 @@ const news = published("news");
 const featured = [...members]
   .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)))
   .slice(0, 5);
+
+test("email links normalize addresses and preserve contact text", () => {
+  expect(emailHref("  MAILTO:person@example.org  ")).toBe(
+    "mailto:person@example.org",
+  );
+  const link = new URL(
+    emailHref("person+ai#team@example.org", "[AIIA 협력 문의]"),
+  );
+  expect(decodeURIComponent(link.pathname)).toBe("person+ai#team@example.org");
+  expect(link.searchParams.get("subject")).toBe("[AIIA 협력 문의]");
+  expect(link.hash).toBe("");
+  expect(
+    emailParts(
+      "주소 안내\n메일: person@example.org. 또는 mailto:team+ai@example.org",
+    ),
+  ).toEqual([
+    "주소 안내\n메일: ",
+    "person@example.org",
+    ". 또는 ",
+    "mailto:team+ai@example.org",
+    "",
+  ]);
+});
+
+test("visible contact addresses link to email composers", async ({ page }) => {
+  await page.goto(url(""));
+  const settings = JSON.parse(
+    fs.readFileSync("src/content/site_settings.json", "utf8"),
+  );
+  const direct = page.locator("#inquiry .inquiry__actions > p a");
+  await expect(direct).toHaveAttribute(
+    "href",
+    emailHref(settings.contact_email),
+  );
+  const button = page.locator("#inquiry a.btn");
+  const destination = new URL((await button.getAttribute("href"))!);
+  expect(destination.protocol).toBe("mailto:");
+  expect(destination.searchParams.get("subject")).toBe("[AIIA 협력 문의]");
+  for (const [selector, text] of [
+    [
+      "#contact",
+      JSON.parse(fs.readFileSync("src/content/contact.json", "utf8"))
+        .items.map((item: any) => item.value)
+        .join("\n"),
+    ],
+    [
+      ".footer__address",
+      JSON.parse(fs.readFileSync("src/content/footer.json", "utf8"))
+        .address_html,
+    ],
+  ]) {
+    for (const address of emailParts(text).filter((_, i) => i % 2))
+      await expect(
+        page
+          .locator(selector)
+          .locator(`a[href="${emailHref(address)}"]`)
+          .first(),
+      ).toBeAttached();
+  }
+  // Inspect activation without launching an OS application or sending mail.
+  await page.evaluate(() =>
+    document.addEventListener("click", (event) => {
+      const anchor = (event.target as Element).closest('a[href^="mailto:"]');
+      if (anchor) {
+        event.preventDefault();
+        document.body.dataset.emailDestination = anchor.getAttribute("href")!;
+      }
+    }),
+  );
+  await direct.click();
+  await expect(page.locator("body")).toHaveAttribute(
+    "data-email-destination",
+    emailHref(settings.contact_email),
+  );
+});
 
 test("home limits content and links to complete directories", async ({
   page,
@@ -162,7 +238,9 @@ test.describe("partnership descriptions", () => {
           () => document.documentElement.scrollWidth <= window.innerWidth + 1,
         ),
       ).toBe(true);
-      await expect(page.locator('#inquiry a[href^="mailto:"]')).toBeVisible();
+      await expect(
+        page.locator('#inquiry a.btn[href^="mailto:"]'),
+      ).toBeVisible();
     });
 });
 for (const width of [390, 768, 1440])

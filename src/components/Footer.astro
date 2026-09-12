@@ -1,6 +1,7 @@
 ---
 import type { FooterView } from "../lib/content/queries";
 import { siteUrl, withBase } from "../lib/url";
+import EmailText from "./EmailText.astro";
 interface Props {
   footer: FooterView;
 }
@@ -40,7 +41,9 @@ const { footer } = Astro.props;
         <a href={withBase("admin/")}>관리자</a>
       </div>
     </div>
-    <p class="footer__address">{footer.addressHtml}</p>
+    <p class="footer__address">
+      <EmailText text={footer.addressHtml} />
+    </p>
     <div class="footer__bottom">
       <span>{footer.copyright}</span>
       <a

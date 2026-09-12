@@ -122,7 +122,7 @@ const organization = singleton(
       .array(
         z.object({
           label: z.string(),
-          person: z.string().default(""),
+          person: optionalText,
           note: z.string(),
         }),
       )

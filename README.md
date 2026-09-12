@@ -34,6 +34,7 @@ npm run test:pages     # /aiia-home/ 경로에서 같은 검사
 ```
 
 브라우저 최초 설치: `npx playwright install --with-deps chromium`.
+`test:content`는 CMS의 모든 편집 항목에 대해 선택값 비우기, 문구 변경, 새 항목 게시·기존 항목 보관/삭제, 사진·첨부파일 업로드를 임시 프로젝트의 실제 빌드로 검사합니다. 로컬 운영 콘텐츠는 변경하지 않습니다.
 PR 검사는 샘플만 사용합니다. 운영 배포는 `AIIA_CONTENT_SOURCE=.content-repository`, `AIIA_REQUIRE_CONTENT=true`로 실행하며 운영 콘텐츠가 없거나 형식이 틀리면 중단합니다. 샘플로 자동 대체해 배포하지 않습니다.
 
 ## 생성·임시 파일 관리

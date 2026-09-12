@@ -21,8 +21,20 @@
 
 ## 편집자 추가·삭제
 
-- **글·사진 담당자:** Pages CMS의 `aiia-content / main`에서 **Collaborators** → 이메일 초대. GitHub 계정은 필요 없습니다. 담당자가 바뀌면 같은 화면에서 제거합니다.
-- **개발자:** GitHub `aiia-home` → **Settings → Collaborators and teams**에서 Write 권한으로 초대합니다. 실제 콘텐츠를 내려받아야 하는 개발자에게만 `aiia-content` Read 권한도 줍니다.
+**글·사진 편집자는 Pages CMS에서 초대합니다. GitHub 저장소의 Settings → Collaborators and teams와는 다른 메뉴입니다.**
+
+| 초대할 사람                | 초대 위치                                                   | 필요한 계정·권한                |
+| -------------------------- | ----------------------------------------------------------- | ------------------------------- |
+| 소식·교수 정보·사진 편집자 | **Pages CMS → aiia-content → main → Collaborators**         | 이메일 초대, GitHub 계정 불필요 |
+| 홈페이지 코드 개발자       | **GitHub → aiia-home → Settings → Collaborators and teams** | GitHub 계정, Write 권한         |
+
+편집자 초대 순서:
+
+1. 관리자가 [Pages CMS 편집자 관리](https://app.pagescms.org/aii-ajou/aiia-content/main/collaborators)에 접속합니다. 주소가 **app.pagescms.org**인지 확인합니다.
+2. 편집자의 **이메일 주소**로 초대하고, 편집자는 받은 초대 메일을 통해 접속합니다.
+3. 담당자가 바뀌면 같은 Pages CMS 화면에서 기존 편집자를 제거하고 새 담당자를 초대합니다.
+
+콘텐츠 편집만 하는 사람을 GitHub 협업자로 추가할 필요는 없습니다. 실제 콘텐츠를 내려받아야 하는 **개발자에게만** GitHub `aiia-content`의 Read 권한도 부여합니다.
 
 ## 글·사진 수정
 

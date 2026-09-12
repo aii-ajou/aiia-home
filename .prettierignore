@@ -5,6 +5,22 @@ package-lock.json
 materials
 playwright-report
 test-results
+blob-report
+playwright/.cache
+coverage
+.nyc_output
+/artifacts
+/tmp
+/temp
+/.cache
+*.tsbuildinfo
+*.log
+logs
+*.tmp
+*.temp
+.env
+.env.*
+/.claude/settings.local.json
 
 .content-repository
 .aiia

@@ -36,6 +36,14 @@ npm run test:pages     # /aiia-home/ 경로에서 같은 검사
 브라우저 최초 설치: `npx playwright install --with-deps chromium`.
 PR 검사는 샘플만 사용합니다. 운영 배포는 `AIIA_CONTENT_SOURCE=.content-repository`, `AIIA_REQUIRE_CONTENT=true`로 실행하며 운영 콘텐츠가 없거나 형식이 틀리면 중단합니다. 샘플로 자동 대체해 배포하지 않습니다.
 
+## 생성·임시 파일 관리
+
+빌드 결과(`dist/`), 캐시(`.astro/`), 테스트 보고서(`test-results/`, `playwright-report/`, `blob-report/`, `coverage/`), 로그와 `.env*`는 Git에서 제외합니다. 환경설정 예시인 `*.example` 파일은 공유할 수 있습니다. 일회성 스크린샷·추적 파일은 루트의 `artifacts/`, 임시 작업 파일은 `tmp/`에 저장합니다. 두 폴더도 제외됩니다.
+
+로컬 결과물이 필요 없으면 `dist/`, `test-results/`, `playwright-report/`, `blob-report/`, `coverage/`, `artifacts/`를 삭제해도 됩니다. 필요한 결과는 빌드·테스트로 다시 생성됩니다. 테스트 코드(`tests/`), 샘플(`fixtures/`), `package-lock.json`은 재현 가능한 개발과 배포를 위해 계속 커밋합니다. `.content-repository/`는 운영 콘텐츠 원본이 있는 별도 저장소이므로 임시 파일 정리 대상으로 삭제하지 않습니다.
+
+커밋 전에 `git status --short`로 확인합니다. 이미 추적 중인 파일은 `.gitignore`만 추가해도 제외되지 않으므로 필요하면 `git rm --cached <파일>`로 추적을 해제합니다. GitHub Actions의 실패 진단 자료는 저장소 파일과 별도로 최대 7일 보관됩니다.
+
 ## 주요 파일
 
 | 파일                           | 역할                                        |

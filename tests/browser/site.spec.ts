@@ -101,7 +101,13 @@ test("news category and original source link work", async ({ page }) => {
 test("research disclosure, saved theme and image fallbacks work", async ({
   page,
 }) => {
-  await page.route("**/uploads/members/*", (route) => route.abort());
+  // CMS uploads and external photos need not live in /uploads/members/.
+  // Simulate image failures by request type, independent of storage paths.
+  await page.route("**/*", (route) =>
+    route.request().resourceType() === "image"
+      ? route.abort()
+      : route.continue(),
+  );
   await page.goto(url(""));
   if (await page.locator("#centers summary").count()) {
     await page.locator("#centers summary").first().click();

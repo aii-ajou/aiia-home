@@ -1,0 +1,83 @@
+<p class="empty-state" data-empty hidden>
+  검색 결과가 없습니다. 다른 검색어로 찾아보세요.
+</p>
+<div class="pagination" data-pagination hidden>
+  <button class="btn" data-prev>
+    ← 이전
+  </button>
+  <span data-page aria-live="polite"></span>
+  <button class="btn" data-next>
+    다음 →
+  </button>
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>("[data-directory]").forEach((root) => {
+    const entries = [...root.querySelectorAll<HTMLElement>("[data-entry]")];
+    const input = root.querySelector<HTMLInputElement>("[data-search-input]")!;
+    const select = root.querySelector<HTMLSelectElement>(
+      "[data-category-select]",
+    )!;
+    const prev = root.querySelector<HTMLButtonElement>("[data-prev]")!;
+    const next = root.querySelector<HTMLButtonElement>("[data-next]")!;
+    const pageSize = Number(root.dataset.pageSize) || 9;
+    let page = 1;
+    const initial = new URLSearchParams(location.search);
+    input.value = initial.get("q") || "";
+    select.value = initial.get("category") || "";
+    const render = (persist = false) => {
+      const term = input.value.trim().toLocaleLowerCase();
+      const category = select.value;
+      const filtered = entries.filter(
+        (e) =>
+          (e.dataset.search || "").toLocaleLowerCase().includes(term) &&
+          (!category || e.dataset.category === category),
+      );
+      const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      page = Math.min(page, pages);
+      entries.forEach((e) => (e.hidden = true));
+      filtered
+        .slice((page - 1) * pageSize, page * pageSize)
+        .forEach((e) => (e.hidden = false));
+      root.querySelector("[data-result-count]")!.textContent =
+        `${term || category ? "검색 결과" : "전체"} ${filtered.length}건`;
+      root.querySelector<HTMLElement>("[data-empty]")!.hidden =
+        filtered.length > 0;
+      root.querySelector<HTMLElement>("[data-pagination]")!.hidden = pages <= 1;
+      root.querySelector("[data-page]")!.textContent = `${page} / ${pages}`;
+      prev.disabled = page === 1;
+      next.disabled = page === pages;
+      if (persist) {
+        const u = new URL(location.href);
+        term
+          ? u.searchParams.set("q", input.value)
+          : u.searchParams.delete("q");
+        category
+          ? u.searchParams.set("category", category)
+          : u.searchParams.delete("category");
+        history.replaceState(null, "", u);
+      }
+    };
+    const reset = () => {
+      page = 1;
+      render(true);
+    };
+    input.addEventListener("input", reset);
+    select.addEventListener("change", reset);
+    const move = (step: number) => {
+      page += step;
+      render();
+      root.querySelector<HTMLElement>("[data-results]")?.scrollIntoView({
+        block: "start",
+        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+      });
+      root
+        .querySelector<HTMLAnchorElement>("[data-entry]:not([hidden]) a")
+        ?.focus({ preventScroll: true });
+    };
+    prev.addEventListener("click", () => move(-1));
+    next.addEventListener("click", () => move(1));
+    render();
+  });
+</script>

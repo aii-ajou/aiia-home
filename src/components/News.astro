@@ -1,89 +1,41 @@
 ---
-/**
- * News.astro — 소식/공지 카드 그리드
- * 콘텐츠는 Directus 에서 온다. 썸네일이 없으면 기본 배경 유지.
- */
 import type { NewsView } from "../lib/content/queries";
+import NewsCard from "./NewsCard.astro";
 import { withBase } from "../lib/url";
-interface Props { news: NewsView[] }
+interface Props {
+  news: NewsView[];
+}
 const { news } = Astro.props;
 ---
 
-<section id="news" class="section">
+<section id="news" class="section section--alt">
   <div class="aiia-container">
     <div class="section__head">
       <div>
-        <p class="eyebrow eyebrow--gold">News &amp; Notice</p>
-        <h2 class="section__title">소식</h2>
+        <p class="eyebrow">News & Stories</p>
+        <h2 class="section__title">연구원의 오늘</h2>
       </div>
-      <a href="#news" class="section__link">전체 소식 →</a>
+      <a class="section__link" href={withBase("news/")}>
+        모든 소식 보기 <span aria-hidden="true">↗</span>
+      </a>
     </div>
-    <div class="grid grid--news">
-      {news.map((n) => (
-        <a href={n.slug ? withBase(`news/${n.slug}`) : "#news"} class="card news-card">
-          <div
-            class="news-card__thumb"
-            style={n.thumbnail ? `background-image:url(${n.thumbnail});background-size:cover;background-position:center` : undefined}
-          >
-            <span class="tag tag--solid" style={`background:${n.color}`}>{n.cat}</span>
-          </div>
-          <div class="news-card__body">
-            <div class="news-card__date">{n.date}</div>
-            <div class="news-card__title">{n.title}</div>
-          </div>
-        </a>
+    <div class="news-grid">
+      {news.slice(0, 3).map((n, index) => (
+        <NewsCard news={n} index={index} />
       ))}
     </div>
   </div>
 </section>
-
 <style>
-  .grid--news {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 18px;
+  .news-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
   }
-  .news-card {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    text-decoration: none;
-    transition: border-color var(--aiia-dur) var(--aiia-ease),
-      box-shadow var(--aiia-dur) var(--aiia-ease);
-  }
-  .news-card:hover {
-    border-color: var(--aiia-primary);
-    box-shadow: var(--aiia-shadow-lg);
-  }
-  .news-card__thumb {
-    height: 120px;
-    background-color: var(--aiia-surface-2);
-    background-image: repeating-linear-gradient(
-      135deg,
-      transparent,
-      transparent 9px,
-      rgba(0, 91, 172, 0.06) 9px,
-      rgba(0, 91, 172, 0.06) 10px
-    );
-    display: flex;
-    align-items: flex-start;
-    padding: 14px;
-  }
-  .news-card__body {
-    padding: 16px 18px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex: 1;
-  }
-  .news-card__date {
-    font-family: var(--aiia-font-display);
-    font-size: 12px;
-    color: var(--aiia-ink-mute);
-  }
-  .news-card__title {
-    font-weight: 700;
-    font-size: 15.5px;
-    line-height: 1.5;
-    color: var(--aiia-ink);
+  @media (max-width: 720px) {
+    .news-grid {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
   }
 </style>

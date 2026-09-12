@@ -1,23 +1,19 @@
-/**
- * content.config.ts — Astro Content Collections 정의 (콘텐츠 정본 = src/content/).
- *
- * 콘텐츠 모델은 docs/PRD.md §7. 싱글톤은 src/content/<name>.json 단일 파일,
- * 목록은 src/content/<name>/<slug>.json 항목 파일. 관리 UI(Decap)의 config 는
- * 이 스키마를 한국어 라벨과 함께 미러링한다 — 필드 추가 시 양쪽을 함께 갱신할 것.
- *
- * 색상 규칙: 강조색은 hex 가 아니라 accent 키(enum)만 저장한다.
- * 키 → var(--aiia-*) 해석은 데이터 계층(accent.ts)이 담당한다.
- */
+/** 콘텐츠 형식 정본. src/content는 준비 스크립트가 생성한다.
+ * 필드 변경 시 cms/pages.yml과 콘텐츠 저장소의 .pages.yml을 함께 갱신한다. */
 import { defineCollection } from "astro:content";
 import { file, glob } from "astro/loaders";
 import { z } from "astro/zod";
 import { ACCENT_KEYS } from "./lib/content/accent";
 
-const accent = z.enum(ACCENT_KEYS);
+const accent = z.enum(ACCENT_KEYS).default("blue");
+const optionalText = z
+  .string()
+  .nullish()
+  .transform((value) => value ?? "");
 const status = z.enum(["published", "draft", "archived"]).default("published");
 
 /** 싱글톤: 파일 루트가 곧 필드인 flat JSON 하나를 단일 엔트리("main")로 읽는다. */
-const singleton = <S extends z.ZodTypeAny>(name: string, schema: S) =>
+const singleton = <S extends z.ZodType>(name: string, schema: S) =>
   defineCollection({
     loader: file(`src/content/${name}.json`, {
       parser: (text) => [{ id: "main", ...JSON.parse(text) }],
@@ -26,13 +22,17 @@ const singleton = <S extends z.ZodTypeAny>(name: string, schema: S) =>
   });
 
 /** 목록: 폴더 내 JSON 항목들. 파일명(slug)이 엔트리 id 가 된다. */
-const rowCollection = <S extends z.ZodTypeAny>(name: string, schema: S) =>
+const rowCollection = <S extends z.ZodType>(name: string, schema: S) =>
   defineCollection({
     loader: glob({ pattern: "*.json", base: `src/content/${name}` }),
     schema,
   });
 
-const socialLink = z.object({ label: z.string(), url: z.string(), icon: z.string().optional() });
+const socialLink = z.object({
+  label: z.string(),
+  url: z.string(),
+  icon: z.string().optional(),
+});
 
 const site_settings = singleton(
   "site_settings",
@@ -64,6 +64,8 @@ const hero = singleton(
     badge_number: z.string().nullable().default(null),
     badge_label: z.string().nullable().default(null),
     visual_image: z.string().nullable().default(null),
+    visual_alt: z.string().default("아주대학교 캠퍼스"),
+    visual_caption: z.string().default("Ajou University, Suwon"),
   }),
 );
 
@@ -74,7 +76,14 @@ const about = singleton(
     title: z.string(),
     lede: z.string(),
     pillars: z
-      .array(z.object({ mono: z.string(), accent, title: z.string(), desc: z.string() }))
+      .array(
+        z.object({
+          mono: z.string(),
+          accent,
+          title: z.string(),
+          desc: z.string(),
+        }),
+      )
       .default([]),
   }),
 );
@@ -87,7 +96,13 @@ const inquiry = singleton(
     lede: z.string(),
     coop_modes: z.array(z.object({ mode: z.string() })).default([]),
     form_fields: z
-      .array(z.object({ label: z.string(), type: z.string(), options: z.array(z.string()).default([]) }))
+      .array(
+        z.object({
+          label: z.string(),
+          type: z.string(),
+          options: z.array(z.string()).default([]),
+        }),
+      )
       .default([]),
     consent_label: z.string(),
     submit_label: z.string(),
@@ -102,17 +117,27 @@ const organization = singleton(
     lede: z.string(),
     /** 최상위 지배구조 (원장 / 운영위원회 …). person: 확정 인선(선택) */
     leadership: z
-      .array(z.object({ label: z.string(), person: z.string().default(""), note: z.string() }))
+      .array(
+        z.object({
+          label: z.string(),
+          person: z.string().default(""),
+          note: z.string(),
+        }),
+      )
       .default([]),
     /** 연구기획 TF 기능 */
-    functions: z.array(z.object({ title: z.string(), desc: z.string() })).default([]),
+    functions: z
+      .array(z.object({ title: z.string(), desc: z.string() }))
+      .default([]),
     /** 연구센터 유형 그룹 (도메인별 / 기업 브랜드) — 개별 센터는 수요 기반 유연 설치 */
     center_groups: z
       .array(z.object({ title: z.string(), desc: z.string() }))
       .default([]),
     /** 기업 브랜드 연구센터 3-Tier 운영모델 */
     tiers: z
-      .array(z.object({ tier: z.string(), name: z.string(), detail: z.string() }))
+      .array(
+        z.object({ tier: z.string(), name: z.string(), detail: z.string() }),
+      )
       .default([]),
   }),
 );
@@ -122,7 +147,9 @@ const contact = singleton(
   z.object({
     eyebrow: z.string(),
     title: z.string(),
-    items: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
+    items: z
+      .array(z.object({ label: z.string(), value: z.string() }))
+      .default([]),
     map_embed: z.string().nullable().default(null),
     map_image: z.string().nullable().default(null),
   }),
@@ -133,7 +160,9 @@ const footer = singleton(
   z.object({
     address_html: z.string(),
     columns: z
-      .array(z.object({ title: z.string(), links: z.array(z.string()).default([]) }))
+      .array(
+        z.object({ title: z.string(), links: z.array(z.string()).default([]) }),
+      )
       .default([]),
     copyright: z.string(),
     social_links: z.array(socialLink).default([]),
@@ -142,12 +171,22 @@ const footer = singleton(
 
 const nav_items = rowCollection(
   "nav_items",
-  z.object({ label: z.string(), href: z.string(), sort: z.number().int(), status }),
+  z.object({
+    label: z.string(),
+    href: z.string(),
+    sort: z.number().int(),
+    status,
+  }),
 );
 
 const stats = rowCollection(
   "stats",
-  z.object({ value: z.string(), label: z.string(), sort: z.number().int(), status }),
+  z.object({
+    value: z.string(),
+    label: z.string(),
+    sort: z.number().int(),
+    status,
+  }),
 );
 
 const centers = rowCollection(
@@ -170,7 +209,11 @@ const members = rowCollection(
   z.object({
     name: z.string(),
     role: z.string(),
-    area: z.string().default(""),
+    area: optionalText,
+    name_en: optionalText,
+    featured: z.boolean().default(false),
+    profile_url: z.string().nullable().default(null),
+    photo_source: z.string().nullable().default(null),
     accent,
     photo: z.string().nullable().default(null),
     bio: z.string().nullable().default(null),
@@ -188,6 +231,15 @@ const news = rowCollection(
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "YYYY-MM-DD"),
     title: z.string(),
     body: z.string().nullable().default(null),
+    summary: optionalText,
+    source_name: optionalText,
+    source_url: z
+      .string()
+      .regex(/^https?:\/\/[^\s]+$/, "https://로 시작하는 원문 주소")
+      .or(z.literal(""))
+      .nullable()
+      .default(null),
+    featured: z.boolean().default(false),
     thumbnail: z.string().nullable().default(null),
     attachment: z.string().nullable().default(null),
     sort: z.number().int(),

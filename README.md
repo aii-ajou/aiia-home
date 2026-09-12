@@ -1,53 +1,53 @@
-# aiia-home
+# AIIA 홈페이지
 
-**아주대학교 인공지능연구원(AIIA) 홈페이지** — 완전 정적(Astro SSG) 사이트.
-콘텐츠는 저장소 안 `src/content/`(git)에 있고, 편집은 `/admin`(Decap CMS, 한국어 UI)에서
-폼으로 한다. **저장 = 커밋 → CI 빌드 → 배포**이며, 공개 서빙에 필요한 것은 정적 파일과
-웹서버(nginx)뿐이다. 상세설계는 `docs/PRD.md`, 미룬 작업은 `docs/BACKLOG.md`.
+Astro 정적 홈페이지. 코드는 **aii-ajou/aiia-home**, 운영 콘텐츠·사진은 별도 비공개 **aii-ajou/aiia-content** 저장소에서 관리합니다. 홈페이지 `/admin/`은 Pages CMS 편집 화면으로 연결합니다.
 
-## 로컬 개발
+**관리자:** [간단 운영 안내](docs/OPERATIONS.md) — 최초 연결, 편집자 초대, 저장·배포, 장애 대응.
 
-```bash
-nvm use            # Node 22
-npm install
-npm run dev        # http://localhost:4321
-```
+## 개발 시작
 
-관리 UI 까지 로컬에서 써보려면 (로그인 없이 로컬 파일 직접 편집):
+Node.js 22.12 이상을 사용합니다 (`nvm use`).
 
 ```bash
-npm run admin:local   # decap-server (별도 터미널)
-# 브라우저: http://localhost:4321/admin/index.html
+npm ci
+npm run dev
 ```
 
-품질 게이트: `npm run check`(0 errors) · `npm run build`(green) · `npm audit`(0) —
-CI(`.github/workflows/ci.yml`)가 PR 마다 강제한다.
+새 clone에서는 샘플 콘텐츠로 실행됩니다. GitHub 인증이나 운영 콘텐츠 접근 권한이 필요 없습니다. 생성되는 `src/content/`, `public/uploads/`는 Git에서 제외됩니다. 기존 Git 이력의 콘텐츠는 보존하며, 이후 운영 변경은 코드 저장소로 동기화하지 않습니다.
 
-## 콘텐츠 편집 (편집자)
+## 실제 콘텐츠로 확인 (권한이 있는 개발자만)
 
-- 운영: `사이트주소/admin` → GitHub 로그인 → 폼 편집 → 저장하면 몇 분 내 사이트 반영.
-- 모든 변경은 편집자 명의의 git 커밋으로 기록된다 — 이력·롤백은 git 이 담당(별도 백업 불필요).
-- 강조색은 디자인 토큰 드롭다운만 제공된다(원시 색상 입력 불가 — 다크모드/브랜드 규정 유지).
+```bash
+npm run content:fetch  # gh + Git 인증 필요: 별도 저장소 clone/pull 후 선택
+npm run dev
+```
 
-## 배포
+직접 clone한 콘텐츠 폴더는 `npm run content:use -- /path/to/aiia-content`로 선택할 수 있습니다. `npm run content:sample`로 샘플로 돌아갑니다. 선택은 이 컴퓨터에만 저장되며, 바꾼 뒤 개발 서버를 다시 시작합니다. 원본 콘텐츠 변경 후에도 dev 서버를 다시 시작해 다시 복사합니다. 생성 폴더를 직접 수정하지 않습니다.
 
-- `main` push → `.github/workflows/deploy.yml` 이 검증(astro check)·빌드 후 배포.
-  빌드가 실패하면 배포가 생략되고 사이트는 이전 버전을 유지한다.
-- 현재 대상: **GitHub Pages**(임시 공개 호스팅). 리포 Settings → Pages → Source 를
-  "GitHub Actions" 로 설정(1회).
-- 대학 서버 전환: deploy 잡을 rsync 로 교체(워크플로 주석 참조) + 편집자 로그인용 OAuth
-  릴레이 배치(`infra/oauth-relay/README.md`).
+## 검증
 
-## 저장소 구조
+```bash
+npm run test:content
+npm run check
+npm run test:e2e       # 빌드·내부 링크·브라우저 검사
+npm run test:pages     # /aiia-home/ 경로에서 같은 검사
+```
 
-| 경로 | 역할 |
-|---|---|
-| `src/content/` | 콘텐츠 정본(싱글톤 JSON 6 + 목록 폴더 5) |
-| `src/content.config.ts` | 콘텐츠 zod 스키마(빌드 타임 검증) — `public/admin/config.yml` 과 동기 유지 |
-| `src/lib/content/` | 데이터 접근 계층(view 정규화, accent 키→CSS 토큰 브리지) |
-| `src/components/`, `src/layouts/` | 섹션 컴포넌트/페이지 셸 — 디자인 시스템 **동결** |
-| `src/styles/` | 디자인 토큰(`aiia-tokens.css`) + 전역 스타일(`global.css`) — **동결** |
-| `public/admin/` | Decap CMS 관리 UI(정적) |
-| `public/uploads/` | 편집자 업로드 미디어(커밋됨) |
-| `infra/oauth-relay/` | 편집자 GitHub 로그인 릴레이(의존성 0) |
-| `docs/` | PRD(v2)·백로그 |
+브라우저 최초 설치: `npx playwright install --with-deps chromium`.
+PR 검사는 샘플만 사용합니다. 운영 배포는 `AIIA_CONTENT_SOURCE=.content-repository`, `AIIA_REQUIRE_CONTENT=true`로 실행하며 운영 콘텐츠가 없거나 형식이 틀리면 중단합니다. 샘플로 자동 대체해 배포하지 않습니다.
+
+## 주요 파일
+
+| 파일                           | 역할                                        |
+| ------------------------------ | ------------------------------------------- |
+| `content-source.json`          | 콘텐츠 저장소·브랜치·형식 버전              |
+| `src/content.config.ts`        | 콘텐츠 형식 검사                            |
+| `fixtures/`                    | 개발용 샘플과 그림                          |
+| `cms/pages.yml`                | 콘텐츠 저장소 `.pages.yml`의 기준 설정      |
+| `cms/publish-site.yml`         | 콘텐츠 저장소의 배포 요청 workflow 기준     |
+| `scripts/prepare-content.mjs`  | 선택한 원본을 작업 폴더로 복사              |
+| `.github/workflows/deploy.yml` | 운영 콘텐츠 결합 → 검사 → GitHub Pages 배포 |
+
+필드를 바꾸면 스키마, 샘플, CMS 설정을 함께 수정하고 **콘텐츠 저장소의 `.pages.yml`에도 반영**합니다. 기존 콘텐츠와 호환되지 않는 변경은 양쪽의 `content-manifest.json`/`content-source.json` 형식 버전과 데이터를 함께 이전합니다. JSON 문법·누락 파일은 준비 단계, 상세 필드는 Astro 빌드가 검사합니다.
+
+Pages CMS의 두 가지 연결용 token은 운영 문서의 최소 권한으로만 발급합니다. PR에서 비공개 콘텐츠나 해당 token을 사용하지 않습니다. 배포 결과에는 콘텐츠 JSON 원본과 인증정보를 포함하지 않습니다.

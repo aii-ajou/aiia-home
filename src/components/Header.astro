@@ -1,88 +1,324 @@
 ---
-/**
- * Header.astro — 상단 고정 GNB (로고 · 전역 내비게이션 · 협력문의 CTA)
- * 콘텐츠(nav/cta)는 Directus 에서 온다.
- */
 import type { NavView, CtaView } from "../lib/content/queries";
-interface Props { nav: NavView[]; cta: CtaView }
+import { siteUrl, withBase } from "../lib/url";
+interface Props {
+  nav: NavView[];
+  cta: CtaView;
+}
 const { nav, cta } = Astro.props;
+const active = (href: string) =>
+  !href.startsWith("#") && Astro.url.pathname.startsWith(siteUrl(href));
 ---
 
+<div class="utility">
+  <div class="aiia-container">
+    <span>아주대학교 인공지능연구원</span>
+    <a href="https://www.ajou.ac.kr/" target="_blank" rel="noopener noreferrer">
+      아주대학교 <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+</div>
 <header class="gnb">
-  <div class="gnb__inner">
-    <a href="#top" class="brand">
-      <img class="brand__mark" src="/brand/aiia-symbol.png" alt="" width="29" height="36" />
+  <div class="aiia-container gnb__inner">
+    <a
+      href={withBase("")}
+      class="brand"
+      aria-label="AIIA 아주대학교 인공지능연구원 홈"
+    >
+      <img
+        src={siteUrl("/brand/aiia-symbol.png")}
+        alt=""
+        width="34"
+        height="42"
+      />
       <span class="brand__text">
-        <span class="brand__name">AIIA</span>
-        <span class="brand__sub">아주대학교 인공지능연구원</span>
+        <strong>AIIA</strong>
+        <span>아주대학교 인공지능연구원</span>
       </span>
     </a>
-    <nav class="gnb__nav">
-      {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+    <nav class="desktop-nav" aria-label="주 메뉴">
+      {nav.map((n) => (
+        <a
+          href={siteUrl(n.href)}
+          aria-current={active(n.href) ? "page" : undefined}
+        >
+          {n.label}
+        </a>
+      ))}
     </nav>
-    <a href={cta.href} class="btn btn--primary btn--sm">{cta.label}</a>
+    <div class="header-actions">
+      <a class="btn header-cta" href={siteUrl(cta.href)}>
+        {cta.label}
+        <span aria-hidden="true">↗</span>
+      </a>
+      <button
+        id="theme-toggle"
+        class="theme-toggle"
+        aria-label="어두운 화면으로 전환"
+        title="어두운 화면으로 전환"
+      >
+        <svg
+          class="theme-icon theme-icon--moon"
+          aria-hidden="true"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+        >
+          <path d="M20.8 13.1A8.8 8.8 0 0 1 10.9 3.2 8.8 8.8 0 1 0 20.8 13.1Z" />
+        </svg>
+        <svg
+          class="theme-icon theme-icon--sun"
+          aria-hidden="true"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+        >
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5" />
+        </svg>
+        <span class="theme-label">화면 모드</span>
+      </button>
+      <button
+        class="menu-toggle"
+        aria-label="메뉴 열기"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </div>
+  <nav id="mobile-nav" class="mobile-nav" aria-label="모바일 메뉴" hidden>
+    {nav.map((n) => (
+      <a href={siteUrl(n.href)}>
+        {n.label}
+        <span aria-hidden="true">↗</span>
+      </a>
+    ))}
+    <a href={siteUrl(cta.href)}>{cta.label} ↗</a>
+  </nav>
 </header>
-
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+  const menu = document.querySelector<HTMLElement>("#mobile-nav");
+  const close = () => {
+    if (!toggle || !menu) return;
+    menu.hidden = true;
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "메뉴 열기");
+  };
+  toggle?.addEventListener("click", () => {
+    if (!menu) return;
+    const open = toggle.getAttribute("aria-expanded") !== "true";
+    menu.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");
+  });
+  menu
+    ?.querySelectorAll("a")
+    .forEach((a) => a.addEventListener("click", close));
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.key === "Escape" &&
+      toggle?.getAttribute("aria-expanded") === "true"
+    ) {
+      close();
+      toggle.focus();
+    }
+  });
+  window.matchMedia("(min-width: 1001px)").addEventListener("change", (e) => {
+    if (e.matches) close();
+  });
+</script>
+<script>
+  const button = document.querySelector<HTMLButtonElement>("#theme-toggle");
+  const sync = () => {
+    const label =
+      document.documentElement.dataset.theme === "dark"
+        ? "밝은 화면으로 전환"
+        : "어두운 화면으로 전환";
+    button?.setAttribute("aria-label", label);
+    button?.setAttribute("title", label);
+  };
+  sync();
+  button?.addEventListener("click", () => {
+    const theme =
+      document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = theme;
+    try {
+      localStorage.setItem("aiia-theme", theme);
+    } catch {}
+    sync();
+  });
+</script>
 <style>
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    min-width: 44px;
+    min-height: 44px;
+    border: 0;
+    border-radius: var(--aiia-r-xs);
+    color: var(--aiia-ink-soft);
+    background: transparent;
+    font-size: var(--aiia-text-control);
+    white-space: nowrap;
+  }
+  .theme-toggle:hover {
+    color: var(--aiia-primary);
+    background: var(--aiia-brand-tint);
+  }
+  .theme-icon--sun {
+    display: none;
+  }
+  :global([data-theme="dark"]) .theme-icon--sun {
+    display: block;
+  }
+  :global([data-theme="dark"]) .theme-icon--moon {
+    display: none;
+  }
+  @media (max-width: 1200px) {
+    .theme-label {
+      display: none;
+    }
+  }
+  @media (max-width: 560px) {
+    .header-actions {
+      gap: 4px;
+    }
+    .gnb__inner {
+      gap: 12px;
+    }
+  }
+
+  .utility {
+    border-bottom: 1px solid var(--aiia-line);
+    font-size: 10px;
+    color: var(--aiia-ink-mute);
+  }
+  .utility > div {
+    display: flex;
+    justify-content: space-between;
+    padding-block: 8px;
+  }
+  .utility a span {
+    margin-left: 10px;
+  }
   .gnb {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--aiia-bg) 88%, transparent);
+    background: var(--aiia-bg);
     border-bottom: 1px solid var(--aiia-line);
-    backdrop-filter: blur(8px);
   }
   .gnb__inner {
-    max-width: var(--aiia-container);
-    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--aiia-space-6);
-    padding: var(--aiia-space-4) 24px;
+    gap: 24px;
+    min-height: 72px;
   }
   .brand {
     display: flex;
+    gap: 12px;
     align-items: center;
-    gap: 11px;
-    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .brand img {
+    object-fit: contain;
   }
   .brand__text {
     display: flex;
     flex-direction: column;
-    line-height: 1.05;
+    gap: 4px;
   }
-  .brand__name {
-    font-family: var(--aiia-font-display);
-    font-weight: 700;
-    font-size: 21px;
-    letter-spacing: 0.5px;
+  .brand strong {
+    font: 700 29px/1 var(--aiia-font-display);
+    letter-spacing: 0.025em;
     color: var(--aiia-primary);
   }
-  .brand__sub {
-    font-size: 11px;
-    color: var(--aiia-ink-mute);
+  .brand__text > span {
+    font-size: 10px;
+    letter-spacing: -0.02em;
   }
-  .gnb__nav {
+  .desktop-nav {
     display: flex;
-    gap: 30px;
+    align-items: center;
+    gap: 20px;
+    font-size: var(--aiia-text-control);
+    white-space: nowrap;
   }
-  .gnb__nav a {
-    font-weight: 500;
-    font-size: 15.5px;
-    color: var(--aiia-ink-soft);
-    text-decoration: none;
-    transition: color var(--aiia-dur) var(--aiia-ease);
+  .desktop-nav a {
+    padding-block: 16px;
   }
-  .gnb__nav a:hover {
-    color: var(--aiia-brand-bright);
-    font-weight: 700;
+  .desktop-nav a:hover,
+  .desktop-nav a[aria-current] {
+    color: var(--aiia-primary);
   }
-
-  @media (max-width: 900px) {
-    .gnb__nav {
+  .menu-toggle {
+    display: none;
+    padding: 10px;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: 0;
+    color: var(--aiia-ink);
+  }
+  .menu-toggle span {
+    display: block;
+    background: currentColor;
+    height: 1px;
+    margin: 7px 0;
+  }
+  .mobile-nav {
+    padding: 8px 24px 12px;
+    font-size: var(--aiia-text-control);
+    border-top: 1px solid var(--aiia-line);
+  }
+  .mobile-nav a {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    min-height: 44px;
+  }
+  @media (max-width: 1000px) {
+    .desktop-nav,
+    .header-cta {
       display: none;
+    }
+    .menu-toggle {
+      display: block;
+    }
+    .gnb__inner {
+      min-height: 68px;
+    }
+  }
+  @media (max-width: 560px) {
+    .utility > div > span {
+      font-size: 9px;
+    }
+    .brand strong {
+      font-size: 25px;
+    }
+    .brand img {
+      width: 29px;
+      height: 36px;
     }
   }
 </style>

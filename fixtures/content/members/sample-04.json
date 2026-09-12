@@ -1,0 +1,14 @@
+{
+  "name": "샘플연구자04",
+  "name_en": "Sample Researcher 4",
+  "role": "융합학과",
+  "area": "머신러닝, 사람 중심 AI, 다양한 길이의 연구 분야 설명",
+  "accent": "blue",
+  "featured": true,
+  "photo": "/uploads/members/sample.svg",
+  "profile_url": "https://www.ajou.ac.kr/",
+  "email": "researcher4@example.com",
+  "bio": "개발용 샘플 프로필입니다.",
+  "sort": 4,
+  "status": "published"
+}

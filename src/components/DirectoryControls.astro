@@ -1,0 +1,29 @@
+---
+interface Props {
+  categories: string[];
+  placeholder: string;
+  categoryLabel: string;
+  count: number;
+}
+const { categories, placeholder, categoryLabel, count } = Astro.props;
+---
+
+<div class="directory-tools">
+  <label class="search-field">
+    <span aria-hidden="true">⌕</span>
+    <span class="sr-only">{placeholder}</span>
+    <input type="search" data-search-input placeholder={placeholder} />
+  </label>
+  <label>
+    <span class="sr-only">{categoryLabel}</span>
+    <select data-category-select>
+      <option value="">전체 {categoryLabel}</option>
+      {categories.map((c) => (
+        <option value={c}>{c}</option>
+      ))}
+    </select>
+  </label>
+  <span class="result-count" data-result-count aria-live="polite">
+    전체 {count}건
+  </span>
+</div>

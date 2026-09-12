@@ -1,0 +1,129 @@
+---
+import type { MemberView } from "../lib/content/queries";
+import { siteUrl, withBase } from "../lib/url";
+interface Props {
+  member: MemberView;
+}
+const { member: m } = Astro.props;
+---
+
+<article
+  class="member-card"
+  data-entry
+  data-search={`${m.name} ${m.nameEn} ${m.role} ${m.area}`}
+  data-category={m.role}
+>
+  <a href={withBase(`members/${m.slug}/`)} class="member-card__link">
+    <div class:list={["member-card__photo", { "image-unavailable": !m.photo }]}>
+      <span class="member-card__fallback" aria-hidden="true">
+        {m.name.slice(0, 1)}
+        <small>AIIA</small>
+      </span>
+      {m.photo && (
+        <img
+          src={siteUrl(m.photo)}
+          alt={`${m.name} 교수`}
+          width="420"
+          height="540"
+          loading="lazy"
+          data-fallback
+        />
+      )}
+    </div>
+    <div class="member-card__body">
+      <div class="member-card__heading">
+        <h3 class="text-subheading">
+          {m.name}
+          <small>교수</small>
+        </h3>
+        <span aria-hidden="true">↗</span>
+      </div>
+      <p class="member-card__english">{m.nameEn}</p>
+      <p class="member-card__role">{m.role}</p>
+      {m.area && <p class="member-card__area">{m.area}</p>}
+    </div>
+  </a>
+</article>
+<style>
+  .member-card {
+    min-width: 0;
+    width: 100%;
+    max-width: 220px;
+  }
+  .member-card__photo {
+    position: relative;
+    background: var(--aiia-surface-2);
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: var(--aiia-r-xs);
+  }
+  .member-card__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    position: absolute;
+    inset: 0;
+  }
+  .member-card__fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    font: 400 40px var(--aiia-font-serif);
+    color: var(--aiia-ink-mute);
+  }
+  .member-card__fallback small {
+    font: 500 var(--aiia-text-caption) var(--aiia-font-display);
+    letter-spacing: 0.14em;
+  }
+  .member-card__body {
+    padding: 14px 0 0;
+  }
+  .member-card__heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .member-card__heading h3 {
+    margin: 0;
+  }
+  .member-card__heading h3 small {
+    font-size: var(--aiia-text-small);
+    font-weight: 400;
+    margin-left: 7px;
+    color: var(--aiia-ink-soft);
+  }
+  .member-card__heading > span {
+    color: var(--aiia-ink-mute);
+  }
+  .member-card__english {
+    font: 400 var(--aiia-text-caption)/1.7 var(--aiia-font-display);
+    color: var(--aiia-ink-mute);
+    margin: 3px 0 10px;
+  }
+  .member-card__role {
+    font-size: var(--aiia-text-small);
+    margin: 0;
+    color: var(--aiia-ink-soft);
+  }
+  .member-card__area {
+    font-size: var(--aiia-text-small);
+    line-height: 1.7;
+    color: var(--aiia-ink-mute);
+    margin: 7px 0 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: normal;
+  }
+  @media (max-width: 560px) {
+    .member-card__body {
+      padding-top: 15px;
+    }
+  }
+</style>

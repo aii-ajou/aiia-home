@@ -1,0 +1,620 @@
+# 콘텐츠 저장소의 .pages.yml로 복사합니다. 스키마 변경 시 함께 갱신하세요.
+media:
+  - name: images
+    label: 사진
+    input: uploads
+    output: /uploads
+    extensions:
+      - jpg
+      - jpeg
+      - png
+      - webp
+      - gif
+      - avif
+    rename: safe
+  - name: documents
+    label: 첨부 문서
+    input: uploads/documents
+    output: /uploads/documents
+    extensions:
+      - pdf
+      - hwp
+      - hwpx
+      - docx
+      - pptx
+      - xlsx
+    rename: safe
+settings:
+  content:
+    merge: true
+content:
+  - name: news
+    label: 소식
+    type: collection
+    path: content/news
+    format: json
+    subfolders: false
+    filename:
+      template: "{fields.date}-{primary}.json"
+      field: create
+    operations:
+      rename: false
+    view:
+      primary: title
+      fields:
+        - title
+        - status
+        - sort
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: 제목
+        type: string
+        required: true
+      - name: category
+        label: 분류
+        type: select
+        required: true
+        default: 언론보도
+        options:
+          values:
+            - 공지
+            - 행사
+            - 세미나
+            - 포럼
+            - 연구성과
+            - 언론보도
+            - 채용
+      - name: date
+        label: 날짜
+        type: date
+        required: true
+        options:
+          time: false
+          format: yyyy-MM-dd
+      - name: source_url
+        label: 원문 주소
+        type: string
+        description: 학교 홈페이지나 외부 기사의 주소를 붙여넣으세요. 상세 화면에 원문 읽기 버튼이 표시됩니다.
+      - name: source_name
+        label: 출처 이름
+        type: string
+        description: "예: 아주대학교, THE AI"
+      - name: summary
+        label: 카드에 표시할 요약
+        type: text
+        description: 핵심 내용을 1~2문장으로 입력하세요.
+      - name: body
+        label: 상세 내용
+        type: text
+        description: 문단 사이에 빈 줄을 넣으세요. 외부 기사는 요약을 쓰고 원문으로 연결하면 됩니다.
+      - name: thumbnail
+        label: 대표 사진
+        type: image
+        description: 권장 가로형 3:2. 사진이 없으면 분류가 표시된 기본 카드가 사용됩니다.
+        options:
+          media: images
+      - name: attachment
+        label: 첨부파일
+        type: file
+        options:
+          media: documents
+      - name: featured
+        label: 추천 소식
+        type: boolean
+        required: true
+        description: 홈과 목록의 맨 앞에 표시합니다. 홈에는 최대 3건만 표시됩니다.
+        default: false
+      - name: accent
+        label: 강조색
+        type: string
+        required: true
+        description: 디자인 토큰 키만 선택 가능 (원시 색상값 입력 불가)
+        default: blue
+        hidden: true
+      - name: sort
+        label: 정렬 순서
+        type: number
+        required: true
+        description: 작은 숫자가 먼저 표시됩니다. 소식은 추천 여부와 최신 날짜가 우선합니다.
+        default: 100
+      - name: status
+        label: 게시 상태
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - name: published
+              label: 게시
+            - name: draft
+              label: 임시저장
+            - name: archived
+              label: 보관
+  - name: members
+    label: 연구자 정보
+    type: collection
+    path: content/members
+    format: json
+    subfolders: false
+    filename:
+      template: "{primary}.json"
+      field: create
+    operations:
+      rename: false
+    view:
+      primary: name
+      fields:
+        - name
+        - status
+        - sort
+      sort: sort
+      order: asc
+    fields:
+      - name: name
+        label: 이름(한글)
+        type: string
+        required: true
+      - name: role
+        label: 소속 학과
+        type: string
+        required: true
+      - name: name_en
+        label: 영문명
+        type: string
+      - name: accent
+        label: 강조색
+        type: string
+        required: true
+        description: 디자인 토큰 키만 선택 가능 (원시 색상값 입력 불가)
+        default: blue
+        hidden: true
+      - name: area
+        label: 연구 분야
+        type: text
+        description: "예: 머신러닝, 의료 AI. 검색에 사용됩니다."
+      - name: photo
+        label: 사진
+        type: image
+        description: 정면 인물 사진을 업로드하세요. 권장 비율 4:5. 없으면 이름으로 표시됩니다.
+        options:
+          media: images
+      - name: profile_url
+        label: 공식 프로필 주소
+        type: string
+      - name: photo_source
+        label: 사진 출처 주소
+        type: string
+      - name: featured
+        label: 홈에 우선 소개
+        type: boolean
+        required: true
+        description: 선택한 연구자부터 정렬 순서대로 최대 5명을 소개합니다.
+        default: false
+      - name: bio
+        label: 소개(선택)
+        type: text
+      - name: email
+        label: 이메일(선택)
+        type: string
+      - name: sort
+        label: 정렬 순서
+        type: number
+        required: true
+        description: 작은 숫자가 먼저 표시됩니다. 소식은 추천 여부와 최신 날짜가 우선합니다.
+        default: 100
+      - name: status
+        label: 게시 상태
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - name: published
+              label: 게시
+            - name: draft
+              label: 임시저장
+            - name: archived
+              label: 보관
+  - name: site_settings
+    label: 사이트 설정
+    type: file
+    path: content/site_settings.json
+    format: json
+    fields:
+      - name: site_title
+        label: 사이트 제목
+        type: string
+        required: true
+      - name: site_description
+        label: 사이트 설명(검색/공유용)
+        type: text
+        required: true
+      - name: og_image
+        label: OG 이미지(공유 미리보기)
+        type: image
+        options:
+          media: images
+      - name: contact_email
+        label: 이메일
+        type: string
+        required: true
+      - name: header_cta_label
+        label: 헤더 버튼 문구
+        type: string
+        required: true
+      - name: header_cta_href
+        label: 헤더 버튼 링크
+        type: string
+        required: true
+  - name: hero
+    label: 히어로(첫 화면)
+    type: file
+    path: content/hero.json
+    format: json
+    fields:
+      - name: eyebrow
+        label: 상단 소제목
+        type: string
+        required: true
+      - name: title
+        label: 제목(줄바꿈 유지)
+        type: text
+        required: true
+      - name: lede
+        label: 소개 문단
+        type: text
+        required: true
+      - name: cta_primary_label
+        label: 주 버튼 문구
+        type: string
+        required: true
+      - name: cta_primary_href
+        label: 주 버튼 링크
+        type: string
+        required: true
+      - name: cta_secondary_label
+        label: 보조 버튼 문구
+        type: string
+        required: true
+      - name: cta_secondary_href
+        label: 보조 버튼 링크
+        type: string
+        required: true
+      - name: visual_image
+        label: 첫 화면 사진
+        type: image
+        options:
+          media: images
+      - name: visual_alt
+        label: 사진 설명 (접근성)
+        type: string
+        required: true
+        default: 아주대학교 캠퍼스
+      - name: visual_caption
+        label: 사진 아래 문구
+        type: string
+        required: true
+        default: 아주대학교 캠퍼스 · Suwon, Korea
+  - name: about
+    label: 연구원 소개
+    type: file
+    path: content/about.json
+    format: json
+    fields:
+      - name: eyebrow
+        label: 상단 소제목
+        type: string
+        required: true
+      - name: title
+        label: 제목(줄바꿈 유지)
+        type: text
+        required: true
+      - name: lede
+        label: 소개 문단
+        type: text
+        required: true
+      - name: pillars
+        label: 핵심 가치(필러)
+        type: object
+        required: true
+        list: true
+        fields:
+          - name: mono
+            label: 약자(1글자)
+            type: string
+            required: true
+          - name: accent
+            label: 강조색
+            type: string
+            required: true
+            description: 디자인 토큰 키만 선택 가능 (원시 색상값 입력 불가)
+            default: blue
+            hidden: true
+          - name: title
+            label: 제목
+            type: string
+            required: true
+          - name: desc
+            label: 설명
+            type: text
+            required: true
+  - name: organization
+    label: 조직도(조직구조)
+    type: file
+    path: content/organization.json
+    format: json
+    fields:
+      - name: eyebrow
+        label: 상단 소제목
+        type: string
+        required: true
+      - name: title
+        label: 제목
+        type: string
+        required: true
+      - name: lede
+        label: 소개 문단
+        type: text
+        required: true
+      - name: leadership
+        label: 지배구조(원장·운영위원회)
+        type: object
+        required: true
+        list: true
+        fields:
+          - name: label
+            label: 명칭
+            type: string
+            required: true
+          - name: person
+            label: 인선(이름·확정 시 입력)
+            type: string
+          - name: note
+            label: 설명
+            type: string
+            required: true
+      - name: functions
+        label: 연구기획 TF 기능
+        type: object
+        required: true
+        list: true
+        fields:
+          - name: title
+            label: 기능명
+            type: string
+            required: true
+          - name: desc
+            label: 설명
+            type: text
+            required: true
+      - name: center_groups
+        label: 연구센터 유형
+        type: object
+        required: true
+        description: 개별 센터는 수요에 따라 유연하게 설치되므로 유형·설명만 기재
+        list: true
+        fields:
+          - name: title
+            label: 유형명
+            type: string
+            required: true
+          - name: desc
+            label: 설명
+            type: text
+            required: true
+      - name: tiers
+        label: 기업 파트너십 3-Tier
+        type: object
+        required: true
+        list: true
+        fields:
+          - name: tier
+            label: 등급
+            type: string
+            required: true
+          - name: name
+            label: 파트너 유형
+            type: string
+            required: true
+          - name: detail
+            label: 운영 내용
+            type: text
+            required: true
+  - name: inquiry
+    label: 협력 문의
+    type: file
+    path: content/inquiry.json
+    format: json
+    fields:
+      - name: eyebrow
+        label: 상단 소제목
+        type: string
+        required: true
+      - name: title
+        label: 제목(줄바꿈 유지)
+        type: text
+        required: true
+      - name: lede
+        label: 소개 문단
+        type: text
+        required: true
+      - name: coop_modes
+        label: 협력 유형
+        type: object
+        required: true
+        list: true
+        fields:
+          - name: mode
+            label: 유형
+            type: string
+            required: true
+      - name: submit_label
+        label: 보내기 버튼 문구
+        type: string
+        required: true
+  - name: contact
+    label: 오시는 길
+    type: file
+    path: content/contact.json
+    format: json
+    fields:
+      - name: eyebrow
+        label: 상단 소제목
+        type: string
+        required: true
+      - name: title
+        label: 제목
+        type: string
+        required: true
+      - name: items
+        label: 연락처 항목
+        type: object
+        required: true
+        list: true
+        fields:
+          - name: label
+            label: 라벨
+            type: string
+            required: true
+          - name: value
+            label: 내용
+            type: text
+            required: true
+      - name: map_image
+        label: 지도 이미지
+        type: image
+        options:
+          media: images
+  - name: footer
+    label: 푸터(하단)
+    type: file
+    path: content/footer.json
+    format: json
+    fields:
+      - name: address_html
+        label: 주소/연락처(줄바꿈 유지)
+        type: text
+        required: true
+      - name: copyright
+        label: 저작권 문구
+        type: string
+        required: true
+  - name: centers
+    label: 연구센터
+    type: collection
+    path: content/centers
+    format: json
+    subfolders: false
+    filename:
+      template: "{primary}.json"
+      field: create
+    operations:
+      rename: false
+    view:
+      primary: name_ko
+      fields:
+        - name_ko
+        - status
+        - sort
+      sort: sort
+      order: asc
+    fields:
+      - name: mono
+        label: 약자(2글자)
+        type: string
+        required: true
+      - name: accent
+        label: 강조색
+        type: string
+        required: true
+        description: 디자인 토큰 키만 선택 가능 (원시 색상값 입력 불가)
+        default: blue
+        hidden: true
+      - name: name_ko
+        label: 센터명(한글)
+        type: string
+        required: true
+      - name: name_en
+        label: 센터명(영문)
+        type: string
+        required: true
+      - name: description
+        label: 소개
+        type: text
+        required: true
+      - name: tag
+        label: "태그(예: LLM · Multimodal)"
+        type: string
+        required: true
+      - name: detail_url
+        label: 상세 페이지 URL
+        type: string
+      - name: sort
+        label: 정렬 순서
+        type: number
+        required: true
+        description: 작은 숫자가 먼저 표시됩니다. 소식은 추천 여부와 최신 날짜가 우선합니다.
+        default: 100
+      - name: status
+        label: 게시 상태
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - name: published
+              label: 게시
+            - name: draft
+              label: 임시저장
+            - name: archived
+              label: 보관
+  - name: nav_items
+    label: 상단 메뉴
+    type: collection
+    path: content/nav_items
+    format: json
+    subfolders: false
+    filename:
+      template: "{primary}.json"
+      field: create
+    operations:
+      rename: false
+    view:
+      primary: label
+      fields:
+        - label
+        - status
+        - sort
+      sort: sort
+      order: asc
+    fields:
+      - name: label
+        label: 메뉴 이름
+        type: string
+        required: true
+      - name: href
+        label: 이동 링크
+        type: string
+        required: true
+        description: "예: #about 또는 https://…"
+      - name: sort
+        label: 정렬 순서
+        type: number
+        required: true
+        description: 작은 숫자가 먼저 표시됩니다. 소식은 추천 여부와 최신 날짜가 우선합니다.
+        default: 100
+      - name: status
+        label: 게시 상태
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - name: published
+              label: 게시
+            - name: draft
+              label: 임시저장
+            - name: archived
+              label: 보관

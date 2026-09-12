@@ -1,0 +1,66 @@
+---
+import Base from "../../layouts/Base.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import NewsCard from "../../components/NewsCard.astro";
+import DirectoryControls from "../../components/DirectoryControls.astro";
+import DirectoryPagination from "../../components/DirectoryPagination.astro";
+import { loadHomePageData } from "../../lib/content/queries";
+import { withBase } from "../../lib/url";
+const data = await loadHomePageData();
+const entries = data.news;
+---
+
+<Base title={`연구원 소식 · ${data.site.title}`}>
+  <Header nav={data.nav} cta={data.site.headerCta} />
+  <main
+    id="main"
+    class="aiia-container directory"
+    data-directory
+    data-page-size="9"
+  >
+    <div class="page-intro">
+      <div class="breadcrumb">
+        <a href={withBase("")}>홈</a> / 연구원 소식
+      </div>
+      <h1>연구원 소식</h1>
+      <p>연구와 교류의 순간, 그리고 함께 만들어가는 변화의 기록입니다.</p>
+    </div>
+    <DirectoryControls
+      categories={[...new Set(entries.map((e) => e.cat))]}
+      placeholder="제목, 내용, 출처 검색"
+      categoryLabel="분류"
+      count={entries.length}
+    />
+    <div class="directory-grid" data-results>
+      {entries.map((entry) => (
+        <NewsCard news={entry} />
+      ))}
+    </div>
+    <DirectoryPagination />
+  </main>
+  <Footer footer={data.footer} />
+</Base>
+<style>
+  .directory {
+    padding-bottom: 80px;
+  }
+  .directory-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 44px 32px;
+    scroll-margin-top: 110px;
+  }
+  @media (max-width: 800px) {
+    .directory-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 32px 22px;
+    }
+  }
+  @media (max-width: 520px) {
+    .directory-grid {
+      grid-template-columns: 1fr;
+      gap: 32px 18px;
+    }
+  }
+</style>

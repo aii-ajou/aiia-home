@@ -9,3 +9,10 @@ export function withBase(path: string): string {
   const rel = path.replace(/^\//, ""); // 앞 슬래시 제거
   return `${base}/${rel}`;
 }
+
+/** 외부 주소는 유지하고 내부 링크·미디어는 배포 경로를 반영한다. */
+export function siteUrl(path: string): string {
+  if (/^(https?:|mailto:|tel:)/i.test(path)) return path;
+  if (/^(javascript:|data:|\/\/)/i.test(path)) return "#";
+  return withBase(path);
+}

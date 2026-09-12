@@ -1,0 +1,141 @@
+---
+import type { NewsView } from "../lib/content/queries";
+import { siteUrl, withBase } from "../lib/url";
+interface Props {
+  news: NewsView;
+  index?: number;
+}
+const { news: n } = Astro.props;
+---
+
+<article
+  class="news-card"
+  data-entry
+  data-search={`${n.title} ${n.summary} ${n.sourceName}`}
+  data-category={n.cat}
+>
+  <a href={withBase(`news/${n.slug}/`)} class="news-card__link">
+    <div
+      class:list={["news-card__visual", { "image-unavailable": !n.thumbnail }]}
+    >
+      <div class="news-card__fallback" aria-hidden="true">
+        <span>AIIA / INSIGHTS</span>
+        <strong>{n.cat}</strong>
+        <span>
+          RESEARCH & CONNECTION <b>↗</b>
+        </span>
+      </div>
+      {n.thumbnail && (
+        <img
+          src={siteUrl(n.thumbnail)}
+          alt=""
+          width="600"
+          height="380"
+          loading="lazy"
+          data-fallback
+        />
+      )}
+    </div>
+    <div class="news-card__meta">
+      <span>{n.cat}</span>
+      <time datetime={n.date.replaceAll(".", "-")}>{n.date}</time>
+    </div>
+    <h3 class="text-subheading">{n.title}</h3>
+    {n.summary && <p class="news-card__summary">{n.summary}</p>}
+    <div class="news-card__source">
+      <span>{n.sourceName || "AIIA"}</span>
+      <span aria-hidden="true">↗</span>
+    </div>
+  </a>
+</article>
+<style>
+  .news-card {
+    min-width: 0;
+  }
+  .news-card__visual {
+    position: relative;
+    height: 210px;
+    background: var(--aiia-surface-2);
+    border-radius: var(--aiia-r-xs);
+    overflow: hidden;
+  }
+  .news-card__visual img {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--aiia-dur-slow);
+  }
+  .news-card__link:hover img {
+    transform: scale(1.025);
+  }
+  .news-card__fallback {
+    position: absolute;
+    inset: 0;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--aiia-brand-tint);
+    color: var(--aiia-primary);
+  }
+  .news-card__fallback > span {
+    font: 500 var(--aiia-text-caption) var(--aiia-font-display);
+    letter-spacing: 0.12em;
+  }
+  .news-card__fallback strong {
+    font: 500 var(--aiia-text-heading) var(--aiia-font-sans);
+  }
+  .news-card__fallback > span:last-child {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--aiia-line-strong);
+    padding-top: 14px;
+  }
+  .news-card__fallback b {
+    font-size: 16px;
+  }
+  .news-card__meta {
+    display: flex;
+    gap: 14px;
+    font-size: var(--aiia-text-caption);
+    margin: 20px 0 11px;
+  }
+  .news-card__meta > span {
+    color: var(--aiia-primary);
+  }
+  .news-card__meta time {
+    color: var(--aiia-ink-mute);
+    font-family: var(--aiia-font-display);
+  }
+  .news-card h3 {
+    margin-bottom: 12px;
+  }
+  .news-card__summary {
+    font-size: var(--aiia-text-body);
+    color: var(--aiia-ink-soft);
+    line-height: 1.9;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .news-card__source {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--aiia-line);
+    padding-top: 14px;
+    margin-top: 18px;
+    font-size: var(--aiia-text-caption);
+    color: var(--aiia-ink-mute);
+  }
+  .news-card__source > span:last-child {
+    font-size: 18px;
+  }
+  @media (max-width: 560px) {
+    .news-card__visual {
+      height: 220px;
+    }
+  }
+</style>

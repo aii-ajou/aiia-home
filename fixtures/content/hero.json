@@ -1,0 +1,12 @@
+{
+  "eyebrow": "AIIA · DEVELOPMENT SAMPLE",
+  "title": "AI로 연결하고,\n함께 더 나은 내일로.",
+  "lede": "다양한 학문의 깊이와 인공지능의 가능성이 만나는 곳.\n아주대학교 인공지능연구원은 연구와 산업을 연결해\n우리 일상에 의미 있는 변화를 만들어갑니다.",
+  "cta_primary_label": "연구원 알아보기",
+  "cta_primary_href": "#about",
+  "cta_secondary_label": "연구 분야 살펴보기",
+  "cta_secondary_href": "#centers",
+  "visual_image": "/uploads/sample.svg",
+  "visual_alt": "개발용 샘플 이미지",
+  "visual_caption": "개발용 샘플"
+}

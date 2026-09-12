@@ -1,5 +1,5 @@
 /**
- * queries.ts — src/content/ (Astro Content Collections) 를 조회해 "view-ready"
+ * queries.ts — 준비된 src/content/ (Astro Content Collections) 를 조회해 "view-ready"
  * 형태로 정규화한다.
  *  - accent 키 → CSS 변수(color) 로 해석 (resolveAccent)
  *  - 목록 컬렉션은 status=published 만, sort 오름차순
@@ -10,47 +10,167 @@
 import { getCollection } from "astro:content";
 import { resolveAccent } from "./accent";
 
-export interface FormField { label: string; type: string; options?: string[] }
+export interface FormField {
+  label: string;
+  type: string;
+  options?: string[];
+}
 
 // ---- view 타입 (컴포넌트가 import 해서 props 타입으로 사용) --------------------
-export interface NavView { label: string; href: string }
-export interface CtaView { label: string; href: string }
-export interface SiteView { title: string; description: string; ogImage: string | null; headerCta: CtaView }
-export interface HeroView {
-  eyebrow: string; title: string; lede: string;
-  ctaPrimary: CtaView; ctaSecondary: CtaView;
-  badgeNumber: string | null; badgeLabel: string | null; visual: string | null;
+export interface NavView {
+  label: string;
+  href: string;
 }
-export interface PillarView { mono: string; color: string; title: string; desc: string }
-export interface AboutView { eyebrow: string; title: string; lede: string; pillars: PillarView[] }
-export interface StatView { value: string; label: string }
-export interface CenterView { mono: string; color: string; ko: string; en: string; desc: string; tag: string; detailUrl: string | null }
-export interface MemberView { name: string; role: string; area: string; color: string; photo: string | null }
-export interface NewsView { cat: string; color: string; date: string; title: string; slug: string | null; thumbnail: string | null }
+export interface CtaView {
+  label: string;
+  href: string;
+}
+export interface SiteView {
+  title: string;
+  description: string;
+  ogImage: string | null;
+  headerCta: CtaView;
+  email: string;
+  address: string;
+}
+export interface HeroView {
+  eyebrow: string;
+  title: string;
+  lede: string;
+  ctaPrimary: CtaView;
+  ctaSecondary: CtaView;
+  badgeNumber: string | null;
+  badgeLabel: string | null;
+  visual: string | null;
+  visualAlt: string;
+  visualCaption: string;
+}
+export interface PillarView {
+  mono: string;
+  color: string;
+  title: string;
+  desc: string;
+}
+export interface AboutView {
+  eyebrow: string;
+  title: string;
+  lede: string;
+  pillars: PillarView[];
+}
+export interface StatView {
+  value: string;
+  label: string;
+}
+export interface CenterView {
+  mono: string;
+  color: string;
+  ko: string;
+  en: string;
+  desc: string;
+  tag: string;
+  detailUrl: string | null;
+}
+export interface MemberView {
+  slug: string;
+  name: string;
+  nameEn: string;
+  role: string;
+  area: string;
+  color: string;
+  photo: string | null;
+  email: string | null;
+  bio: string | null;
+  profileUrl: string | null;
+  featured: boolean;
+}
+export interface NewsView {
+  cat: string;
+  color: string;
+  date: string;
+  title: string;
+  slug: string;
+  thumbnail: string | null;
+  summary: string;
+  sourceName: string;
+  sourceUrl: string | null;
+  featured: boolean;
+}
 /** 소식 상세 페이지(/news/[slug]) 전용 — body·원본 날짜·첨부까지 포함한다. */
 export interface NewsDetailView {
-  slug: string; cat: string; color: string;
-  dateISO: string; dateDisplay: string;
-  title: string; body: string | null; thumbnail: string | null; attachment: string | null;
+  slug: string;
+  cat: string;
+  color: string;
+  dateISO: string;
+  dateDisplay: string;
+  title: string;
+  body: string | null;
+  thumbnail: string | null;
+  attachment: string | null;
+  summary: string;
+  sourceName: string;
+  sourceUrl: string | null;
 }
-export interface OrgLeadershipView { label: string; person: string; note: string }
-export interface OrgFunctionView { title: string; desc: string }
-export interface OrgCenterGroupView { title: string; desc: string }
-export interface OrgTierView { tier: string; name: string; detail: string }
+export interface OrgLeadershipView {
+  label: string;
+  person: string;
+  note: string;
+}
+export interface OrgFunctionView {
+  title: string;
+  desc: string;
+}
+export interface OrgCenterGroupView {
+  title: string;
+  desc: string;
+}
+export interface OrgTierView {
+  tier: string;
+  name: string;
+  detail: string;
+}
 export interface OrganizationView {
-  eyebrow: string; title: string; lede: string;
-  leadership: OrgLeadershipView[]; functions: OrgFunctionView[];
-  centerGroups: OrgCenterGroupView[]; tiers: OrgTierView[];
+  eyebrow: string;
+  title: string;
+  lede: string;
+  leadership: OrgLeadershipView[];
+  functions: OrgFunctionView[];
+  centerGroups: OrgCenterGroupView[];
+  tiers: OrgTierView[];
 }
 export interface InquiryView {
-  eyebrow: string; title: string; lede: string;
-  coopModes: string[]; formFields: FormField[]; consentLabel: string; submitLabel: string;
+  eyebrow: string;
+  title: string;
+  lede: string;
+  coopModes: string[];
+  formFields: FormField[];
+  consentLabel: string;
+  submitLabel: string;
 }
-export interface ContactItemView { label: string; value: string }
-export interface ContactView { eyebrow: string; title: string; items: ContactItemView[]; mapEmbed: string | null; mapImage: string | null }
-export interface FooterColumnView { title: string; links: string[] }
-export interface SocialView { label: string; url: string }
-export interface FooterView { addressHtml: string; columns: FooterColumnView[]; copyright: string; social: SocialView[] }
+export interface ContactItemView {
+  label: string;
+  value: string;
+}
+export interface ContactView {
+  eyebrow: string;
+  title: string;
+  items: ContactItemView[];
+  mapEmbed: string | null;
+  mapImage: string | null;
+}
+export interface FooterColumnView {
+  title: string;
+  links: string[];
+}
+export interface SocialView {
+  label: string;
+  url: string;
+}
+export interface FooterView {
+  addressHtml: string;
+  columns: FooterColumnView[];
+  copyright: string;
+  social: SocialView[];
+}
 
 export interface HomePageData {
   site: SiteView;
@@ -72,14 +192,19 @@ export interface HomePageData {
 // 유니언으로 붕괴시킨다 → 엔트리 배열을 받아 호출 지점에서 타입이 추론되게 한다.
 
 /** 싱글톤: 단일 엔트리("main")의 data 를 반환한다. */
-function singleData<T extends { data: unknown }>(entries: T[], name: string): T["data"] {
+function singleData<T extends { data: unknown }>(
+  entries: T[],
+  name: string,
+): T["data"] {
   const entry = entries[0];
   if (!entry) throw new Error(`싱글톤 콘텐츠 누락: src/content/${name}.json`);
   return entry.data;
 }
 
 /** 목록: published 만, sort 오름차순. */
-function published<T extends { data: { status: string; sort: number } }>(entries: T[]): T[] {
+function published<T extends { data: { status: string; sort: number } }>(
+  entries: T[],
+): T[] {
   return entries
     .filter((e) => e.data.status === "published")
     .sort((a, b) => a.data.sort - b.data.sort);
@@ -87,10 +212,16 @@ function published<T extends { data: { status: string; sort: number } }>(entries
 
 // ---- 집계 조회 (index.astro 가 사용) -----------------------------------------
 export async function loadHomePageData(): Promise<HomePageData> {
-  const site = singleData(await getCollection("site_settings"), "site_settings");
+  const site = singleData(
+    await getCollection("site_settings"),
+    "site_settings",
+  );
   const hero = singleData(await getCollection("hero"), "hero");
   const about = singleData(await getCollection("about"), "about");
-  const organization = singleData(await getCollection("organization"), "organization");
+  const organization = singleData(
+    await getCollection("organization"),
+    "organization",
+  );
   const inquiry = singleData(await getCollection("inquiry"), "inquiry");
   const contact = singleData(await getCollection("contact"), "contact");
   const footer = singleData(await getCollection("footer"), "footer");
@@ -103,6 +234,8 @@ export async function loadHomePageData(): Promise<HomePageData> {
   return {
     site: {
       title: site.site_title,
+      email: site.contact_email,
+      address: site.contact_address,
       description: site.site_description,
       ogImage: site.og_image,
       headerCta: { label: site.header_cta_label, href: site.header_cta_href },
@@ -112,18 +245,29 @@ export async function loadHomePageData(): Promise<HomePageData> {
       eyebrow: hero.eyebrow,
       title: hero.title,
       lede: hero.lede,
-      ctaPrimary: { label: hero.cta_primary_label, href: hero.cta_primary_href },
-      ctaSecondary: { label: hero.cta_secondary_label, href: hero.cta_secondary_href },
+      ctaPrimary: {
+        label: hero.cta_primary_label,
+        href: hero.cta_primary_href,
+      },
+      ctaSecondary: {
+        label: hero.cta_secondary_label,
+        href: hero.cta_secondary_href,
+      },
       badgeNumber: hero.badge_number,
       badgeLabel: hero.badge_label,
       visual: hero.visual_image,
+      visualAlt: hero.visual_alt,
+      visualCaption: hero.visual_caption,
     },
     about: {
       eyebrow: about.eyebrow,
       title: about.title,
       lede: about.lede,
       pillars: about.pillars.map((p) => ({
-        mono: p.mono, color: resolveAccent(p.accent), title: p.title, desc: p.desc,
+        mono: p.mono,
+        color: resolveAccent(p.accent),
+        title: p.title,
+        desc: p.desc,
       })),
     },
     organization: {
@@ -137,26 +281,58 @@ export async function loadHomePageData(): Promise<HomePageData> {
     },
     stats: stats.map(({ data: s }) => ({ value: s.value, label: s.label })),
     centers: centers.map(({ data: c }) => ({
-      mono: c.mono, color: resolveAccent(c.accent), ko: c.name_ko, en: c.name_en,
-      desc: c.description, tag: c.tag, detailUrl: c.detail_url,
+      mono: c.mono,
+      color: resolveAccent(c.accent),
+      ko: c.name_ko,
+      en: c.name_en,
+      desc: c.description,
+      tag: c.tag,
+      detailUrl: c.detail_url,
     })),
-    members: members.map(({ data: m }) => ({
-      name: m.name, role: m.role, area: m.area,
-      color: resolveAccent(m.accent), photo: m.photo,
+    members: members.map(({ id, data: m }) => ({
+      slug: id,
+      nameEn: m.name_en,
+      email: m.email,
+      bio: m.bio,
+      profileUrl: m.profile_url,
+      featured: m.featured,
+      name: m.name,
+      role: m.role,
+      area: m.area,
+      color: resolveAccent(m.accent),
+      photo: m.photo,
     })),
-    news: news.map(({ id, data: n }) => ({
-      cat: n.category, color: resolveAccent(n.accent),
-      date: n.date.replaceAll("-", "."), title: n.title, slug: id,
-      thumbnail: n.thumbnail,
-    })),
+    news: news
+      .sort(
+        (a, b) =>
+          Number(b.data.featured) - Number(a.data.featured) ||
+          b.data.date.localeCompare(a.data.date) ||
+          a.data.sort - b.data.sort,
+      )
+      .map(({ id, data: n }) => ({
+        cat: n.category,
+        color: resolveAccent(n.accent),
+        date: n.date.replaceAll("-", "."),
+        title: n.title,
+        slug: id,
+        thumbnail: n.thumbnail,
+        summary: n.summary,
+        sourceName: n.source_name,
+        sourceUrl: n.source_url,
+        featured: n.featured,
+      })),
     inquiry: {
-      eyebrow: inquiry.eyebrow, title: inquiry.title, lede: inquiry.lede,
+      eyebrow: inquiry.eyebrow,
+      title: inquiry.title,
+      lede: inquiry.lede,
       coopModes: inquiry.coop_modes.map((m) => m.mode),
       formFields: inquiry.form_fields,
-      consentLabel: inquiry.consent_label, submitLabel: inquiry.submit_label,
+      consentLabel: inquiry.consent_label,
+      submitLabel: inquiry.submit_label,
     },
     contact: {
-      eyebrow: contact.eyebrow, title: contact.title,
+      eyebrow: contact.eyebrow,
+      title: contact.title,
       items: contact.items,
       mapEmbed: contact.map_embed || null,
       mapImage: contact.map_image,
@@ -183,6 +359,10 @@ export async function loadNewsDetails(): Promise<NewsDetailView[]> {
     title: n.title,
     body: n.body,
     thumbnail: n.thumbnail,
+    summary: n.summary,
+    sourceName: n.source_name,
+    sourceUrl: n.source_url,
+    featured: n.featured,
     attachment: n.attachment,
   }));
 }

@@ -1,0 +1,14 @@
+{
+  "name": "샘플연구자09",
+  "name_en": "Sample Researcher 9",
+  "role": "인공지능학과",
+  "area": "머신러닝, 사람 중심 AI, 다양한 길이의 연구 분야 설명",
+  "accent": "blue",
+  "featured": false,
+  "photo": null,
+  "profile_url": "https://www.ajou.ac.kr/",
+  "email": "researcher9@example.com",
+  "bio": "개발용 샘플 프로필입니다.",
+  "sort": 9,
+  "status": "published"
+}

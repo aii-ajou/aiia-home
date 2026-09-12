@@ -1,0 +1,31 @@
+{
+  "eyebrow": "About AIIA",
+  "title": "학문의 경계를 넘어,\n가능성을 현실로.",
+  "lede": "아주대학교 인공지능연구원(AIIA)은 대학의 AI 역량을 모으는 열린 연구 플랫폼입니다. 의료, 모빌리티, 제조 등 아주대학교가 쌓아온 전문성에 AI를 더해 교육·연구·산학협력의 변화를 이끕니다.",
+  "pillars": [
+    {
+      "mono": "C",
+      "accent": "blue",
+      "title": "융합",
+      "desc": "전공 경계를 넘는 AI 융합 연구를 수행합니다."
+    },
+    {
+      "mono": "A",
+      "accent": "blue-bright",
+      "title": "가속",
+      "desc": "도메인별 AX를 빠르게 현실화합니다."
+    },
+    {
+      "mono": "O",
+      "accent": "gold",
+      "title": "개방",
+      "desc": "학내·학외 모든 구성원에게 열린 플랫폼을 지향합니다."
+    },
+    {
+      "mono": "P",
+      "accent": "success",
+      "title": "실용",
+      "desc": "실질적 AX 성과 창출에 집중합니다."
+    }
+  ]
+}

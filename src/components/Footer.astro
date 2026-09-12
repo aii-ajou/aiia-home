@@ -1,121 +1,129 @@
 ---
-/**
- * Footer.astro — 하단 (주소·연락처 · 링크 컬럼 · 카피라이트 · 소셜)
- * 배경은 항상 어두운 톤(#0B1220)으로 고정합니다. 콘텐츠는 Directus 에서 온다.
- */
 import type { FooterView } from "../lib/content/queries";
-import { nl2br } from "../lib/content/html";
-interface Props { footer: FooterView }
+import { siteUrl, withBase } from "../lib/url";
+interface Props {
+  footer: FooterView;
+}
 const { footer } = Astro.props;
 ---
 
 <footer class="footer">
   <div class="aiia-container">
     <div class="footer__top">
-      <div>
-        <div class="footer__brand">
-          <img class="footer__mark" src="/brand/aiia-symbol.png" alt="" width="26" height="32" />
-          <span class="footer__name">AIIA</span>
-        </div>
-        <p class="footer__addr" set:html={nl2br(footer.addressHtml)}></p>
+      <a href={withBase("")} class="footer__brand">
+        <img
+          src={siteUrl("/brand/aiia-symbol.png")}
+          alt=""
+          width="25"
+          height="31"
+        />
+        <span>
+          <strong>AIIA</strong>
+          <span>아주대학교 인공지능연구원</span>
+        </span>
+      </a>
+      <div class="footer__links">
+        <a
+          href="https://www.ajou.ac.kr/kr/index.do"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          아주대학교 ↗
+        </a>
+        <a
+          href="https://www.ajou.ac.kr/kr/etc/privacy.do"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          개인정보처리방침 ↗
+        </a>
+        <a href={withBase("admin/")}>관리자</a>
       </div>
-      {footer.columns.map((col) => (
-        <div>
-          <div class="footer__col-title">{col.title}</div>
-          {col.links.map((l) => <a href="#top" class="footer__link">{l}</a>)}
-        </div>
-      ))}
     </div>
+    <p class="footer__address">{footer.addressHtml}</p>
     <div class="footer__bottom">
-      <span class="footer__copy">{footer.copyright}</span>
-      <div class="footer__social">
-        {footer.social.map((s) => <span>{s.label}</span>)}
-      </div>
+      <span>{footer.copyright}</span>
+      <a
+        href="#top"
+        onclick="window.scrollTo({top:0});return false"
+        aria-label="맨 위로 이동"
+      >
+        맨 위로 ↑
+      </a>
     </div>
   </div>
 </footer>
 
 <style>
+  .footer__address {
+    white-space: pre-line;
+    font-size: var(--aiia-text-caption);
+    color: var(--aiia-ink-mute);
+    margin: 0 0 24px;
+  }
   .footer {
-    background: #0b1220;
-    padding: 56px 0 40px;
+    border-top: 1px solid var(--aiia-line);
+    padding: 36px 0 24px;
+    background: var(--aiia-bg-alt);
   }
   .footer__top {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    gap: var(--aiia-space-8);
-    padding-bottom: var(--aiia-space-8);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    padding-bottom: 30px;
   }
   .footer__brand {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: var(--aiia-space-4);
+    gap: 12px;
   }
-  .footer__name {
-    font-family: var(--aiia-font-display);
-    font-weight: 700;
-    font-size: 19px;
-    color: var(--aiia-sky);
-    letter-spacing: 0.5px;
+  .footer__brand > span {
+    display: flex;
+    align-items: center;
+    gap: 15px;
   }
-  .footer__addr {
-    margin: 0;
-    font-size: 13px;
-    line-height: 1.75;
-    color: rgba(255, 255, 255, 0.6);
+  .footer__brand strong {
+    font: 700 23px var(--aiia-font-display);
+    color: var(--aiia-primary);
   }
-  .footer__col-title {
-    font-weight: 700;
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: var(--aiia-space-3);
+  .footer__brand span span {
+    font-size: var(--aiia-text-caption);
   }
-  .footer__link {
-    display: block;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    padding: 5px 0;
-    transition: color var(--aiia-dur) var(--aiia-ease);
-  }
-  .footer__link:hover {
-    color: var(--aiia-sky);
+  .footer__links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: var(--aiia-text-small);
+    color: var(--aiia-ink-soft);
   }
   .footer__bottom {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--aiia-space-4);
-    padding-top: var(--aiia-space-6);
-  }
-  .footer__copy {
-    font-family: var(--aiia-font-display);
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.45);
-  }
-  .footer__social {
-    display: flex;
-    gap: 10px;
-  }
-  .footer__social span {
-    width: 34px;
-    height: 34px;
-    border-radius: var(--aiia-r-full);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid var(--aiia-line);
+    padding-top: 20px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-family: var(--aiia-font-display);
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.7);
+    gap: 25px;
+    color: var(--aiia-ink-mute);
+    font-size: var(--aiia-text-small);
   }
-
-  @media (max-width: 900px) {
+  .footer__bottom > span {
+    margin-right: auto;
+    font: 400 var(--aiia-text-caption) var(--aiia-font-display);
+  }
+  @media (max-width: 720px) {
     .footer__top {
-      grid-template-columns: 1fr 1fr;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .footer__bottom {
+      flex-wrap: wrap;
+      gap: 10px 20px;
+    }
+    .footer__bottom > span {
+      width: 100%;
+    }
+    .footer__brand > span {
+      gap: 10px;
     }
   }
 </style>

@@ -1,0 +1,536 @@
+---
+import Base from "../../layouts/Base.astro";
+import { loadHomePageData } from "../../lib/content/queries";
+import { withBase, siteUrl } from "../../lib/url";
+const data = await loadHomePageData();
+import {
+  cmsRoot,
+  cmsCollection,
+  cmsNew,
+  cmsEntry,
+  cmsFile,
+  cmsMedia,
+  deploymentUrl,
+} from "../../lib/cms";
+const missingPhotos = data.members.filter((m) => !m.photo);
+---
+
+<Base title="콘텐츠 관리 · AIIA" noindex>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <a class="admin-brand" href={withBase("admin/")}>
+        <img
+          src={siteUrl("/brand/aiia-symbol.png")}
+          alt=""
+          width="29"
+          height="36"
+        />
+        <strong>
+          AIIA <small>콘텐츠 관리</small>
+        </strong>
+      </a>
+      <nav aria-label="콘텐츠 관리 메뉴">
+        <a href={withBase("admin/")} aria-current="page">
+          관리 홈 <span>⌂</span>
+        </a>
+        <a href={cmsCollection("news")}>
+          소식 관리 <span>↗</span>
+        </a>
+        <a href={cmsCollection("members")}>
+          연구자 정보 <span>↗</span>
+        </a>
+        <a href={cmsFile("hero")}>
+          페이지 편집 <span>↗</span>
+        </a>
+        <a href={cmsCollection("centers")}>
+          연구 분야 <span>↗</span>
+        </a>
+        <a href={cmsMedia}>
+          사진·파일 <span>↗</span>
+        </a>
+      </nav>
+      <a class="admin-site" href={withBase("")} target="_blank" rel="noopener">
+        홈페이지 보기 ↗
+      </a>
+    </aside>
+    <main id="main" class="admin-main">
+      <header>
+        <div>
+          <p class="eyebrow">AIIA CONTENT STUDIO</p>
+          <h1>안녕하세요, 오늘은 어떤 소식을 전할까요?</h1>
+          <p>Pages CMS에서 소식과 연구자 정보, 홈페이지의 문구를 편집하세요.</p>
+        </div>
+        <a class="btn btn--primary" href={cmsNew("news")}>
+          + 새 소식 작성
+        </a>
+      </header>
+      <div class="admin-stats">
+        <a href={cmsCollection("news")}>
+          <span>게시된 소식</span>
+          <strong>
+            {data.news.length}
+            <small>건</small>
+          </strong>
+        </a>
+        <a href={cmsCollection("members")}>
+          <span>함께하는 연구자</span>
+          <strong>
+            {data.members.length}
+            <small>명</small>
+          </strong>
+        </a>
+        <a href="#photo-check">
+          <span>사진 등록이 필요한 연구자</span>
+          <strong>
+            {missingPhotos.length}
+            <small>명</small>
+          </strong>
+        </a>
+      </div>
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>자주 하는 작업</h2>
+          <span>필요한 편집 화면으로 바로 이동합니다</span>
+        </div>
+        <div class="quick-grid">
+          <a href={cmsNew("news")}>
+            <span>01</span>
+            <h3>소식 올리기 ↗</h3>
+            <p>
+              학교 소식이나 기사 주소, 요약과 사진을 넣어 새로운 소식을
+              전하세요.
+            </p>
+          </a>
+          <a href={cmsCollection("members")}>
+            <span>02</span>
+            <h3>연구자 정보 수정 ↗</h3>
+            <p>
+              교수 사진, 소속, 연구 분야를 수정하고 홈에 소개할 연구자를
+              선택하세요.
+            </p>
+          </a>
+          <a href={cmsFile("hero")}>
+            <span>03</span>
+            <h3>첫 화면 바꾸기 ↗</h3>
+            <p>대표 문구와 캠퍼스 사진을 수정하세요.</p>
+          </a>
+        </div>
+      </section>
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>최근 게시된 소식</h2>
+          <a href={cmsCollection("news")}>전체 관리 ↗</a>
+        </div>
+        <div class="admin-news">
+          {data.news.slice(0, 5).map((n) => (
+            <div>
+              <span class="tag">{n.cat}</span>
+              <a href={cmsEntry("news", n.slug)}>{n.title}</a>
+              <time>{n.date}</time>
+              <a class="edit-link" href={cmsEntry("news", n.slug)}>
+                수정 ↗
+              </a>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section id="photo-check" class="admin-panel">
+        <div class="panel-head">
+          <h2>연구자 사진 점검</h2>
+          <span>사진이 없는 프로필부터 확인하세요</span>
+        </div>
+        {missingPhotos.length ? (
+          <div class="photo-check">
+            {missingPhotos.map((m) => (
+              <a href={cmsEntry("members", m.slug)}>
+                <span class="initial">{m.name.slice(0, 1)}</span>
+                <span>
+                  <strong>{m.name}</strong>
+                  <small>{m.role}</small>
+                </span>
+                <span>사진 등록 ↗</span>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p>모든 연구자 사진이 등록되어 있습니다.</p>
+        )}
+      </section>
+      <section class="admin-guide">
+        <p>
+          <a class="text-link" href={cmsRoot}>
+            Pages CMS 열기 ↗
+          </a>{" "}
+          ·{" "}
+          <a class="text-link" href={deploymentUrl}>
+            배포 상태 확인 ↗
+          </a>
+        </p>
+        <h2>편집부터 게시까지</h2>
+        <ol>
+          <li>
+            <strong>내용 작성</strong>
+            <span>
+              사진은 직접 업로드하고, 외부 소식은 원문 주소와 요약을 입력하세요.
+            </span>
+          </li>
+          <li>
+            <strong>내용과 사진 확인</strong>
+            <span>Pages CMS 편집 화면에서 제목, 사진, 요약을 확인하세요.</span>
+          </li>
+          <li>
+            <strong>게시 상태 선택 후 저장</strong>
+            <span>
+              작업 중에는 임시저장, 공개할 때는 게시를 선택하세요. 저장 후
+              배포가 완료되면 홈페이지에 반영됩니다.
+            </span>
+          </li>
+        </ol>
+        <p>
+          이 화면은 마지막 빌드 기준입니다. 최신 편집 내용과 임시저장 글은 Pages
+          CMS에서 확인할 수 있습니다. 로컬 개발용 샘플을 사용하는 경우 운영
+          내용과 다릅니다.
+        </p>
+      </section>
+    </main>
+  </div>
+</Base>
+<style>
+  .admin-shell {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    min-height: 100vh;
+    background: var(--aiia-bg-alt);
+  }
+  .admin-sidebar {
+    padding: 35px 22px;
+    border-right: 1px solid var(--aiia-line);
+    background: var(--aiia-bg);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .admin-brand strong {
+    font: 700 25px var(--aiia-font-display);
+    color: var(--aiia-primary);
+  }
+  .admin-brand small {
+    display: block;
+    font: 400 10px var(--aiia-font-sans);
+    color: var(--aiia-ink-mute);
+    margin-top: 4px;
+  }
+  .admin-sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .admin-sidebar nav a {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 14px;
+    font-size: 13px;
+    border-radius: 5px;
+  }
+  .admin-sidebar nav a[aria-current],
+  .admin-sidebar nav a:hover {
+    background: var(--aiia-brand-tint);
+    color: var(--aiia-primary);
+  }
+  .admin-site {
+    margin-top: auto;
+    padding: 16px 14px;
+    border-top: 1px solid var(--aiia-line);
+    font-size: 12px;
+  }
+  .admin-main {
+    width: 100%;
+    max-width: 1300px;
+    padding: 48px 54px;
+  }
+  .admin-main header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 36px;
+  }
+  .admin-main header .eyebrow {
+    margin-bottom: 14px;
+  }
+  .admin-main h1 {
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    margin-bottom: 10px;
+  }
+  .admin-main header p:last-child {
+    font-size: 12px;
+    color: var(--aiia-ink-soft);
+    margin-bottom: 0;
+  }
+  .admin-main header .btn {
+    flex-shrink: 0;
+  }
+  .admin-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+  .admin-stats a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: var(--aiia-surface);
+    padding: 24px;
+    border: 1px solid var(--aiia-line);
+    border-radius: 8px;
+  }
+  .admin-stats span {
+    font-size: 12px;
+    color: var(--aiia-ink-soft);
+  }
+  .admin-stats strong {
+    font: 500 32px var(--aiia-font-display);
+    color: var(--aiia-primary);
+  }
+  .admin-stats small {
+    font: 400 11px var(--aiia-font-sans);
+    margin-left: 6px;
+  }
+  .admin-panel {
+    padding: 28px;
+    background: var(--aiia-surface);
+    border: 1px solid var(--aiia-line);
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .panel-head h2,
+  .admin-guide h2 {
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .panel-head > span,
+  .panel-head > a {
+    font-size: 11px;
+    color: var(--aiia-ink-mute);
+  }
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .quick-grid > a {
+    padding: 22px;
+    background: var(--aiia-bg);
+    border: 1px solid var(--aiia-line);
+    border-radius: 5px;
+  }
+  .quick-grid > a:hover {
+    border-color: var(--aiia-primary);
+  }
+  .quick-grid > a > span {
+    color: var(--aiia-primary);
+    font-size: 11px;
+  }
+  .quick-grid h3 {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 18px 0 10px;
+  }
+  .quick-grid p {
+    font-size: 12px;
+    color: var(--aiia-ink-soft);
+    margin: 0;
+  }
+  .admin-news > div {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 17px 0;
+    border-top: 1px solid var(--aiia-line);
+  }
+  .admin-news > div > a:not(.edit-link) {
+    font-size: 13px;
+    flex: 1;
+  }
+  .admin-news time {
+    font-size: 10px;
+    color: var(--aiia-ink-mute);
+  }
+  .edit-link {
+    font-size: 11px;
+    color: var(--aiia-primary);
+    white-space: nowrap;
+  }
+  .photo-check {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .photo-check > a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    background: var(--aiia-bg-alt);
+  }
+  .initial {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 44px;
+    background: var(--aiia-surface-2);
+    color: var(--aiia-ink-mute);
+  }
+  .photo-check strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .photo-check small {
+    display: block;
+    font-size: 10px;
+    color: var(--aiia-ink-mute);
+  }
+  .photo-check > a > span:last-child {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--aiia-primary);
+  }
+  .admin-guide {
+    padding: 24px 4px;
+  }
+  .admin-guide ol {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    padding-left: 20px;
+  }
+  .admin-guide li {
+    padding-left: 3px;
+    font-size: 12px;
+    color: var(--aiia-primary);
+  }
+  .admin-guide li strong {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .admin-guide li span {
+    color: var(--aiia-ink-soft);
+    font-size: 11px;
+  }
+  .admin-guide > p {
+    font-size: 10px;
+    color: var(--aiia-ink-mute);
+    margin: 28px 0 0;
+  }
+  @media (max-width: 1100px) {
+    .admin-shell {
+      grid-template-columns: 190px 1fr;
+    }
+    .admin-main {
+      padding: 32px 28px;
+    }
+    .admin-main header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .quick-grid {
+      gap: 12px;
+    }
+    .admin-stats a {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 20px;
+    }
+    .admin-news time {
+      display: none;
+    }
+  }
+  @media (max-width: 760px) {
+    .admin-shell {
+      display: block;
+    }
+    .admin-sidebar {
+      position: static;
+      height: auto;
+      padding: 20px;
+    }
+    .admin-brand {
+      margin-bottom: 20px;
+    }
+    .admin-sidebar nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .admin-sidebar nav a {
+      font-size: 11px;
+      padding: 8px 12px;
+      gap: 10px;
+    }
+    .admin-site {
+      display: none;
+    }
+    .admin-main {
+      padding: 28px 20px;
+    }
+    .admin-main h1 {
+      font-size: 24px;
+    }
+    .admin-stats {
+      gap: 10px;
+    }
+    .admin-stats a {
+      padding: 14px;
+    }
+    .admin-stats span {
+      font-size: 10px;
+    }
+    .admin-stats strong {
+      font-size: 25px;
+    }
+    .admin-panel {
+      padding: 20px;
+    }
+    .quick-grid,
+    .photo-check,
+    .admin-guide ol {
+      grid-template-columns: 1fr;
+    }
+    .panel-head > span {
+      display: none;
+    }
+    .admin-news > div {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .admin-news > div > a:not(.edit-link) {
+      min-width: 70%;
+    }
+    .edit-link {
+      margin-left: auto;
+    }
+  }
+</style>

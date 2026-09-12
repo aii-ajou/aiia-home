@@ -24,3 +24,13 @@ pnpm-debug.log*
 
 # 내부 참고 자료(전략 PDF 등) — 저장소에 공개하지 않음
 materials/
+
+# browser verification artifacts
+playwright-report/
+test-results/
+
+# Generated working content and separate, private content checkout
+/src/content/
+/public/uploads/
+/.content-repository/
+/.aiia/

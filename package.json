@@ -5,7 +5,7 @@
   "private": true,
   "description": "Homepage for AIIA (AI Institute of Ajou University)",
   "engines": {
-    "node": "^18.20.8 || ^20.3.0 || >=22.0.0"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "dev": "astro dev",
@@ -14,14 +14,30 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "admin:local": "PORT=8200 npx -y decap-server"
+    "test:e2e": "playwright test",
+    "format": "prettier --write .",
+    "test:pages": "GITHUB_PAGES=true AIIA_TEST_BASE_PATH=/aiia-home playwright test",
+    "verify:build": "node scripts/verify-built.mjs",
+    "predev": "node scripts/prepare-content.mjs",
+    "prestart": "node scripts/prepare-content.mjs",
+    "prebuild": "node scripts/prepare-content.mjs",
+    "precheck": "node scripts/prepare-content.mjs",
+    "pretest:e2e": "node scripts/prepare-content.mjs",
+    "pretest:pages": "node scripts/prepare-content.mjs",
+    "content:use": "node scripts/select-content.mjs",
+    "content:sample": "node scripts/select-content.mjs fixtures",
+    "content:fetch": "node scripts/fetch-content.mjs",
+    "test:content": "node --test tests/content/*.test.mjs"
   },
   "dependencies": {
     "astro": "^7.0.4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^26.1.0",
+    "prettier": "^3.9.6",
+    "prettier-plugin-astro": "^1.0.0",
     "typescript": "^5.6.0"
   },
   "comments": {

@@ -3,18 +3,51 @@ name: Update AIIA website
 on:
   push:
     branches: [main]
-    paths: ["content/**", "uploads/**", "content-manifest.json"]
+    paths:
+      [
+        "content/**",
+        "uploads/**",
+        "media-archive/**",
+        "content-manifest.json",
+        ".pages.yml",
+        "scripts/reconcile-media.mjs",
+        ".github/workflows/publish-site.yml",
+      ]
+  schedule:
+    - cron: "23 */6 * * *"
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: notify-site
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Organize media and archive unused files
+        id: media
+        run: |
+          node scripts/reconcile-media.mjs --apply > "$RUNNER_TEMP/media-report.json"
+          cat "$RUNNER_TEMP/media-report.json" >> "$GITHUB_STEP_SUMMARY"
+          git add content uploads media-state.json
+          if [ -d media-archive ]; then git add media-archive; fi
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Organize media and preserve unused files'
+            # A concurrent CMS save rejects this push. Never rebase a stale usage scan.
+            git push origin HEAD:main
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          fi
       - name: Request website deployment
+        if: github.event_name != 'schedule' || steps.media.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.SITE_DEPLOY_TOKEN }}
         run: |

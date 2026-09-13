@@ -255,3 +255,45 @@ test("cached CMS options remain valid across diagram revisions; stale preview ve
   assert.equal(published.review_version, undefined);
   assert.equal(published.review_approval, undefined);
 });
+
+test("a new diagram style regenerates previews while previous approved snapshots remain readable", async (t) => {
+  const { source, image, read, save } = await setup(t);
+  const published = await publicOrganization(source);
+  const legacyHash = chartHash(published, 1);
+  const statePath = join(source, "organization-review/state.json");
+  const currentState = JSON.parse(await readFile(statePath, "utf8"));
+  await cp(
+    join(
+      source,
+      "organization-review/previews",
+      `${currentState.preview_hash}.png`,
+    ),
+    join(source, "organization-review/previews", `${legacyHash}.png`),
+  );
+  await rm(
+    join(
+      source,
+      "organization-review/previews",
+      `${currentState.preview_hash}.png`,
+    ),
+  );
+  await writeFile(
+    statePath,
+    JSON.stringify({
+      version: 1,
+      preview_hash: legacyHash,
+      published_hash: legacyHash,
+    }),
+  );
+  let draft = await read();
+  draft.review_version = legacyHash;
+  await save(draft);
+  assert.deepEqual(await publicOrganization(source), published);
+  const plan = await reviewPlan(source);
+  assert.equal(plan.needsPreview, true);
+  assert.equal(plan.approved, false);
+  assert.notEqual(plan.hash, legacyHash);
+  await applyReview(source, { image, expectedHash: plan.hash });
+  assert.deepEqual(await publicOrganization(source), published);
+  assert.equal((await reviewPlan(source)).needsPreview, false);
+});

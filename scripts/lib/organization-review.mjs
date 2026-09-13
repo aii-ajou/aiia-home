@@ -2,6 +2,8 @@ import { createHash } from "node:crypto";
 import { readFile, writeFile, mkdir, copyFile, access } from "node:fs/promises";
 import { join } from "node:path";
 
+// Increment when the rendered diagram changes, retaining old snapshot verification.
+export const chartVersion = 2;
 export const reviewFolder = "organization-review";
 export const publishedFile = `${reviewFolder}/published.json`;
 const stateFile = `${reviewFolder}/state.json`;
@@ -31,7 +33,9 @@ export function withoutReview(data) {
 
 // Include exactly the fields visible or interactive in OrganizationChart. Group
 // order is fixed by the layout, so moving an item past a different group is inert.
-export function chartData(data) {
+export function chartData(data, version = chartVersion) {
+  if (![1, chartVersion].includes(version))
+    throw new Error("지원하지 않는 조직도 형식입니다.");
   const nodes = data.nodes ?? [];
   if (!Array.isArray(nodes)) throw new Error("조직 구성은 목록이어야 합니다.");
   for (const node of nodes) {
@@ -54,7 +58,7 @@ export function chartData(data) {
         detail_url: text(node.detail_url),
       }));
   return {
-    version: 1,
+    version,
     root_name: data.root_name ?? "AIIA",
     root_description: data.root_description || "인공지능연구원",
     root_leader: text(data.root_leader),
@@ -65,9 +69,9 @@ export function chartData(data) {
     centers: group("di"),
   };
 }
-export function chartHash(data) {
+export function chartHash(data, version = chartVersion) {
   return createHash("sha256")
-    .update(JSON.stringify(chartData(data)))
+    .update(JSON.stringify(chartData(data, version)))
     .digest("hex");
 }
 
@@ -134,6 +138,7 @@ export async function applyReview(
   const published = publish ? withoutReview(plan.draft) : plan.published;
   const state = {
     version: 1,
+    chart_version: chartVersion,
     preview_hash: plan.hash,
     published_hash: chartHash(published),
     generated_at:
@@ -165,7 +170,7 @@ export async function publicOrganization(root) {
   const state = await optionalJson(join(root, stateFile));
   if (!state) return null; // Legacy and sample sources remain compatible.
   const published = await readJson(join(root, publishedFile));
-  if (chartHash(published) !== state.published_hash)
+  if (chartHash(published, state.chart_version ?? 1) !== state.published_hash)
     throw new Error("승인된 조직도 데이터가 일치하지 않습니다.");
   return withoutReview(published);
 }

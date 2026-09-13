@@ -98,7 +98,7 @@ for (const width of [390, 768, 1050, 1440, 1920])
     const container = page.locator(".chart-canvas");
     await expect(container).toBeVisible();
     await expect(
-      page.locator('.chart-canvas [data-relation="d"] .node-kind'),
+      page.locator(".chart-canvas [data-relation] .node-kind"),
     ).toHaveCount(0);
     await expect(page.locator(".mobile-chart")).toHaveCount(0);
     await expect(

@@ -28,10 +28,10 @@
 - 비공개 콘텐츠 저장소의 `content/organization.json`은 CMS 편집본, `organization-review/published.json`은 마지막 승인본입니다. `state.json`에는 그림 입력의 SHA-256 버전을 기록합니다.
 - 그림은 `organization-review/previews/<hash>.png`에 보관하고 CMS의 읽기 전용 본문 필드에서 확인합니다. 미리보기 이미지와 승인 제어 필드는 공개 빌드에 포함하지 않습니다.
 - 콘텐츠 저장 작업은 최신 코드 저장소의 `scripts/review-organization.mjs`로 변경 여부를 비교합니다. 새 그림이 필요할 때만 Chromium과 한글 폰트를 설치하고 `scripts/render-organization-preview.mjs`로 실제 홈페이지의 조직도를 캡처합니다.
-- 그림·승인 선택지·공개본은 하나의 커밋으로 저장합니다. 생성 중 다른 편집이 저장되면 오래된 결과의 push는 거부되며, 다음 실행이 최신 내용을 처리합니다.
+- 그림·검토 버전·공개본은 하나의 커밋으로 저장합니다. 생성 중 다른 편집이 저장되면 오래된 결과의 push는 거부되며, 다음 실행이 최신 내용을 처리합니다.
 - 공개 빌드는 반드시 승인본을 사용합니다. 승인본이 없거나 기록된 버전과 다르면 실패합니다. 검토 상태를 아직 설치하지 않은 옛 콘텐츠와 샘플은 이전 방식과 호환됩니다.
 - 설명·사진만 바뀌면 승인본을 갱신하되 그림은 재사용합니다. 미디어 정리는 편집본과 승인본 모두에서 사진 참조를 확인하여, 승인 대기 때문에 현재 공개 사진이 보관함으로 이동하지 않도록 합니다.
-- 개발자 설치 파일: `cms/pages.yml` → `.pages.yml`, `cms/publish-site.yml` → `.github/workflows/publish-site.yml`, `cms/reconcile-media.mjs` → `scripts/reconcile-media.mjs`. 승인 선택지는 작업이 동적으로 갱신합니다.
+- 개발자 설치 파일: `cms/pages.yml` → `.pages.yml`, `cms/publish-site.yml` → `.github/workflows/publish-site.yml`, `cms/reconcile-media.mjs` → `scripts/reconcile-media.mjs`. 승인 선택값은 `pending` / `approved`로 고정합니다. 읽기 전용 `review_version`이 현재 그림 버전과 일치해야 승인됩니다. 그림 변경 때 CMS 설정을 수정하지 않으므로 이전 허용 목록에 따른 저장 오류를 방지합니다.
 - 최초 설치 시 사용자가 확인한 초기 데이터에 대해서만 `apply --bootstrap-approved --hash HASH --image PNG`로 승인본을 만듭니다. 이후 운영에는 초기화 옵션을 사용하지 않습니다. 레이아웃 코드 변경으로 그림 형식이 바뀌면 `chartData`의 버전을 올려 새 미리보기를 생성합니다.
 
 개발용 미리보기 빌드에는 `AIIA_ORGANIZATION_PREVIEW=true`를 사용합니다. 운영 배포와 함께 이 옵션을 사용하면 빌드를 거부합니다.

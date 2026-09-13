@@ -6,7 +6,12 @@ export const reviewFolder = "organization-review";
 export const publishedFile = `${reviewFolder}/published.json`;
 const stateFile = `${reviewFolder}/state.json`;
 const text = (value) => value ?? "";
-const controls = ["review_status", "review_preview", "review_approval"];
+const controls = [
+  "review_status",
+  "review_preview",
+  "review_approval",
+  "review_version",
+];
 const readJson = async (path) => JSON.parse(await readFile(path, "utf8"));
 async function optionalJson(path) {
   try {
@@ -83,7 +88,8 @@ export async function reviewPlan(root) {
   const approved =
     !needsPreview &&
     state?.preview_hash === hash &&
-    draft.review_approval === hash;
+    draft.review_approval === "approved" &&
+    draft.review_version === hash;
   return {
     draft,
     hash,
@@ -111,16 +117,6 @@ export async function applyReview(
     throw new Error("새 조직도 그림을 먼저 생성해야 합니다.");
   if (image && !expectedHash)
     throw new Error("생성한 그림의 대상 버전이 필요합니다.");
-  const configPath = join(root, ".pages.yml");
-  let config = await readFile(configPath, "utf8");
-  const marker =
-    /          # organization-approval:start[\s\S]*?          # organization-approval:end/;
-  if (!marker.test(config))
-    throw new Error("CMS 조직도 승인 설정을 설치하세요.");
-  config = config.replace(
-    marker,
-    `          # organization-approval:start\n          values:\n            - name: pending\n              label: 검토 중 · 공개하지 않음\n            - name: "${plan.hash}"\n              label: "이 그림 확인 · 공개 승인 (${plan.hash.slice(0, 8)})"\n          # organization-approval:end`,
-  );
   const publish = bootstrap || plan.alreadyPublished || plan.approved;
   if (!publish && !plan.published)
     throw new Error("기존 공개 조직도를 먼저 초기화하세요.");
@@ -151,12 +147,12 @@ export async function applyReview(
       ? "공개 승인 완료. 자동 배포 후 홈페이지에 반영됩니다."
       : "새 조직도 그림이 준비됐습니다. 아래 그림을 확인한 뒤 공개 승인을 선택하고 저장하세요.",
     review_preview: `![조직도 검토 그림 — ${plan.hash.slice(0, 8)}](/${plan.preview})`,
-    review_approval: publish ? plan.hash : "pending",
+    review_version: plan.hash,
+    review_approval: publish ? "approved" : "pending",
   };
   await save(join(root, publishedFile), published);
   await save(join(root, stateFile), state);
   await save(join(root, "content/organization.json"), draft);
-  await writeFile(configPath, config);
   return {
     hash: plan.hash,
     generated: plan.needsPreview,

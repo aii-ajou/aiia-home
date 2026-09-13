@@ -1,9 +1,6 @@
 ---
 import type { OrganizationView } from "../lib/content/queries";
-import {
-  layoutOrganization,
-  relationLabels,
-} from "../lib/content/organization";
+import { layoutOrganization } from "../lib/content/organization";
 import { siteUrl } from "../lib/url";
 interface Props {
   organization: OrganizationView;
@@ -68,9 +65,6 @@ const minScale = 0.8;
               data-relation={node.relation}
               title={node.description || undefined}
             >
-              {node.relation !== "d" && (
-                <span class="node-kind">{relationLabels[node.relation]}</span>
-              )}
               <strong>
                 {node.name}
                 {node.detailUrl && <span aria-hidden="true"> ↗</span>}

@@ -8,6 +8,7 @@ on:
         "content/**",
         "uploads/**",
         "media-archive/**",
+        "organization-review/**",
         "content-manifest.json",
         ".pages.yml",
         "scripts/reconcile-media.mjs",
@@ -28,20 +29,57 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+      - uses: actions/checkout@v4
+        with:
+          repository: aii-ajou/aiia-home
+          ref: main
+          path: .website
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - name: Organize media and archive unused files
-        id: media
         run: |
           node scripts/reconcile-media.mjs --apply > "$RUNNER_TEMP/media-report.json"
           cat "$RUNNER_TEMP/media-report.json" >> "$GITHUB_STEP_SUMMARY"
-          git add content uploads media-state.json
+      - name: Check organization diagram changes
+        id: organization
+        run: node .website/scripts/review-organization.mjs plan .
+      - name: Install preview renderer
+        if: steps.organization.outputs.needs_preview == 'true'
+        working-directory: .website
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          sudo apt-get install -y fonts-nanum
+      - name: Generate organization diagram for review
+        if: steps.organization.outputs.needs_preview == 'true'
+        working-directory: .website
+        env:
+          AIIA_ORGANIZATION_PREVIEW: "true"
+          AIIA_REQUIRE_CONTENT: "false"
+        run: |
+          AIIA_CONTENT_SOURCE="$GITHUB_WORKSPACE" npm run build
+          node scripts/render-organization-preview.mjs "$RUNNER_TEMP/organization-preview.png"
+      - name: Update CMS preview and apply approved organization
+        env:
+          REVIEW_HASH: ${{ steps.organization.outputs.hash }}
+          NEEDS_PREVIEW: ${{ steps.organization.outputs.needs_preview }}
+        run: |
+          if [ "$NEEDS_PREVIEW" = 'true' ]; then
+            node .website/scripts/review-organization.mjs apply . --hash "$REVIEW_HASH" --image "$RUNNER_TEMP/organization-preview.png"
+          else
+            node .website/scripts/review-organization.mjs apply . --hash "$REVIEW_HASH"
+          fi
+      - name: Save media and organization review state
+        id: media
+        run: |
+          git add content uploads media-state.json organization-review .pages.yml
           if [ -d media-archive ]; then git add media-archive; fi
           if ! git diff --cached --quiet; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git commit -m 'Organize media and preserve unused files'
+            git commit -m 'Update organization review and organize media'
             # A concurrent CMS save rejects this push. Never rebase a stale usage scan.
             git push origin HEAD:main
             echo 'changed=true' >> "$GITHUB_OUTPUT"

@@ -72,6 +72,12 @@ media:
       - pptx
       - xlsx
     rename: safe
+  - name: organization_previews
+    label: 조직도 검토 그림
+    input: organization-review/previews
+    output: /organization-review/previews
+    extensions:
+      - png
 settings:
   content:
     merge: true
@@ -404,6 +410,28 @@ content:
     path: content/organization.json
     format: json
     fields:
+      - name: review_status
+        label: 조직도 검토 상태
+        type: text
+        readonly: true
+        description: 조직도 내용을 수정하고 Save하면 그림을 자동 생성합니다. 생성이 끝난 뒤 화면을 새로고침하고 그림을 확인하세요. 승인 전에는 기존 공개 조직도가 유지됩니다.
+      - name: review_preview
+        label: 생성된 조직도 · 확인 후 아래에서 승인
+        type: rich-text
+        readonly: true
+        options:
+          media: organization_previews
+      - name: review_approval
+        label: 조직도 공개 승인
+        type: select
+        default: pending
+        description: 위 그림을 확인한 뒤 해당 그림의 공개 승인을 선택하고 Save하세요. 내용을 다시 바꾸면 새 그림 확인이 필요합니다.
+        options:
+          # organization-approval:start
+          values:
+            - name: pending
+              label: 검토 중 · 공개하지 않음
+          # organization-approval:end
       - name: eyebrow
         label: 상단 소제목
         type: string
@@ -416,23 +444,69 @@ content:
         label: 소개 문단
         type: text
         required: true
-      - name: leadership
-        label: 지배구조(원장·운영위원회)
-        type: object
+      - name: root_name
+        label: 중심 조직 이름
+        type: string
         required: true
-        list: true
+        default: AIIA
+      - name: root_description
+        label: 중심 조직 설명
+        type: string
+      - name: root_leader
+        label: 연구원 책임자(선택)
+        type: string
+      - name: nodes
+        label: 조직 구성
+        type: object
+        description: 조직을 추가하고 종류를 선택하세요. 같은 종류 안에서는 목록 순서로 배치합니다. 연구 분야 소개와 별도로 관리합니다.
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{fields.name}"
         fields:
-          - name: label
-            label: 명칭
+          - name: name
+            label: 조직명
             type: string
             required: true
-          - name: person
-            label: 인선(이름·확정 시 입력)
-            type: string
-          - name: note
-            label: 설명
-            type: string
+          - name: relation
+            label: 종류(관계)
+            type: select
             required: true
+            default: d
+            options:
+              values:
+                - name: h
+                  label: 상위기관
+                - name: p
+                  label: 협력기관
+                - name: c
+                  label: 위원회
+                - name: s
+                  label: 스탭·행정 부서
+                - name: d
+                  label: 일반·도메인 센터
+                - name: i
+                  label: 기업 브랜드 센터
+          - name: description
+            label: 역할·소개(선택)
+            type: text
+          - name: leader
+            label: 책임자 이름(선택)
+            type: string
+          - name: photo
+            label: 그림·사진(선택)
+            type: image
+            options:
+              media: images
+          - name: detail_url
+            label: 상세 페이지 주소(선택)
+            type: string
+            description: 외부 홈페이지 또는 이 사이트 안의 상세 페이지 주소를 입력하세요. 비워 두면 링크 없이 표시합니다.
+          - name: visible
+            label: 조직도에 표시
+            type: boolean
+            required: true
+            default: true
       - name: functions
         label: 연구기획 TF 기능
         type: object
@@ -441,21 +515,6 @@ content:
         fields:
           - name: title
             label: 기능명
-            type: string
-            required: true
-          - name: desc
-            label: 설명
-            type: text
-            required: true
-      - name: center_groups
-        label: 연구센터 유형
-        type: object
-        required: true
-        description: 개별 센터는 수요에 따라 유연하게 설치되므로 유형·설명만 기재
-        list: true
-        fields:
-          - name: title
-            label: 유형명
             type: string
             required: true
           - name: desc
@@ -564,7 +623,7 @@ content:
         type: string
         required: true
   - name: centers
-    label: 연구센터
+    label: 연구 분야
     type: collection
     path: content/centers
     format: json
@@ -600,11 +659,11 @@ content:
         default: blue
         hidden: true
       - name: name_ko
-        label: 센터명(한글)
+        label: 연구 분야명(한글)
         type: string
         required: true
       - name: name_en
-        label: 센터명(영문)
+        label: 연구 분야명(영문)
         type: string
         required: true
       - name: description

@@ -44,6 +44,7 @@ async function workspace(t) {
 
 function edit(data, fields, scenario) {
   for (const field of fields) {
+    if (field.readonly) continue;
     if (field.type === "object") {
       if (scenario === "omitted" && field.list) data[field.name] = [];
       else

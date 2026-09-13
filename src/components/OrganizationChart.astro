@@ -1,0 +1,223 @@
+---
+import type { OrganizationView } from "../lib/content/queries";
+import {
+  layoutOrganization,
+  relationLabels,
+} from "../lib/content/organization";
+import { siteUrl } from "../lib/url";
+interface Props {
+  organization: OrganizationView;
+}
+const { organization: o } = Astro.props;
+const chart = layoutOrganization(o.nodes);
+const position = (box: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}) =>
+  `left:${box.x}px;top:${box.y}px;width:${box.width}px;min-height:${box.height}px`;
+const minScale = 0.8;
+---
+
+<figure class="org-chart" aria-label={`${o.rootName} 조직도`}>
+  <div
+    class="chart-scroll"
+    data-width={chart.width}
+    data-height={chart.height}
+    data-min-scale={minScale}
+    tabindex="0"
+    role="region"
+    aria-label="조직도. 폭이 넓으면 좌우로 스크롤할 수 있습니다."
+  >
+    <div
+      class="chart-frame"
+      style={`width:${chart.width}px;height:${chart.height}px`}
+    >
+      <div
+        class="chart-canvas"
+        style={`width:${chart.width}px;height:${chart.height}px`}
+      >
+        <svg
+          width={chart.width}
+          height={chart.height}
+          viewBox={`0 0 ${chart.width} ${chart.height}`}
+          aria-hidden="true"
+        >
+          {chart.lines.map((line) => (
+            <path d={line.path} class:list={{ peer: line.peer }} />
+          ))}
+        </svg>
+        <div
+          class="chart-node root-node"
+          style={position(chart.root)}
+          data-org-root
+        >
+          <span class="node-kind">{o.rootDescription || "인공지능연구원"}</span>
+          <strong>{o.rootName}</strong>
+          {o.rootLeader && <span class="node-leader">{o.rootLeader}</span>}
+        </div>
+        {chart.boxes.map((box) => {
+          const node = o.nodes[box.index];
+          const Tag = node.detailUrl ? "a" : "div";
+          return (
+            <Tag
+              class="chart-node"
+              style={position(box)}
+              href={node.detailUrl ? siteUrl(node.detailUrl) : undefined}
+              data-relation={node.relation}
+              title={node.description || undefined}
+            >
+              {node.relation !== "d" && (
+                <span class="node-kind">{relationLabels[node.relation]}</span>
+              )}
+              <strong>
+                {node.name}
+                {node.detailUrl && <span aria-hidden="true"> ↗</span>}
+              </strong>
+              {node.leader && (
+                <span class="node-leader">책임자 · {node.leader}</span>
+              )}
+            </Tag>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+  <p class="chart-scroll-hint">좌우로 스크롤해 전체 조직도를 볼 수 있습니다.</p>
+  {o.nodes.some((node) => node.relation === "p") && (
+    <figcaption>실선은 조직 관계, 점선은 협력 관계를 나타냅니다.</figcaption>
+  )}
+</figure>
+<style>
+  .org-chart {
+    margin: 0;
+  }
+  .chart-scroll {
+    overflow-x: auto;
+    padding-block: var(--aiia-space-4);
+    border: 1px solid var(--aiia-line);
+    border-radius: var(--aiia-r-lg);
+    background: var(--aiia-surface);
+  }
+  .chart-canvas {
+    position: absolute;
+    inset: 0;
+    transform-origin: top left;
+  }
+  .chart-scroll::-webkit-scrollbar {
+    height: var(--aiia-space-3);
+  }
+  .chart-scroll::-webkit-scrollbar-track {
+    background: var(--aiia-bg-alt);
+  }
+  .chart-scroll::-webkit-scrollbar-thumb {
+    background: var(--aiia-line-strong);
+    border-radius: var(--aiia-r-full);
+  }
+  .chart-frame {
+    position: relative;
+    margin-inline: auto;
+    overflow: hidden;
+  }
+  .chart-scroll-hint {
+    display: none;
+    margin: var(--aiia-space-3) 0 0;
+    font-size: var(--aiia-text-small);
+    color: var(--aiia-ink-soft);
+  }
+  .chart-scroll[data-overflow="true"] + .chart-scroll-hint {
+    display: block;
+  }
+  svg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  path {
+    fill: none;
+    stroke: var(--aiia-primary);
+    stroke-width: 1.5;
+  }
+  path.peer {
+    stroke-dasharray: 5 5;
+  }
+  .chart-node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: var(--aiia-space-2);
+    padding: var(--aiia-space-3);
+    border: 1px solid var(--aiia-line-strong);
+    border-radius: var(--aiia-r-md);
+    background: var(--aiia-surface);
+    color: var(--aiia-ink);
+    text-decoration: none;
+  }
+  .chart-node strong {
+    font-size: var(--aiia-text-control);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+  }
+  .node-kind,
+  .node-leader {
+    font-size: var(--aiia-text-caption);
+    line-height: 1.5;
+    color: var(--aiia-ink-soft);
+    overflow-wrap: anywhere;
+  }
+  .root-node {
+    background: var(--aiia-primary);
+    color: var(--aiia-on-primary);
+    border-color: var(--aiia-primary);
+  }
+  .root-node .node-kind,
+  .root-node .node-leader {
+    color: inherit;
+  }
+  .root-node strong {
+    font-family: var(--aiia-font-display);
+    font-size: var(--aiia-text-subheading);
+  }
+  a.chart-node:hover,
+  a.chart-node:focus-visible {
+    border-color: var(--aiia-primary);
+    box-shadow: var(--aiia-shadow);
+  }
+  figcaption {
+    margin-top: var(--aiia-space-3);
+    font-size: var(--aiia-text-caption);
+    color: var(--aiia-ink-soft);
+  }
+</style>
+<script>
+  // The diagram is already rendered at build time. Resize only its display scale.
+  for (const region of document.querySelectorAll<HTMLElement>(
+    ".chart-scroll",
+  )) {
+    const frame = region.querySelector<HTMLElement>(".chart-frame")!;
+    const canvas = region.querySelector<HTMLElement>(".chart-canvas")!;
+    const width = Number(region.dataset.width);
+    const height = Number(region.dataset.height);
+    const minimum = Number(region.dataset.minScale);
+    let wasOverflowing = false;
+    const resize = () => {
+      const scale = Math.max(minimum, Math.min(1, region.clientWidth / width));
+      const overflow = width * scale > region.clientWidth + 1;
+      frame.style.width = `${width * scale}px`;
+      frame.style.height = `${height * scale}px`;
+      canvas.style.transform = `scale(${scale})`;
+      region.dataset.scale = String(scale);
+      region.dataset.overflow = String(overflow);
+      // Start with the central institute visible when entering the scrolling view.
+      if (overflow && !wasOverflowing)
+        region.scrollLeft = (region.scrollWidth - region.clientWidth) / 2;
+      wasOverflowing = overflow;
+    };
+    resize();
+    new ResizeObserver(resize).observe(region);
+  }
+</script>

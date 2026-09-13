@@ -157,8 +157,16 @@ for (const width of [390, 768, 1050, 1440, 1920])
     );
     for (const item of centers) {
       const card = page.locator("[data-center-name]").filter({
-        has: page.getByRole("heading", { name: item.name, exact: true }),
+        has: page.getByRole("heading", {
+          name: item.detail_url ? `${item.name} ↗` : item.name,
+          exact: true,
+        }),
       });
+      if (/^https?:/i.test(item.detail_url || ""))
+        await expect(card.locator("h4 a")).toHaveAttribute(
+          "href",
+          item.detail_url,
+        );
       if (item.description) await expect(card).toContainText(item.description);
       if (!item.leader)
         await expect(card.locator(".org-leader")).toHaveCount(0);

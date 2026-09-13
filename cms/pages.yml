@@ -421,17 +421,22 @@ content:
         readonly: true
         options:
           media: organization_previews
+      - name: review_version
+        label: 검토 그림 버전
+        type: string
+        readonly: true
+        description: 자동으로 기록됩니다. 승인할 때 이 버전의 그림인지 확인합니다.
       - name: review_approval
         label: 조직도 공개 승인
         type: select
         default: pending
         description: 위 그림을 확인한 뒤 해당 그림의 공개 승인을 선택하고 Save하세요. 내용을 다시 바꾸면 새 그림 확인이 필요합니다.
         options:
-          # organization-approval:start
           values:
             - name: pending
               label: 검토 중 · 공개하지 않음
-          # organization-approval:end
+            - name: approved
+              label: 이 그림 확인 · 공개 승인
       - name: eyebrow
         label: 상단 소제목
         type: string

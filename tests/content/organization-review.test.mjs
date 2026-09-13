@@ -120,8 +120,9 @@ test("save generates a pending preview; only approval of that exact diagram chan
   const approval = config.content
     .find((c) => c.name === "organization")
     .fields.find((f) => f.name === "review_approval");
-  assert.equal(approval.options.values[1].name, plan.hash);
-  review.review_approval = plan.hash;
+  assert.equal(approval.options.values[1].name, "approved");
+  assert.equal(review.review_version, plan.hash);
+  review.review_approval = "approved";
   await save(review);
   assert.equal((await applyReview(source)).published, true);
   assert.equal(
@@ -152,7 +153,8 @@ test("stale approval or edits made after generation never publish a different di
   await applyReview(source, { image, expectedHash: firstHash });
   draft = await read();
   draft.nodes[4].name = "둘째 수정";
-  draft.review_approval = firstHash;
+  draft.review_approval = "approved";
+  assert.equal(draft.review_version, firstHash);
   await save(draft);
   await assert.rejects(
     applyReview(source, { image, expectedHash: firstHash }),
@@ -210,4 +212,46 @@ test("missing or inconsistent approved snapshots fail closed", async (t) => {
   await assert.rejects(publicOrganization(source), /일치하지/);
   await rm(join(source, "organization-review/published.json"));
   await assert.rejects(publicOrganization(source));
+});
+
+test("cached CMS options remain valid across diagram revisions; stale preview versions cannot approve", async (t) => {
+  const { source, image, read, save } = await setup(t);
+  const cachedConfigText = await readFile(join(source, ".pages.yml"), "utf8");
+  const config = YAML.parse(cachedConfigText);
+  const fields = config.content.find((c) => c.name === "organization").fields;
+  const values = fields
+    .find((f) => f.name === "review_approval")
+    .options.values.map((v) => v.value ?? v.name);
+  assert.deepEqual(values, ["pending", "approved"]);
+  assert.equal(fields.find((f) => f.name === "review_version").readonly, true);
+  let draft = await read();
+  const previousVersion = draft.review_version;
+  draft.nodes[4].detail_url = "https://example.org/new-center";
+  await save(draft);
+  const nextHash = chartHash(draft);
+  await applyReview(source, { image, expectedHash: nextHash });
+  assert.equal(
+    await readFile(join(source, ".pages.yml"), "utf8"),
+    cachedConfigText,
+  );
+  draft = await read();
+  draft.review_approval = "approved";
+  draft.review_version = previousVersion; // an older tab with the same fixed options
+  assert(values.includes(draft.review_approval)); // Pages CMS's select validation
+  await save(draft);
+  assert.equal((await applyReview(source)).pending, true);
+  assert.notEqual(chartHash(await publicOrganization(source)), nextHash);
+  draft = await read();
+  draft.review_approval = "approved";
+  delete draft.review_version;
+  await save(draft);
+  assert.equal((await applyReview(source)).pending, true);
+  draft = await read();
+  draft.review_approval = "approved";
+  await save(draft);
+  assert.equal((await applyReview(source)).published, true);
+  const published = await publicOrganization(source);
+  assert.equal(chartHash(published), nextHash);
+  assert.equal(published.review_version, undefined);
+  assert.equal(published.review_approval, undefined);
 });

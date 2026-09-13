@@ -54,9 +54,12 @@ PR 검사는 샘플만 사용합니다. 운영 배포는 `AIIA_CONTENT_SOURCE=.c
 | `fixtures/`                    | 개발용 샘플과 그림                          |
 | `cms/pages.yml`                | 콘텐츠 저장소 `.pages.yml`의 기준 설정      |
 | `cms/publish-site.yml`         | 콘텐츠 저장소의 배포 요청 workflow 기준     |
+| `cms/reconcile-media.mjs`      | 사진 경로 통일·미사용 사진/첨부 보관 처리   |
 | `scripts/prepare-content.mjs`  | 선택한 원본을 작업 폴더로 복사              |
 | `.github/workflows/deploy.yml` | 운영 콘텐츠 결합 → 검사 → GitHub Pages 배포 |
 
 필드를 바꾸면 스키마, 샘플, CMS 설정을 함께 수정하고 **콘텐츠 저장소의 `.pages.yml`에도 반영**합니다. 기존 콘텐츠와 호환되지 않는 변경은 양쪽의 `content-manifest.json`/`content-source.json` 형식 버전과 데이터를 함께 이전합니다. JSON 문법·누락 파일은 준비 단계, 상세 필드는 Astro 빌드가 검사합니다.
 
 Pages CMS의 두 가지 연결용 token은 운영 문서의 최소 권한으로만 발급합니다. PR에서 비공개 콘텐츠나 해당 token을 사용하지 않습니다. 배포 결과에는 콘텐츠 JSON 원본과 인증정보를 포함하지 않습니다.
+
+사진·첨부는 용도별 `uploads/` 하위 폴더에 저장합니다. 모든 콘텐츠에서 24시간 이상 연결되지 않은 파일은 콘텐츠 저장소의 `media-archive/`로 옮기며 홈페이지에 배포하지 않습니다. 운영자는 CMS의 미사용 보관함에서 확인·삭제할 수 있습니다. 정리 스크립트와 workflow 설치·복원 방법은 [사진·첨부와 미사용 보관함](docs/OPERATIONS.md#사진첨부와-미사용-보관함)을 참고하세요.

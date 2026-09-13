@@ -1,9 +1,33 @@
 # 콘텐츠 저장소의 .pages.yml로 복사합니다. 스키마 변경 시 함께 갱신하세요.
 media:
   - name: images
-    label: 사진
-    input: uploads
-    output: /uploads
+    label: 공통 사진
+    input: uploads/images
+    output: /uploads/images
+    extensions:
+      - jpg
+      - jpeg
+      - png
+      - webp
+      - gif
+      - avif
+    rename: safe
+  - name: member_images
+    label: 연구자 사진
+    input: uploads/members
+    output: /uploads/members
+    extensions:
+      - jpg
+      - jpeg
+      - png
+      - webp
+      - gif
+      - avif
+    rename: safe
+  - name: news_images
+    label: 소식 사진
+    input: uploads/news
+    output: /uploads/news
     extensions:
       - jpg
       - jpeg
@@ -16,6 +40,30 @@ media:
     label: 첨부 문서
     input: uploads/documents
     output: /uploads/documents
+    extensions:
+      - pdf
+      - hwp
+      - hwpx
+      - docx
+      - pptx
+      - xlsx
+    rename: safe
+  - name: archived_images
+    label: 미사용 사진 보관함
+    input: media-archive/images
+    output: /media-archive/images
+    extensions:
+      - jpg
+      - jpeg
+      - png
+      - webp
+      - gif
+      - avif
+    rename: safe
+  - name: archived_documents
+    label: 미사용 첨부 보관함
+    input: media-archive/documents
+    output: /media-archive/documents
     extensions:
       - pdf
       - hwp
@@ -97,9 +145,9 @@ content:
       - name: thumbnail
         label: 대표 사진
         type: image
-        description: 권장 가로형 3:2. 사진이 없으면 분류가 표시된 기본 카드가 사용됩니다.
+        description: 권장 가로형 3:2. 기존 사진은 선택으로 재사용하세요. 연결을 제거한 파일은 유예 기간 후 미사용 보관함으로 이동합니다.
         options:
-          media: images
+          media: news_images
       - name: attachment
         label: 첨부파일
         type: file
@@ -187,9 +235,9 @@ content:
       - name: photo
         label: 사진
         type: image
-        description: 정면 인물 사진을 업로드하세요. 권장 비율 4:5. 없으면 이름으로 표시됩니다.
+        description: 정면 인물 사진, 권장 비율 4:5. 기존 사진은 선택으로 재사용하세요. 연결을 제거한 파일은 유예 기간 후 미사용 보관함으로 이동합니다.
         options:
-          media: images
+          media: member_images
       - name: profile_url
         label: 공식 프로필 주소
         type: string

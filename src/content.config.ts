@@ -118,6 +118,23 @@ const organization = singleton(
     title: z.string(),
     lede: z.string(),
     /** 최상위 지배구조 (원장 / 운영위원회 …). person: 확정 인선(선택) */
+    root_name: z.string().default("AIIA"),
+    root_description: optionalText,
+    root_leader: optionalText,
+    nodes: z
+      .array(
+        z.object({
+          name: z.string().min(1),
+          relation: z.enum(["h", "p", "c", "s", "d", "i"]),
+          description: optionalText,
+          leader: optionalText,
+          photo: optionalText,
+          detail_url: optionalText,
+          visible: z.boolean().default(true),
+        }),
+      )
+      .nullish()
+      .transform((value) => value ?? []),
     leadership: z
       .array(
         z.object({

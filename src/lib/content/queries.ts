@@ -132,10 +132,22 @@ export interface OrganizationView {
   eyebrow: string;
   title: string;
   lede: string;
+  rootName: string;
+  rootDescription: string;
+  rootLeader: string;
+  nodes: OrgNodeView[];
   leadership: OrgLeadershipView[];
   functions: OrgFunctionView[];
   centerGroups: OrgCenterGroupView[];
   tiers: OrgTierView[];
+}
+export interface OrgNodeView {
+  name: string;
+  relation: "h" | "p" | "c" | "s" | "d" | "i";
+  description: string;
+  leader: string;
+  photo: string;
+  detailUrl: string;
 }
 export interface InquiryView {
   eyebrow: string;
@@ -274,6 +286,19 @@ export async function loadHomePageData(): Promise<HomePageData> {
       eyebrow: organization.eyebrow,
       title: organization.title,
       lede: organization.lede,
+      rootName: organization.root_name,
+      rootDescription: organization.root_description,
+      rootLeader: organization.root_leader,
+      nodes: organization.nodes
+        .filter((node) => node.visible)
+        .map((node) => ({
+          name: node.name,
+          relation: node.relation,
+          description: node.description,
+          leader: node.leader,
+          photo: node.photo,
+          detailUrl: node.detail_url,
+        })),
       leadership: organization.leadership,
       functions: organization.functions,
       centerGroups: organization.center_groups,

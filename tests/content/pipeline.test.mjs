@@ -119,6 +119,7 @@ test("Pages CMS preserves unexposed legacy fields and creates drafts with stable
           "date",
           "object",
           "uuid",
+          "rich-text",
         ].includes(field.type),
       );
   }

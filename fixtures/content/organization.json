@@ -1,7 +1,7 @@
 {
   "eyebrow": "Organization",
-  "title": "조직구조 및 운영모델",
-  "lede": "AIIA는 원장 직속 체계 아래 연구기획 TF와 도메인·기업 브랜드 연구센터로 구성되며, 수요 기반으로 유연하게 확장·재구성됩니다.",
+  "title": "조직도",
+  "lede": "연구기획과 산학협력을 바탕으로 전문 연구센터를 연결합니다. 아래 센터명과 역할은 초기 구성을 검토하기 위한 가상 예시입니다.",
   "leadership": [
     {
       "label": "원장",
@@ -53,6 +53,92 @@
       "tier": "Tier 3",
       "name": "협력 파트너",
       "detail": "과제단위 협력 + 기술자문"
+    }
+  ],
+  "root_name": "AIIA",
+  "root_description": "아주대학교 인공지능연구원",
+  "root_leader": "",
+  "nodes": [
+    {
+      "name": "총장",
+      "relation": "h",
+      "description": "대학 차원의 연구 방향과 연구원 운영을 총괄합니다.",
+      "leader": "",
+      "photo": "",
+      "detail_url": "",
+      "visible": true
+    },
+    {
+      "name": "인공지능대학원",
+      "relation": "p",
+      "description": "AI 전문인재 양성, 공동연구 및 연구인력 교류를 연계합니다.",
+      "leader": "",
+      "photo": "",
+      "detail_url": "",
+      "visible": true
+    },
+    {
+      "name": "연구기획 TF",
+      "relation": "s",
+      "description": "연구과제 기획, 대외협력 및 연구센터 간 공동사업을 지원합니다.",
+      "leader": "",
+      "photo": "",
+      "detail_url": "",
+      "visible": true
+    },
+    {
+      "name": "운영위원회",
+      "relation": "c",
+      "description": "연구원의 주요 운영 방향과 센터 협력 과제를 논의하고 자문합니다.",
+      "leader": "",
+      "photo": "",
+      "detail_url": "",
+      "visible": true
+    },
+    {
+      "name": "국방AX 거점센터",
+      "relation": "d",
+      "description": "국방 현장의 AI 전환 수요를 발굴하고, 지능형 의사결정 지원과 유·무인 협업 기술의 연구·실증을 연결합니다.",
+      "leader": "",
+      "photo": "",
+      "detail_url": "",
+      "visible": true
+    },
+    {
+      "name": "병원 로지스틱스 연구센터",
+      "relation": "d",
+      "description": "병원 내 물류와 자원 흐름을 분석하고, AI 기반 수요 예측·배차·배송 최적화로 의료진의 업무와 병원 운영을 지원합니다.",
+      "leader": "",
+      "photo": "",
+      "detail_url": "",
+      "visible": true
+    },
+    {
+      "name": "AI 레드팀 운영센터",
+      "relation": "d",
+      "description": "AI 모델과 서비스의 취약점 및 오용 가능성을 점검하고, 공격 시나리오 기반 평가와 개선 방안을 연구합니다.",
+      "leader": "",
+      "photo": "",
+      "detail_url": "",
+      "visible": true
+    },
+    {
+      "name": "생성형 미디어 생태계 연구센터",
+      "relation": "d",
+      "description": "생성형 AI를 활용한 콘텐츠 제작과 유통을 연구하고, 창작자·기업과 함께 저작권과 신뢰성을 고려한 미디어 활용 모델을 탐색합니다.",
+      "leader": "",
+      "photo": "",
+      "detail_url": "",
+      "visible": true
+    },
+    {
+      "name": "경기 AI 협력센터",
+      "relation": "d",
+      "description": "경기도의 기업·공공기관·대학을 연결해 지역 AI 수요를 발굴하고, 공동연구와 현장 실증 및 기술 확산을 지원합니다.",
+      "leader": "",
+      "photo": "",
+      "detail_url": "",
+      "visible": true
     }
   ]
 }

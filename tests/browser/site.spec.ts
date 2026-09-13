@@ -224,6 +224,9 @@ test.describe("partnership descriptions", () => {
         const summary = row.locator("summary");
         const description = row.locator(".inquiry__description");
         await expect(description).toBeHidden();
+        // Wait for the page's smooth scroll before clicking a far-below-fold control.
+        await summary.scrollIntoViewIfNeeded();
+        await expect(summary).toBeInViewport();
         await summary.locator(".inquiry__toggle").click();
         await expect(description).toBeVisible();
         await expect(description).toHaveText(mode.description);

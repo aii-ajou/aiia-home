@@ -77,6 +77,12 @@ export async function reconcileMedia({
   );
   if (!contentFiles.length)
     throw new Error("No content JSON found; refusing to archive media.");
+  // A pending organization edit must not orphan photos still used by the live snapshot.
+  const publishedOrganization = "organization-review/published.json";
+  if (
+    (await files(root, "organization-review")).includes(publishedOrganization)
+  )
+    contentFiles.push(publishedOrganization);
   const records = await Promise.all(
     contentFiles.map(async (path) => ({
       path,

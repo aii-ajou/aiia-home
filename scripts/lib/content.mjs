@@ -9,6 +9,7 @@ import {
 } from "node:fs/promises";
 import { resolve, join, relative, sep } from "node:path";
 import { randomUUID } from "node:crypto";
+import { publicOrganization } from "./organization-review.mjs";
 
 export const singletons = [
   "site_settings",
@@ -58,6 +59,7 @@ export async function prepareContent({
   root = process.cwd(),
   source,
   production = false,
+  organizationPreview = false,
 } = {}) {
   root = resolve(root);
   const settings = await json(join(root, "content-source.json"));
@@ -77,6 +79,11 @@ export async function prepareContent({
   const manifest = await validateSource(source, settings.schemaVersion);
   if (production && manifest.sample)
     throw new Error("운영 배포에 샘플 콘텐츠를 사용할 수 없습니다.");
+  if (production && organizationPreview)
+    throw new Error("운영 배포에는 조직도 편집본을 사용할 수 없습니다.");
+  const approvedOrganization = organizationPreview
+    ? null
+    : await publicOrganization(source);
   const work = join(root, ".aiia", `prepare-${randomUUID()}`);
   await mkdir(work, { recursive: true });
   const installed = [];
@@ -85,6 +92,11 @@ export async function prepareContent({
     await cp(join(source, "content"), join(work, "content"), {
       recursive: true,
     });
+    if (approvedOrganization)
+      await writeFile(
+        join(work, "content/organization.json"),
+        JSON.stringify(approvedOrganization, null, 2) + "\n",
+      );
     await cp(join(source, "uploads"), join(work, "uploads"), {
       recursive: true,
     });

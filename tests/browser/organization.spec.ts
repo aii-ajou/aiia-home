@@ -140,7 +140,9 @@ for (const width of [390, 768, 1050, 1440, 1920])
     }
     for (const item of nodes)
       await expect(
-        container.getByText(item.name, { exact: true }),
+        container.getByText(item.detail_url ? `${item.name} ↗` : item.name, {
+          exact: true,
+        }),
       ).toBeVisible();
     expect(
       await page.evaluate(

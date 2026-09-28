@@ -322,3 +322,32 @@ test("home portraits load successfully when scrolled into view", async ({
       .toBeGreaterThan(0);
   }
 });
+
+for (const member of members)
+  test(`published researcher ${member.slug} has a working profile and uploaded portrait`, async ({
+    page,
+  }) => {
+    const path = url(`members/${member.slug}/`);
+    await page.goto(url("members/"));
+    // Paginated entries stay in the DOM, including members beyond the home page.
+    await expect(page.locator(`[data-entry] a[href="${path}"]`)).toBeAttached();
+
+    const response = await page.goto(path);
+    expect(response?.status()).toBe(200);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(
+      member.name,
+    );
+    if (member.photo?.startsWith("/")) {
+      const portrait = page.locator(".portrait img");
+      await expect(portrait).toHaveAttribute(
+        "src",
+        url(member.photo.replace(/^\//, "")),
+      );
+      await expect(portrait).toBeVisible();
+      await expect
+        .poll(() =>
+          portrait.evaluate((el: HTMLImageElement) => el.naturalWidth),
+        )
+        .toBeGreaterThan(0);
+    }
+  });

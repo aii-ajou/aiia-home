@@ -6,6 +6,12 @@ interface Props {
   contact: ContactView;
 }
 const { contact } = Astro.props;
+const place = encodeURIComponent("아주대학교");
+const mapLinks = [
+  { label: "카카오맵", href: `https://map.kakao.com/link/search/${place}` },
+  { label: "네이버 지도", href: `https://map.naver.com/p/search/${place}` },
+  { label: "캠퍼스 안내", href: "https://www.ajou.ac.kr/kr/intro/way01.do" },
+];
 ---
 
 <section id="contact" class="contact aiia-container">
@@ -23,14 +29,18 @@ const { contact } = Astro.props;
       </p>
     ))}
   </div>
-  <a
-    href="https://www.ajou.ac.kr/kr/intro/way01.do"
-    class="text-link"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    캠퍼스 안내 <span aria-hidden="true">↗</span>
-  </a>
+  <div class="contact__links">
+    {mapLinks.map((link) => (
+      <a
+        href={link.href}
+        class="text-link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {link.label} <span aria-hidden="true">↗</span>
+      </a>
+    ))}
+  </div>
   {contact.mapImage && (
     <img
       src={siteUrl(contact.mapImage)}
@@ -72,6 +82,11 @@ const { contact } = Astro.props;
     font-weight: 400;
     white-space: pre-line;
   }
+  .contact__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--aiia-space-6);
+  }
   .contact > img {
     width: 100%;
     max-height: 350px;
@@ -86,8 +101,8 @@ const { contact } = Astro.props;
       flex-direction: column;
       gap: 20px;
     }
-    .contact > .text-link {
-      margin-left: auto;
+    .contact__links {
+      gap: var(--aiia-space-4) var(--aiia-space-6);
     }
   }
 </style>

@@ -23,9 +23,7 @@ const { about } = Astro.props;
     <div class="pillars">
       {about.pillars.map((p, i) => (
         <article>
-          <span class="pillar-index">
-            0{i + 1} / {p.mono}
-          </span>
+          <span class="pillar-index">{String(i + 1).padStart(2, "0")}</span>
           <h3 class="text-subheading">{p.title}</h3>
           <p>{p.desc}</p>
         </article>

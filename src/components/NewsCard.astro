@@ -22,7 +22,7 @@ const { news: n } = Astro.props;
         <span>AIIA / INSIGHTS</span>
         <strong>{n.cat}</strong>
         <span>
-          RESEARCH & CONNECTION <b>↗</b>
+          RESEARCH & CONNECTION <b>→</b>
         </span>
       </div>
       {n.thumbnail && (
@@ -44,13 +44,18 @@ const { news: n } = Astro.props;
     {n.summary && <p class="news-card__summary">{n.summary}</p>}
     <div class="news-card__source">
       <span>{n.sourceName || "AIIA"}</span>
-      <span aria-hidden="true">↗</span>
+      <span aria-hidden="true">→</span>
     </div>
   </a>
 </article>
 <style>
   .news-card {
     min-width: 0;
+  }
+  .news-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
   .news-card__visual {
     position: relative;
@@ -112,6 +117,7 @@ const { news: n } = Astro.props;
     margin-bottom: 12px;
   }
   .news-card__summary {
+    margin-bottom: 18px;
     font-size: var(--aiia-text-body);
     color: var(--aiia-ink-soft);
     line-height: 1.9;
@@ -126,7 +132,7 @@ const { news: n } = Astro.props;
     justify-content: space-between;
     border-top: 1px solid var(--aiia-line);
     padding-top: 14px;
-    margin-top: 18px;
+    margin-top: auto;
     font-size: var(--aiia-text-caption);
     color: var(--aiia-ink-mute);
   }

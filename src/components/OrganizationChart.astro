@@ -1,7 +1,7 @@
 ---
 import type { OrganizationView } from "../lib/content/queries";
 import { layoutOrganization } from "../lib/content/organization";
-import { siteUrl } from "../lib/url";
+import { linkArrow, siteUrl } from "../lib/url";
 interface Props {
   organization: OrganizationView;
 }
@@ -67,7 +67,9 @@ const minScale = 0.8;
             >
               <strong>
                 {node.name}
-                {node.detailUrl && <span aria-hidden="true"> ↗</span>}
+                {node.detailUrl && (
+                  <span aria-hidden="true"> {linkArrow(node.detailUrl)}</span>
+                )}
               </strong>
               {node.leader && (
                 <span class="node-leader">책임자 · {node.leader}</span>

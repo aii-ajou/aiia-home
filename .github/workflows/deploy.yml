@@ -11,7 +11,8 @@ concurrency:
 jobs:
   build:
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    # Playwright --with-deps가 지원하는 이미지로 고정. ubuntu-latest(26) 지원 확인 후 해제.
+    runs-on: ubuntu-24.04
     env:
       AIIA_CONTENT_SOURCE: .content-repository
       AIIA_REQUIRE_CONTENT: "true"
@@ -67,7 +68,7 @@ jobs:
           path: dist
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       pages: write
       id-token: write

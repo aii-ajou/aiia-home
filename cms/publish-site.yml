@@ -24,7 +24,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   notify:
-    runs-on: ubuntu-latest
+    # 조직도 검토 그림에 Playwright --with-deps를 쓰므로 aiia-home 워크플로와 같은 이미지로 고정.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
         with:

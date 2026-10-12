@@ -26,16 +26,16 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: main
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: aii-ajou/aiia-home
           ref: main
           path: .website
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - name: Organize media and archive unused files

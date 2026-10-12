@@ -16,7 +16,7 @@ jobs:
       AIIA_CONTENT_SOURCE: .content-repository
       AIIA_REQUIRE_CONTENT: "true"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Check content access
@@ -30,14 +30,14 @@ jobs:
       - name: Read content repository settings
         id: content
         run: node --input-type=module -e 'import fs from "node:fs"; const c=JSON.parse(fs.readFileSync("content-source.json")); fs.appendFileSync(process.env.GITHUB_OUTPUT, `repository=${c.repository}\nbranch=${c.branch}\n`);'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: ${{ steps.content.outputs.repository }}
           ref: ${{ steps.content.outputs.branch }}
           token: ${{ secrets.CONTENT_READ_TOKEN }}
           path: .content-repository
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -56,13 +56,13 @@ jobs:
         run: |
           echo "Code: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
           echo "Content: $(git -C .content-repository rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: deployment-browser-traces
           path: test-results/
           retention-days: 7
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
   deploy:
@@ -76,4 +76,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

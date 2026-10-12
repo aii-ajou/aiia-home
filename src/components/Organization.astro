@@ -1,7 +1,7 @@
 ---
 import type { OrganizationView } from "../lib/content/queries";
 import { relationLabels } from "../lib/content/organization";
-import { siteUrl } from "../lib/url";
+import { linkArrow, siteUrl } from "../lib/url";
 import OrganizationChart from "./OrganizationChart.astro";
 interface Props {
   organization: OrganizationView;
@@ -15,6 +15,13 @@ const supporting = o.nodes.filter(
     !["d", "i", "h"].includes(node.relation) &&
     (node.description || node.photo),
 );
+// 마지막 줄에 카드 하나만 남지 않도록 열 수를 고른다 (4개 → 4열, 7개 → 4+3).
+const columnsFor = (count: number) =>
+  count > 1 && (count % 4 === 0 || count % 3 === 1) ? 4 : 3;
+// 사진이 있는 카드와 섞이면 사진 없는 카드에도 같은 크기의 자리표시를 둔다.
+const anyPhoto = (nodes: typeof o.nodes) => nodes.some((node) => node.photo);
+const centersHavePhoto = anyPhoto(centers);
+const supportingHavePhoto = anyPhoto(supporting);
 ---
 
 <section
@@ -38,10 +45,10 @@ const supporting = o.nodes.filter(
         <h3>연구센터</h3>
         <p>각 센터의 역할을 살펴보세요.</p>
       </div>
-      <div class="org-cards">
+      <div class="org-cards" style={`--org-cols:${columnsFor(centers.length)}`}>
         {centers.map((node) => (
           <article class="org-card" data-center-name={node.name}>
-            {node.photo && (
+            {node.photo ? (
               <img
                 src={siteUrl(node.photo)}
                 alt={`${node.name} 소개`}
@@ -49,13 +56,26 @@ const supporting = o.nodes.filter(
                 width="600"
                 height="360"
               />
+            ) : (
+              centersHavePhoto && (
+                <div class="org-card__placeholder" aria-hidden="true">
+                  <img
+                    src={siteUrl("/brand/aiia-symbol.png")}
+                    alt=""
+                    width="34"
+                    height="42"
+                  />
+                </div>
+              )
             )}
             {node.relation !== "d" && (
               <span class="org-kind">{relationLabels[node.relation]}</span>
             )}
             <h4>
               {node.detailUrl ? (
-                <a href={siteUrl(node.detailUrl)}>{node.name} ↗</a>
+                <a href={siteUrl(node.detailUrl)}>
+                  {node.name} {linkArrow(node.detailUrl)}
+                </a>
               ) : (
                 node.name
               )}
@@ -71,11 +91,19 @@ const supporting = o.nodes.filter(
   )}
   {supporting.length > 0 && (
     <details class="org-more">
-      <summary>협력기관·운영 조직 소개</summary>
-      <div class="org-cards">
+      <summary>
+        협력기관·운영 조직 소개
+        <span class="org-more__toggle" aria-hidden="true">
+          +
+        </span>
+      </summary>
+      <div
+        class="org-cards"
+        style={`--org-cols:${columnsFor(supporting.length)}`}
+      >
         {supporting.map((node) => (
           <article class="org-card">
-            {node.photo && (
+            {node.photo ? (
               <img
                 src={siteUrl(node.photo)}
                 alt={`${node.name} 소개`}
@@ -83,13 +111,26 @@ const supporting = o.nodes.filter(
                 width="600"
                 height="360"
               />
+            ) : (
+              supportingHavePhoto && (
+                <div class="org-card__placeholder" aria-hidden="true">
+                  <img
+                    src={siteUrl("/brand/aiia-symbol.png")}
+                    alt=""
+                    width="34"
+                    height="42"
+                  />
+                </div>
+              )
             )}
             <span class="org-kind">{relationLabels[node.relation]}</span>
             <h4>{node.name}</h4>
             {node.leader && <p class="org-leader">책임자 · {node.leader}</p>}
             <p class="org-description">{node.description}</p>
             {node.detailUrl && (
-              <a href={siteUrl(node.detailUrl)}>자세히 보기 ↗</a>
+              <a href={siteUrl(node.detailUrl)}>
+                자세히 보기 {linkArrow(node.detailUrl)}
+              </a>
             )}
           </article>
         ))}
@@ -98,7 +139,12 @@ const supporting = o.nodes.filter(
   )}
   {(o.functions.length > 0 || o.tiers.length > 0) && (
     <details class="org-more">
-      <summary>연구기획 및 파트너십 운영모델</summary>
+      <summary>
+        연구기획 및 파트너십 운영모델
+        <span class="org-more__toggle" aria-hidden="true">
+          +
+        </span>
+      </summary>
       {o.functions.length > 0 && (
         <>
           <h3>연구기획 TF</h3>
@@ -156,7 +202,7 @@ const supporting = o.nodes.filter(
   }
   .org-cards {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--org-cols, 3), minmax(0, 1fr));
     gap: var(--aiia-space-6);
   }
   .org-card {
@@ -185,7 +231,8 @@ const supporting = o.nodes.filter(
     font-size: var(--aiia-text-caption);
     color: var(--aiia-primary);
   }
-  .org-card img {
+  .org-card > img,
+  .org-card__placeholder {
     width: 100%;
     height: auto;
     aspect-ratio: 5 / 3;
@@ -193,14 +240,39 @@ const supporting = o.nodes.filter(
     border-radius: var(--aiia-r-sm);
     margin-bottom: var(--aiia-space-4);
   }
+  .org-card__placeholder {
+    display: grid;
+    place-items: center;
+    background: var(--aiia-surface-2);
+  }
+  .org-card__placeholder img {
+    opacity: 0.35;
+  }
   .org-more {
     border-top: 1px solid var(--aiia-line);
     margin-top: var(--aiia-space-8);
   }
   .org-more summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--aiia-space-6);
     cursor: pointer;
     padding-block: var(--aiia-space-6);
     font-size: var(--aiia-text-control);
+    list-style: none;
+  }
+  .org-more summary::-webkit-details-marker {
+    display: none;
+  }
+  .org-more__toggle {
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--aiia-primary);
+  }
+  .org-more[open] .org-more__toggle {
+    transform: rotate(45deg);
   }
   .org-more h3 {
     margin-block: var(--aiia-space-4);

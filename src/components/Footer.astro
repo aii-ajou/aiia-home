@@ -38,7 +38,6 @@ const { footer } = Astro.props;
         >
           개인정보처리방침 ↗
         </a>
-        <a href={withBase("admin/")}>관리자</a>
       </div>
     </div>
     <p class="footer__address">
@@ -46,6 +45,7 @@ const { footer } = Astro.props;
     </p>
     <div class="footer__bottom">
       <span>{footer.copyright}</span>
+      <a href={withBase("admin/")}>관리자</a>
       <a
         href="#top"
         onclick="window.scrollTo({top:0});return false"

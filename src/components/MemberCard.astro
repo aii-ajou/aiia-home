@@ -36,7 +36,7 @@ const { member: m } = Astro.props;
           {m.name}
           <small>교수</small>
         </h3>
-        <span aria-hidden="true">↗</span>
+        <span aria-hidden="true">→</span>
       </div>
       <p class="member-card__english">{m.nameEn}</p>
       <p class="member-card__role">{m.role}</p>
@@ -48,7 +48,6 @@ const { member: m } = Astro.props;
   .member-card {
     min-width: 0;
     width: 100%;
-    max-width: 220px;
   }
   .member-card__photo {
     position: relative;

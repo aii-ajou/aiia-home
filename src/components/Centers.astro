@@ -1,10 +1,15 @@
 ---
 import type { CenterView } from "../lib/content/queries";
-import { siteUrl } from "../lib/url";
+import { linkArrow, siteUrl } from "../lib/url";
 interface Props {
   centers: CenterView[];
 }
 const { centers } = Astro.props;
+// 좌우 열을 따로 쌓아 한 항목을 펼쳐도 옆 열이 밀리지 않게 한다 (위→아래, 왼쪽 열 먼저).
+const half = Math.ceil(centers.length / 2);
+const columns = [centers.slice(0, half), centers.slice(half)].filter(
+  (column) => column.length > 0,
+);
 ---
 
 <section id="centers" class="section section--alt">
@@ -20,33 +25,37 @@ const { centers } = Astro.props;
         다양한 융합 연구 분야
       </p>
     </div>
+    <p class="centers-hint">관심 있는 분야를 선택해 연구 내용을 살펴보세요.</p>
     <div class="centers-grid">
-      {centers.map((c) => (
-        <details class="center">
-          <summary>
-            <span class="center__name">
-              <small>{c.en}</small>
-              <strong class="text-subheading">{c.ko.replace("AI+", "")}</strong>
-            </span>
-            <span class="center__toggle" aria-hidden="true">
-              +
-            </span>
-          </summary>
-          <div class="center__detail">
-            <p>{c.desc}</p>
-            <span class="center__tags">{c.tag}</span>
-            {c.detailUrl && (
-              <a class="text-link" href={siteUrl(c.detailUrl)}>
-                연구 분야 자세히 보기 ↗
-              </a>
-            )}
-          </div>
-        </details>
+      {columns.map((column) => (
+        <div class="centers-column">
+          {column.map((c) => (
+            <details class="center">
+              <summary>
+                <span class="center__name">
+                  <small>{c.en}</small>
+                  <strong class="text-subheading">
+                    {c.ko.replace("AI+", "")}
+                  </strong>
+                </span>
+                <span class="center__toggle" aria-hidden="true">
+                  +
+                </span>
+              </summary>
+              <div class="center__detail">
+                <p>{c.desc}</p>
+                <span class="center__tags">{c.tag}</span>
+                {c.detailUrl && (
+                  <a class="text-link" href={siteUrl(c.detailUrl)}>
+                    연구 분야 자세히 보기 {linkArrow(c.detailUrl)}
+                  </a>
+                )}
+              </div>
+            </details>
+          ))}
+        </div>
       ))}
     </div>
-    <p class="centers-footnote">
-      관심 있는 분야를 선택해 연구 내용을 살펴보세요.
-    </p>
   </div>
 </section>
 <style>
@@ -65,7 +74,7 @@ const { centers } = Astro.props;
   .center {
     border-top: 1px solid var(--aiia-line-strong);
   }
-  .center:nth-last-child(-n + 2) {
+  .center:last-child {
     border-bottom: 1px solid var(--aiia-line-strong);
   }
   summary {
@@ -113,16 +122,16 @@ const { centers } = Astro.props;
     width: max-content;
     margin-top: 12px;
   }
-  .centers-footnote {
+  .centers-hint {
     font-size: var(--aiia-text-small);
     color: var(--aiia-ink-mute);
-    margin: 24px 0 0;
+    margin: 0 0 var(--aiia-space-4);
   }
   @media (max-width: 640px) {
     .centers-grid {
       grid-template-columns: 1fr;
     }
-    .center:nth-last-child(2) {
+    .centers-column:not(:last-child) .center:last-child {
       border-bottom: 0;
     }
     .centers-note {

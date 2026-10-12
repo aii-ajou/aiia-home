@@ -10,6 +10,15 @@ export function withBase(path: string): string {
   return `${base}/${rel}`;
 }
 
+/**
+ * 링크 끝 화살표. 외부 사이트·메일은 ↗, 같은 페이지 섹션 이동은 ↓,
+ * 그 밖의 사이트 안 이동은 →. samePage 는 링크가 항상 홈에 있을 때만 켠다.
+ */
+export function linkArrow(href: string, samePage = false): string {
+  if (/^(https?:|mailto:|tel:)/i.test(href)) return "↗";
+  return samePage && href.startsWith("#") ? "↓" : "→";
+}
+
 /** 외부 주소는 유지하고 내부 링크·미디어는 배포 경로를 반영한다. */
 export function siteUrl(path: string): string {
   if (/^(https?:|mailto:|tel:)/i.test(path)) return path;

@@ -1,6 +1,6 @@
 ---
 import type { NavView, CtaView } from "../lib/content/queries";
-import { siteUrl, withBase } from "../lib/url";
+import { linkArrow, siteUrl, withBase } from "../lib/url";
 interface Props {
   nav: NavView[];
   cta: CtaView;
@@ -12,7 +12,6 @@ const active = (href: string) =>
 
 <div class="utility">
   <div class="aiia-container">
-    <span>아주대학교 인공지능연구원</span>
     <a href="https://www.ajou.ac.kr/" target="_blank" rel="noopener noreferrer">
       아주대학교 <span aria-hidden="true">↗</span>
     </a>
@@ -49,7 +48,7 @@ const active = (href: string) =>
     <div class="header-actions">
       <a class="btn header-cta" href={siteUrl(cta.href)}>
         {cta.label}
-        <span aria-hidden="true">↗</span>
+        <span aria-hidden="true">{linkArrow(cta.href)}</span>
       </a>
       <button
         id="theme-toggle"
@@ -99,10 +98,12 @@ const active = (href: string) =>
     {nav.map((n) => (
       <a href={siteUrl(n.href)}>
         {n.label}
-        <span aria-hidden="true">↗</span>
+        <span aria-hidden="true">{linkArrow(n.href)}</span>
       </a>
     ))}
-    <a href={siteUrl(cta.href)}>{cta.label} ↗</a>
+    <a href={siteUrl(cta.href)}>
+      {cta.label} <span aria-hidden="true">{linkArrow(cta.href)}</span>
+    </a>
   </nav>
 </header>
 <script>
@@ -214,7 +215,7 @@ const active = (href: string) =>
   }
   .utility > div {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding-block: 8px;
   }
   .utility a span {
@@ -310,9 +311,6 @@ const active = (href: string) =>
     }
   }
   @media (max-width: 560px) {
-    .utility > div > span {
-      font-size: 9px;
-    }
     .brand strong {
       font-size: 25px;
     }

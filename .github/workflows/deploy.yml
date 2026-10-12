@@ -42,7 +42,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm audit
+      # 정적 산출물만 배포하므로 빌드 도구 취약점으로 콘텐츠 배포를 막지 않는다.
+      # critical(악성 패키지 포함)만 차단하고 나머지는 경고로 남긴다. 0건 규칙은 ci.yml(PR)에서 강제.
+      - name: Audit dependencies
+        run: |
+          npm audit || echo '::warning::npm audit 취약점이 있습니다. npm audit fix 후 PR로 반영하세요.'
+          npm audit --audit-level=critical
       - run: npm run test:content
       - run: npm run check
       - run: npx playwright install --with-deps chromium

@@ -36,7 +36,10 @@ comments are in Korean; the default `lang` is `ko` (Base.astro also supports `en
 ## Build tooling / versions
 
 - **Astro 7 SSG**(`output` 기본값 static, 어댑터 없음) on **Node 22**(nvm, `.nvmrc`=22).
-- `npm audit` **0 vulnerabilities 유지**. `yaml` override(GHSA-48c2-rrv3-qjmp)도 유지.
+- `npm audit` **0 vulnerabilities 유지** — PR 게이트(`ci.yml`)에서 강제. 배포(`deploy.yml`)는
+  CMS 저장마다 실행되므로 `--audit-level=critical` 만 차단하고 나머지는 경고로 남긴다(정적
+  산출물만 배포 — 빌드 도구 취약점이 방문자에게 닿지 않음). 경고가 보이면 `npm audit fix` 후
+  PR 로 반영. `yaml` override(GHSA-48c2-rrv3-qjmp)도 유지.
   Decap CMS 는 npm 의존성이 아니라 `/admin` 정적 페이지가 CDN 번들을 로드 — audit 표면에
   들어오지 않는다. `decap-server` 도 `npx` 실행이라 미설치.
 - `astro.config.mjs` 는 `site: "https://aiia.ajou.ac.kr"`(canonical/OG) 유지. `GITHUB_PAGES`
@@ -69,7 +72,8 @@ comments are in Korean; the default `lang` is `ko` (Base.astro also supports `en
   콘텐츠에 `/uploads/...` 경로로 기록. 운영 GitHub 로그인은 `backend.base_url` 에 OAuth
   릴레이 주소가 필요(로컬은 `local_backend` + `admin:local`).
 - **`.github/workflows/`** — `deploy.yml`(main push → check → build → GitHub Pages 배포.
-  빌드 실패 시 배포 생략 = 이전 버전 유지. 서브패스 보정은 산출물에서만), `ci.yml`(PR:
+  빌드 실패 시 배포 생략 = 이전 버전 유지. 서브패스 보정은 산출물에서만. audit 는 critical 만
+  차단), `ci.yml`(PR:
   audit/check/build 게이트).
 - **`infra/oauth-relay/`** — 편집자 GitHub 로그인용 셀프호스트 OAuth 릴레이(의존성 0,
   스테이트리스). 설정 절차는 해당 README.

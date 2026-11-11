@@ -43,7 +43,8 @@ comments are in Korean; the default `lang` is `ko` (Base.astro also supports `en
   Decap CMS 는 npm 의존성이 아니라 `/admin` 정적 페이지가 CDN 번들을 로드 — audit 표면에
   들어오지 않는다. `decap-server` 도 `npx` 실행이라 미설치.
 - `astro.config.mjs` 는 `site: "https://aiia.ajou.ac.kr"`(canonical/OG) 유지. `GITHUB_PAGES`
-  env 스위치는 임시 호스팅(GitHub Pages 서브패스) 전용 — CI 에서만 켠다.
+  env 스위치는 서브패스 호환성 검사 전용 — PR CI 매트릭스에서만 켠다. 운영은 GitHub Pages +
+  커스텀 도메인 루트(https://aiia.ajou.ac.kr/)이므로 `deploy.yml` 은 루트 빌드(`test:e2e`)로 배포한다.
 - `tsconfig.json` 은 `astro/tsconfigs/strict` 확장. `npm run check` 0 errors 유지.
 
 ## Architecture

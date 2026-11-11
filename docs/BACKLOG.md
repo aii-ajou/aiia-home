@@ -5,7 +5,7 @@ v2(정적 아키텍처, `docs/PRD.md`) 재구축 완료 시점(2026-07-03) 기�
 등록된다** — 등록 후 이 문서는 이슈 링크로 대체하거나 삭제한다.
 
 현재 상태: main = 정적 사이트 + git 콘텐츠 + `/admin`(Decap). **GitHub Pages 임시 배포
-가동 중**(https://aii-ajou.github.io/aiia-home/, main push 마다 자동). 로컬 편집은
+가동 중**(2026-11 커스텀 도메인 https://aiia.ajou.ac.kr/ 연결, 루트 빌드로 배포). 로컬 편집은
 `npm run admin:local` 로 가능. 운영 편집자 로그인만 미개통(OAuth 릴레이 미배치).
 
 ---

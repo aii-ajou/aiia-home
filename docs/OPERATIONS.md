@@ -1,13 +1,13 @@
 # 홈페이지 운영 — 관리자용
 
-- 홈페이지: https://aii-ajou.github.io/aiia-home/
+- 홈페이지: https://aiia.ajou.ac.kr/
 - 편집: https://app.pagescms.org/aii-ajou/aiia-content/main
 - 코드: `aii-ajou/aiia-home` · 콘텐츠: `aii-ajou/aiia-content` (비공개)
 
 ## 최초 연결 (저장소 관리자, 한 번만)
 
 1. [Pages CMS](https://app.pagescms.org/)에 GitHub로 로그인 → `aii-ajou` 조직에 Pages CMS GitHub App 설치 → **aiia-content만** 허용합니다. 저장소 `main`을 열면 한국어 편집 항목이 나옵니다.
-2. GitHub **aiia-home → Settings → Pages → Source**를 **GitHub Actions**로 선택합니다.
+2. GitHub **aiia-home → Settings → Pages → Source**를 **GitHub Actions**로 선택하고, **Custom domain**에 `aiia.ajou.ac.kr`을 입력한 뒤 **Enforce HTTPS**를 켭니다. DNS는 `aiia.ajou.ac.kr` → `aii-ajou.github.io` CNAME입니다. 기존 `aii-ajou.github.io/aiia-home/` 주소는 GitHub가 새 도메인으로 자동 이동시킵니다.
 3. [Fine-grained token](https://github.com/settings/personal-access-tokens/new) 두 개를 만듭니다. Resource owner는 `aii-ajou`, 지정 저장소만 선택하고 아래 권한만 부여합니다. 조직 승인이 표시되면 승인합니다.
 
    | 토큰                 | 대상 저장소·권한                    | Actions secret을 등록할 곳 |
@@ -67,7 +67,7 @@ Collaborators 메뉴가 안 보이거나 접근이 거부되면 **GitHub 로그�
 >
 > 이메일은 `name@ajou.ac.kr`처럼 주소만 입력하세요. 홈페이지에서는 메일 작성 링크가 자동으로 붙습니다.
 >
-> 홈페이지(https://aii-ajou.github.io/aiia-home/) 맨 아래 **관리자** 링크를 통해서도 편집 화면으로 이동할 수 있습니다. 접속 권한이 없다고 나오면 초대받은 이메일로 로그인했는지 확인하고, 계속 안 되면 초대한 관리자에게 문의해 주세요.
+> 홈페이지(https://aiia.ajou.ac.kr/) 맨 아래 **관리자** 링크를 통해서도 편집 화면으로 이동할 수 있습니다. 접속 권한이 없다고 나오면 초대받은 이메일로 로그인했는지 확인하고, 계속 안 되면 초대한 관리자에게 문의해 주세요.
 
 ## 글·사진 수정
 

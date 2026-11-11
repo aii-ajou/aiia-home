@@ -30,7 +30,7 @@ npm run dev
 npm run test:content
 npm run check
 npm run test:e2e       # 빌드·내부 링크·브라우저 검사
-npm run test:pages     # /aiia-home/ 경로에서 같은 검사
+npm run test:pages     # /aiia-home/ 서브패스 호환성 검사(운영 배포는 루트 빌드)
 ```
 
 브라우저 최초 설치: `npx playwright install --with-deps chromium`.

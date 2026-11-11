@@ -1,8 +1,9 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 
-// 임시 공개 호스팅(GitHub Pages, 리포 서브패스) 빌드 스위치 — CI 에서만 켠다.
-// 대학 서버(루트 도메인) 배포에서는 불필요하며, 기본값이 정본이다.
+// 서브패스(https://aii-ajou.github.io/aiia-home/) 호환성 검사용 스위치 — PR CI 매트릭스에서만 켠다.
+// 운영 배포(deploy.yml)는 커스텀 도메인 루트(https://aiia.ajou.ac.kr/)이므로 켜지 않는다.
+// 켠 채로 배포하면 모든 경로가 /aiia-home/… 로 굳어 커스텀 도메인에서 페이지가 깨진다.
 const ghPages = process.env.GITHUB_PAGES === "true";
 
 // https://astro.build/config

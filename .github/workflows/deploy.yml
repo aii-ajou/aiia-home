@@ -52,7 +52,9 @@ jobs:
       - run: npm run test:content
       - run: npm run check
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:pages
+      # 운영 주소는 커스텀 도메인 루트(https://aiia.ajou.ac.kr/)다. GITHUB_PAGES 스위치를 켜면
+      # /aiia-home 서브패스로 빌드되어 CSS·이미지·링크가 모두 404가 되므로 루트 빌드로 배포한다.
+      - run: npm run test:e2e
       - name: Record deployed revisions
         run: |
           echo "Code: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
